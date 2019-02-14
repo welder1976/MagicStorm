@@ -17,6 +17,7 @@
 
 enum eVaultOfWardens
 {
+    // Bastillax
     EVENT_FEL_ANNIHILATION        = 0,
     EVENT_CRUSHING_SHADOWS        = 1,
     EVENT_BLUR_OF_SHADOWS         = 2,
@@ -24,6 +25,13 @@ enum eVaultOfWardens
     SPELL_FEL_ANNIHILATION        = 200007,
     SPELL_CRUSHING_SHADOWS        = 200027,
     SPELL_BLUR_OF_SHADOWS         = 200002,
+
+    // Immolanth
+    EVENT_BURNING_FEL             = 0,
+    EVENT_CHAOS_NOVA              = 1,
+
+    SPELL_BURNING_FEL             = 199758,
+    SPELL_CHAOS_NOVA              = 199828,
 };
 
 class npc_bastillax : public CreatureScript
@@ -99,7 +107,70 @@ public:
     }
 };
 
+class npc_immolanth : public CreatureScript
+{
+public:
+    npc_immolanth() : CreatureScript("npc_immolanth") { }
+
+    struct npc_immolanthAI : public ScriptedAI
+    {
+        npc_immolanthAI(Creature* creature) : ScriptedAI(creature) { }
+
+        void Reset() override
+        {
+            events.Reset();
+        }
+
+        void JustDied(Unit* killer) override
+        {
+            if (killer->GetTypeId() == TYPEID_PLAYER)
+                killer->ToPlayer()->KilledMonsterCredit(106254, ObjectGuid::Empty);
+        }
+
+        void EnterCombat(Unit* who) override
+        {
+            events.ScheduleEvent(EVENT_BURNING_FEL, 8s, 10s);
+            events.ScheduleEvent(EVENT_CHAOS_NOVA, 18s, 20s);
+        }
+
+        void UpdateAI(const uint32 diff) override
+        {
+            events.Update(diff);
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                    case EVENT_BURNING_FEL:
+                        if (Unit* target = me->GetVictim())
+                            me->CastSpell(me, SPELL_BURNING_FEL, true);
+
+                        events.ScheduleEvent(EVENT_BURNING_FEL, 8s, 10s);
+                        break;
+                    case EVENT_CHAOS_NOVA:
+                        if (Unit* target = me->GetVictim())
+                            me->CastSpell(target, SPELL_CHAOS_NOVA, true);
+
+                        events.ScheduleEvent(EVENT_CHAOS_NOVA, 18s);
+                        break;
+                }
+            }
+
+            if (UpdateVictim())
+                DoMeleeAttackIfReady();
+        }
+    private:
+        EventMap events;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_immolanthAI(creature);
+    }
+};
+
 void AddSC_zone_vault_of_wardens()
 {
     new npc_bastillax();
+    new npc_immolanth();
 }
