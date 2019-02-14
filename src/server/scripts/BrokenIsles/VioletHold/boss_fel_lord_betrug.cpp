@@ -5,6 +5,9 @@
 #include "AreaTrigger.h"
 #include "AreaTriggerTemplate.h"
 #include "AreaTriggerAI.h"
+#include "Spell.h"
+#include "SpellInfo.h"
+#include "SpellMgr.h"
 #include "violet_hold_assault.h"
 #include <G3D/Vector3.h>
 #include <G3D/Triangle.h>

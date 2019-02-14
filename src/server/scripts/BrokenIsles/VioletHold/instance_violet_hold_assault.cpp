@@ -1,6 +1,9 @@
 #include "ScriptMgr.h"
 #include "InstanceScript.h"
+#include "InstanceScript.h"
 #include "GameObject.h"
+#include "Group.h"
+#include "ScriptPCH.h"
 #include "violet_hold_assault.h"
 
 enum Events
