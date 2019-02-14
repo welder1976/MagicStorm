@@ -125,16 +125,16 @@ void AddSC_boss_dargrul_the_underking();
 //void AddSC_boss_cordana_felsong();
 
 // Violet Hold
-//void AddSC_instance_violet_hold_legion();
-//void AddSC_violet_hold_legion();
-//void AddSC_boss_anubesset();
-//void AddSC_boss_bloodprincess_thalena();
-//void AddSC_boss_festerface();
-//void AddSC_boss_millificent_manastorm();
-//void AddSC_boss_mindflayer_kaahrj();
-//void AddSC_boss_shivermaw();
-//void AddSC_boss_saelorn();
-//void AddSC_boss_fel_lord_betrug();
+void AddSC_instance_violet_hold_assault();
+void AddSC_violet_hold_assault();
+void AddSC_boss_anubesset();
+void AddSC_boss_bloodprincess_thalena();
+void AddSC_boss_festerface();
+void AddSC_boss_millificent_manastorm();
+void AddSC_boss_mindflayer_kaahrj();
+void AddSC_boss_shivermaw();
+void AddSC_boss_saelorn();
+void AddSC_boss_fel_lord_betrug();
 
 // Court of Stars
 void AddSC_boss_patrol_captain_gerdo();
@@ -313,16 +313,16 @@ void AddBrokenIslesScripts()
     //AddSC_boss_cordana_felsong();
 
     // Violet Hold
-    //AddSC_instance_violet_hold_legion();
-    //AddSC_violet_hold_legion();
-    //AddSC_boss_anubesset();
-    //AddSC_boss_bloodprincess_thalena();
-    //AddSC_boss_festerface();
-    //AddSC_boss_millificent_manastorm();
-    //AddSC_boss_mindflayer_kaahrj();
-    //AddSC_boss_shivermaw();
-    //AddSC_boss_saelorn();
-    //AddSC_boss_fel_lord_betrug();
+    AddSC_instance_violet_hold_assault();
+    AddSC_violet_hold_assault();
+    AddSC_boss_anubesset();
+    AddSC_boss_bloodprincess_thalena();
+    AddSC_boss_festerface();
+    AddSC_boss_millificent_manastorm();
+    AddSC_boss_mindflayer_kaahrj();
+    AddSC_boss_shivermaw();
+    AddSC_boss_saelorn();
+    AddSC_boss_fel_lord_betrug();
 
     // Court of Stars
     AddSC_boss_patrol_captain_gerdo();

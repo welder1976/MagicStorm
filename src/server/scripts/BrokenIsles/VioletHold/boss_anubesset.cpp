@@ -2,7 +2,8 @@
 #include "ScriptedCreature.h"
 #include "AreaTriggerTemplate.h"
 #include "AreaTriggerAI.h"
-#include "violet_hold_legion.h"
+#include "SpellMgr.h"
+#include "violet_hold_assault.h"
 
 enum Spells
 {
