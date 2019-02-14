@@ -96,7 +96,7 @@ class instance_violet_hold_assault : public InstanceMapScript
 
         struct instance_violet_hold_assault_InstanceScript : public InstanceScript
         {
-            instance_violet_hold_assault_InstanceScript(Map* map) : InstanceScript(map)
+            instance_violet_hold_assault_InstanceScript(InstanceMap* map) : InstanceScript(map)
             {
                 SetHeaders(DataHeader);
                 SetBossNumber(EncounterCount);
@@ -106,11 +106,11 @@ class instance_violet_hold_assault : public InstanceMapScript
                 while (_secondBoss == _firstBoss)
                     _secondBoss = BossesId[urand(0,5)];
 
-                if (Difficulty(instance->GetSpawnMode()) == DIFFICULTY_MYTHIC)
+               // if (Difficulty(instance->GetSpawnMode()) == DIFFICULTY_MYTHIC)
                     _criteriaToFind = CRITERIA_MYTHIC_STAGE_1;
-                else if (Difficulty(instance->GetSpawnMode()) == DIFFICULTY_HEROIC)
+               // else if (Difficulty(instance->GetSpawnMode()) == DIFFICULTY_HEROIC)
                     _criteriaToFind = CRITERIA_HEROIC_STAGE_1;
-                else
+               // else
                     _criteriaToFind = CRITERIA_NORMAL_STAGE_1;
 
                 _eliteDead = 0;
