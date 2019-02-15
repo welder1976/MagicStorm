@@ -138,7 +138,7 @@ void AddSC_boss_fel_lord_betrug();
 
 // Court of Stars
 void AddSC_boss_patrol_captain_gerdo();
-void AddSC_talixae_flamewreath();
+void AddSC_boss_talixae_flamewreath();
 void AddSC_boss_advisor_melandrus();
 void AddSC_court_of_stars();
 void AddSC_instance_court_of_stars();
@@ -326,7 +326,7 @@ void AddBrokenIslesScripts()
 
     // Court of Stars
     AddSC_boss_patrol_captain_gerdo();
-    AddSC_talixae_flamewreath();
+    AddSC_boss_talixae_flamewreath();
     AddSC_boss_advisor_melandrus();
     AddSC_court_of_stars();
     AddSC_instance_court_of_stars();
