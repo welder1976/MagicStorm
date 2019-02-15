@@ -4124,11 +4124,19 @@ TimeIsMoneyFriend.Money = 1000
 
 #
 #     Double.XP
-#        Description: Enables or disables the Double XP Weekend Script
+#        Description: Enables or disables the Double XP Weekend script.
 #        Default:     1 (Enabled)
 #                     0 (Disabled)
 
 Double.XP = 1
+
+#
+#     Debug.LFG
+#        Description: Enables or disables debug LFG system.
+#        Default:     1 (Enabled)
+#                     0 (Disabled)
+
+Debug.LFG = 1
 
 #
 ###################################################################################################
