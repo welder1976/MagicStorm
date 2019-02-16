@@ -145,6 +145,7 @@ namespace WorldPackets
         class ReportPvPPlayerAFK;
         class RequestPVPRewards;
         class RequestRatedBattlefieldInfo;
+        class BattlemasterJoinRatedBG;
     }
 
     namespace Battlenet
@@ -1587,6 +1588,7 @@ class TC_GAME_API WorldSession
         void HandleAreaSpiritHealerQueueOpcode(WorldPackets::Battleground::AreaSpiritHealerQueue& areaSpiritHealerQueue);
         void HandleHearthAndResurrect(WorldPackets::Battleground::HearthAndResurrect& hearthAndResurrect);
         void HandleRequestBattlefieldStatusOpcode(WorldPackets::Battleground::RequestBattlefieldStatus& requestBattlefieldStatus);
+        void HandleJoinRatedBattleground(WorldPackets::Battleground::BattlemasterJoinRatedBG& packet);
 
         // Battlefield
         void SendBfInvitePlayerToWar(uint64 queueId, uint32 zoneId, uint32 acceptTime);
