@@ -99,7 +99,7 @@ public:
     {
         if (summoner)
         {
-            me->GetScheduler().Schedule(1s, [this, summoner](TaskContext /*context*/)
+            //me->GetScheduler().Schedule(1s, [this, summoner](TaskContext /*context*/));
             summoner->CastSpell(me, 46598);
         }
     }

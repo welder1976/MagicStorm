@@ -119,3 +119,14 @@ INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `positio
 (3215790, 32, 974.031, -355.625, -69.1521, 0, 0),
 (3215790, 33, 967.597, -349.477, -71.3905, 0, 0),
 (3215790, 34, 963.267, -343.735, -71.7394, 0, 0);
+UPDATE creature_template_addon SET emote = 214 WHERE entry = 46983;
+DELETE FROM creature WHERE guid = 10297;
+INSERT INTO creature (guid, id, map, zoneId, areaId, position_x, position_y, position_z, orientation) VALUES
+(10297, 46985, 0, 12, 87, -9462.1, 126.892, 58.962, 4.66003);
+UPDATE creature_template SET AIName = "SmartAI" WHERE entry = 46983;
+DELETE FROM smart_scripts WHERE entryorguid = 46983;
+INSERT INTO smart_scripts (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(46983, 0, 0, 0, 1, 0, 100, 0, 1, 1, 10000, 10000, 11, 45425, 0, 0, 0, 0, 0, 10, 10297, 0, 0, 0, 0, 0, 0, "Benjamin Foxworthy - OOC - Cast Spell 'Shot'");
+
+UPDATE playercreateinfo SET map = 648, zone = 4765, position_x = -8423.81, position_y = 1361.3, position_z = 104.671, orientation = 1.55428 WHERE race = 9 AND class IN (1, 3, 4, 5, 7, 8, 9);
+UPDATE playercreateinfo SET map = 654, zone = 4756, position_x = -1451.53, position_y = 1403.35, position_z = 35.5561, orientation = 0.333847 WHERE race = 22 AND class IN (1, 3, 4, 5, 8, 9, 11);

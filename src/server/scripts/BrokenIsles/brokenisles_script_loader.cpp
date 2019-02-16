@@ -189,18 +189,18 @@ void AddSC_boss_chronomatic_anomaly();
 void AddSC_boss_trilliax();
 void AddSC_boss_aluriel();
 
-// Karazhan
+// New Karazhan
 void AddSC_instance_new_karazhan();
-void AddSC_boss_maiden_of_virtue();
-void AddSC_boss_curator();
-void AddSC_boss_mana_devourer();
-void AddSC_boss_shade_of_medivh();
-void AddSC_boss_moroes();
-void AddSC_boss_attumen();
-void AddSC_boss_opera();
-void AddSC_boss_vizaduum();
-void AddSC_boss_nightbane();
 void AddSC_new_karazhan();
+void AddSC_boss_new_maiden_of_virtue();
+void AddSC_boss_new_curator();
+void AddSC_boss_new_mana_devourer();
+void AddSC_boss_new_shade_of_medivh();
+void AddSC_boss_new_moroes();
+void AddSC_boss_new_attumen();
+void AddSC_boss_new_opera();
+void AddSC_boss_new_vizaduum();
+void AddSC_boss_new_nightbane();
 
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
@@ -370,16 +370,16 @@ void AddBrokenIslesScripts()
     AddSC_boss_trilliax();
     AddSC_boss_aluriel();
   
-    // Karazhan
+    // New Karazhan
     AddSC_instance_new_karazhan();
-    AddSC_boss_maiden_of_virtue();
-    AddSC_boss_curator();
-    AddSC_boss_mana_devourer();
-    AddSC_boss_shade_of_medivh();
-    AddSC_boss_moroes();
-    AddSC_boss_attumen();
-    AddSC_boss_opera();
-    AddSC_boss_vizaduum();
-    AddSC_boss_nightbane();
     AddSC_new_karazhan();
+    AddSC_boss_new_maiden_of_virtue();
+    AddSC_boss_new_curator();
+    AddSC_boss_new_mana_devourer();
+    AddSC_boss_new_shade_of_medivh();
+    AddSC_boss_new_moroes();
+    AddSC_boss_new_attumen();
+    AddSC_boss_new_opera();
+    AddSC_boss_new_vizaduum();
+    AddSC_boss_new_nightbane();
 }
