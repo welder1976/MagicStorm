@@ -1,4 +1,4 @@
-DELETE FROM `gameobject_questitem` WHERE (`GameObjectEntry`=246804 AND `Idx`=4) OR (`GameObjectEntry`=246804 AND `Idx`=3) OR (`GameObjectEntry`=246804 AND `Idx`=2) OR (`GameObjectEntry`=246804 AND `Idx`=1) OR (`GameObjectEntry`=246804 AND `Idx`=0);
+﻿DELETE FROM `gameobject_questitem` WHERE (`GameObjectEntry`=246804 AND `Idx`=4) OR (`GameObjectEntry`=246804 AND `Idx`=3) OR (`GameObjectEntry`=246804 AND `Idx`=2) OR (`GameObjectEntry`=246804 AND `Idx`=1) OR (`GameObjectEntry`=246804 AND `Idx`=0);
 INSERT INTO `gameobject_questitem` (`GameObjectEntry`, `Idx`, `ItemId`, `VerifiedBuild`) VALUES
 (246804, 4, 137271, 22522), -- Archäologischer Fund der Hochbergtauren
 (246804, 3, 134095, 22522), -- Archäologischer Fund der Hochbergtauren
@@ -2732,4 +2732,5 @@ INSERT INTO `quest_objectives_locale` (`ID`, `locale`, `QuestId`, `StorageIndex`
 SET NAMES 'latin1';
 
 
-
+DELETE FROM `creature_template` WHERE `entry`=93105;
+INSERT INTO `creature_template` VALUES (93105, 0, 0, 0, 95226, 0, 68182, 0, 0, 0, 'Inquisitor Baleful', '', '', NULL, NULL, 0, 98, 98, 5, 0, 0, 954, 0, 1, 1.14286, 1, 0, 0, 2000, 2000, 1, 1, 2, 32832, 2099200, 0, 0, 0, 0, 0, 0, 3, 2147483752, 0, 93105, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'SmartAI', 0, 3, 1, 5.5, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 'npc_inquisitor_baleful', 26365);
