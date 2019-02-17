@@ -3820,6 +3820,6 @@ void AddSC_warlock_spell_scripts()
     new spell_npc_warl_demonic_gateway_purple();
     new npc_pet_warlock_darkglare();
     RegisterCreatureAI(npc_pet_warlock_wild_imp);
-	new spell_warl_sindorei_spite();
+    new spell_warl_sindorei_spite();
     new spell_warl_sindorei_spite_proc();
 }
