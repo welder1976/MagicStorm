@@ -58,9 +58,7 @@ class npc_prince_anduin : public CreatureScript
                 }
             }
 
-            void UpdateAI(uint32 /*diff*/) override
-            {
-            }
+            void UpdateAI(uint32 /*diff*/) override { }
         };
 
         CreatureAI* GetAI(Creature* creature) const override
@@ -214,8 +212,144 @@ class npc_kairoz : public CreatureScript
         }
 };
 
+class npc_emperor_shaohao : public CreatureScript
+{
+public:
+    npc_emperor_shaohao() : CreatureScript("npc_emperor_shaohao") { }
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_emperor_shaohaoAI(creature);
+    }
+
+    struct npc_emperor_shaohaoAI : public ScriptedAI
+    {
+        npc_emperor_shaohaoAI(Creature* creature) : ScriptedAI(creature) { }
+
+        void Reset()
+        {
+            me->setActive(true);
+            events.Reset();
+            _yulon = false;
+            _xuen = false;
+            _chiji = false;
+            _niuzao = false;
+            _challenge_started = false;
+        }
+
+        void MoveInLineOfSight(Unit* who)
+        {
+            if (!_challenge_started && me->IsWithinDistInMap(who, 30.0f) && who->GetTypeId() == TYPEID_PLAYER && who->IsAlive())
+            {
+                _challenge_started = true;
+                _yulon = true;
+                _xuen = false;
+                _chiji = false;
+                _niuzao = false;
+                me->AI()->Talk(EMPEROR_TALK_INTRO);
+                events.ScheduleEvent(EVENT_EMPEROR_ARRANGE_BOSS, 16s);
+            }
+        }
+
+        void DoAction(const int32 action) override
+        {
+            switch (action)
+            {
+                case ACTION_XUEN:
+                    _xuen = true;
+                    break;
+                case ACTION_CHIJI:
+                    _chiji = true;
+                    break;
+                case ACTION_NIUZAO:
+                    _niuzao = true;
+                    break;
+                case ACTION_YULON:
+                    _yulon = true;
+                    break;
+            }
+
+            events.ScheduleEvent(EVENT_EMPEROR_ARRANGE_BOSS, 8s + 500ms);
+        }
+
+        void UpdateAI(const uint32 diff)
+        {
+            events.Update(diff);
+
+            switch (events.ExecuteEvent())
+            {
+                case EVENT_EMPEROR_ARRANGE_BOSS:
+                {
+                    if (_yulon)
+                    {
+                        if (Creature* yulon = me->FindNearestCreature(BOSS_YU_LON, 300.0f, true))
+                        {
+                            yulon->GetMotionMaster()->MovePoint(1, _timelessIsleMiddle);
+                            me->AI()->Talk(EMPEROR_TALK_INTRO_YULON);
+                        }
+                        else
+                            _xuen = true;
+
+                        _yulon = false;
+                    }
+                    if (_xuen)
+                    {
+                        if (Creature* xuen = me->FindNearestCreature(BOSS_XUEN, 300.0f, true))
+                        {
+                            xuen->GetMotionMaster()->MovePoint(1, _timelessIsleMiddle);
+                            me->AI()->Talk(EMPEROR_TALK_INTRO_XUEN);
+                        }
+                        else
+                            _chiji = true;
+
+                        _xuen = false;
+                    }
+                    if (_chiji)
+                    {
+                        if (Creature* chiji = me->FindNearestCreature(BOSS_CHI_JI, 300.0f, true))
+                        {
+                            chiji->GetMotionMaster()->MovePoint(1, _timelessIsleMiddle);
+                            me->AI()->Talk(EMPEROR_TALK_INTRO_CHIJI);
+                        }
+                        else
+                            _niuzao = true;
+
+                        _chiji = false;
+                    }
+                    if (_niuzao)
+                    {
+                        if (Creature* niuzao = me->FindNearestCreature(BOSS_NIUZAO, 300.0f, true))
+                        {
+                            niuzao->GetMotionMaster()->MovePoint(1, _timelessIsleMiddle);
+                            me->AI()->Talk(EMPEROR_TALK_INTRO_NIUZAO);
+                        }
+                        else
+                            _yulon = true;
+
+                        _niuzao = false;
+                    }
+
+                    events.ScheduleEvent(EVENT_EMPEROR_ARRANGE_BOSS, 5s);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+
+        private:
+            EventMap events;
+            bool _yulon;
+            bool _xuen;
+            bool _chiji;
+            bool _niuzao;
+            bool _challenge_started;
+    };
+};
+
 void AddSC_timeless_isle()
 {
     new npc_prince_anduin();
     new npc_kairoz();
+    new npc_emperor_shaohao();
 }
