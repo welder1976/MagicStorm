@@ -21,6 +21,7 @@ void AddSC_darkmoon_island();
 void AddSC_darkmoon_rabbit();
 void AddSC_darkmoon_tonk();
 void AddSC_darkmoon_whack_gnoll();
+void AddSC_event_darkmoon_faire();
 
 
 // The name of this function should match:
@@ -32,4 +33,5 @@ void AddDarkmoonIslandScripts()
     AddSC_darkmoon_rabbit();
     AddSC_darkmoon_tonk();
     AddSC_darkmoon_whack_gnoll();
+    AddSC_event_darkmoon_faire();
 }
