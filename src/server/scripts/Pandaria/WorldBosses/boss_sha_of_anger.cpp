@@ -58,17 +58,17 @@ enum eEvents
 
 enum eCreatures
 {
-    CREATURE_SHA_OF_ANGER           = 56439
+    CREATURE_SHA_OF_ANGER       = 56439
 };
 
 enum eTalk
 {
-    TALK_INTRO = 0,
-    TALK_ANGER = 1,
-    TALK_SPAWN = 2,
-    TALK_RESET = 3,
-    TALK_SLAY  = 4,
-    TALK_AGGRO = 5
+    TALK_INTRO                  = 0,
+    TALK_ANGER                  = 1,
+    TALK_SPAWN                  = 2,
+    TALK_RESET                  = 3,
+    TALK_SLAY                   = 4,
+    TALK_AGGRO                  = 5
 };
 
 class boss_sha_of_anger : public CreatureScript
@@ -111,11 +111,11 @@ class boss_sha_of_anger : public CreatureScript
                 Talk(TALK_RESET);
 
                 events.Reset();
-                events.ScheduleEvent(EVENT_GROWING_ANGER_WARNING, 19000);
-                events.ScheduleEvent(EVENT_SPAWN, 5000);
-                events.ScheduleEvent(EVENT_UNLEASHED_WRATH, 52000);
-                events.ScheduleEvent(EVENT_BERSERK, 900000);
-                events.ScheduleEvent(EVENT_UPDATE_RAGE, 1000);
+                events.ScheduleEvent(EVENT_GROWING_ANGER_WARNING, 19s);
+                events.ScheduleEvent(EVENT_SPAWN, 5s);
+                events.ScheduleEvent(EVENT_UNLEASHED_WRATH, 52s);
+                events.ScheduleEvent(EVENT_BERSERK, 900s);
+                events.ScheduleEvent(EVENT_UPDATE_RAGE, 1s);
 
                 targetedDominationplayerGUIDs.clear();
                 m_LootersGuids.clear();
@@ -146,7 +146,7 @@ class boss_sha_of_anger : public CreatureScript
                 if (summon->GetEntry() == 61523)
                 {
                     summon->CastSpell(summon, SPELL_BITTER_THOUGHTS, true);
-                    summon->DespawnOrUnsummon(60000);
+                    summon->DespawnOrUnsummon(60s);
                 }
             }
 
@@ -213,11 +213,11 @@ class boss_sha_of_anger : public CreatureScript
                                     Talk(TALK_INTRO);
 
                                 _targetCount++;
-                                events.ScheduleEvent(EVENT_UNLEASHED_WRATH, 2000);
+                                events.ScheduleEvent(EVENT_UNLEASHED_WRATH, 2s);
                             }
                             else
                             {
-                                events.ScheduleEvent(EVENT_UNLEASHED_WRATH, 50000);
+                                events.ScheduleEvent(EVENT_UNLEASHED_WRATH, 50s);
                                 phase1 = true;
                                 _targetCount = 0;
                             }
@@ -235,7 +235,7 @@ class boss_sha_of_anger : public CreatureScript
                                     me->CastSpell(target, SPELL_DOMINATE_MIND_WARNING, true);
                                 }
 
-                            events.ScheduleEvent(EVENT_GROWING_ANGER, 6000);
+                            events.ScheduleEvent(EVENT_GROWING_ANGER, 6s);
                             break;
                         }
                         case EVENT_GROWING_ANGER:
@@ -246,7 +246,7 @@ class boss_sha_of_anger : public CreatureScript
                                         if (!me->GetVictim() || target != me->GetVictim())
                                             me->CastSpell(target, SPELL_DOMINATE_MIND, false);
 
-                            events.ScheduleEvent(EVENT_GROWING_ANGER_WARNING, 19000);
+                            events.ScheduleEvent(EVENT_GROWING_ANGER_WARNING, 19s);
                             break;
                         }
                         case EVENT_SPAWN:
@@ -257,7 +257,7 @@ class boss_sha_of_anger : public CreatureScript
                                 if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM))
                                     me->CastSpell(target, SPELL_ENDLESS_RAGE, false);
 
-                            events.ScheduleEvent(EVENT_SPAWN, 15000);
+                            events.ScheduleEvent(EVENT_SPAWN, 15s);
                             break;
                         }
                         case EVENT_UPDATE_RAGE:
@@ -268,7 +268,7 @@ class boss_sha_of_anger : public CreatureScript
                                 timer = timer - 20;
 
                             me->SetPower(POWER_RAGE, timer);
-                            events.ScheduleEvent(EVENT_UPDATE_RAGE, 1000);
+                            events.ScheduleEvent(EVENT_UPDATE_RAGE, 1s);
                             break;
                         }
                         case EVENT_BERSERK:
@@ -295,7 +295,7 @@ class boss_sha_of_anger : public CreatureScript
                 if (me->GetVictim() && !me->IsWithinMeleeRange(me->GetVictim()) && !range)
                 {
                     range = true;
-                    events.ScheduleEvent(EVENT_RANGE_ATTACK, 2000);
+                    events.ScheduleEvent(EVENT_RANGE_ATTACK, 2s);
                 }
 
                 DoMeleeAttackIfReady();
@@ -392,7 +392,6 @@ class spell_sha_of_anger_aggressive_behaviour: public SpellScriptLoader
                     target->setFaction(16);
                     target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
                 }
-
             }
 
             void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)

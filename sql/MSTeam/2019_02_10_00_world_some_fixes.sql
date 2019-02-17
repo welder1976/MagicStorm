@@ -127,6 +127,10 @@ UPDATE creature_template SET AIName = "SmartAI" WHERE entry = 46983;
 DELETE FROM smart_scripts WHERE entryorguid = 46983;
 INSERT INTO smart_scripts (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
 (46983, 0, 0, 0, 1, 0, 100, 0, 1, 1, 10000, 10000, 11, 45425, 0, 0, 0, 0, 0, 10, 10297, 0, 0, 0, 0, 0, 0, "Benjamin Foxworthy - OOC - Cast Spell 'Shot'");
+UPDATE creature SET spawndist = 0, MovementType = 0 WHERE guid IN (179030, 178999, 179035, 179049, 179051, 179047);
+
+
+-- 179871 179874 179873 179877 179876
 
 UPDATE playercreateinfo SET map = 648, zone = 4765, position_x = -8423.81, position_y = 1361.3, position_z = 104.671, orientation = 1.55428 WHERE race = 9 AND class IN (1, 3, 4, 5, 7, 8, 9);
 UPDATE playercreateinfo SET map = 654, zone = 4756, position_x = -1451.53, position_y = 1403.35, position_z = 35.5561, orientation = 0.333847 WHERE race = 22 AND class IN (1, 3, 4, 5, 8, 9, 11);
