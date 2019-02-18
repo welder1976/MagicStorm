@@ -13,12 +13,14 @@ UPDATE `creature_template` SET `ScriptName` = "boss_yu_lon_celestial" WHERE `ent
 UPDATE `creature_template` SET `ScriptName` = "boss_ordos" WHERE entry = 72057;
 
 UPDATE creature_template SET faction = 16, ScriptName = "npc_child_of_chi_ji" WHERE entry = 71990;
-DELETE FROM spell_script_names WHERE spell_id IN (144608, 144610, 144475, 144688);
+DELETE FROM spell_script_names WHERE spell_id IN (144608, 144610, 144475, 144688, 144634, 144642);
 INSERT INTO spell_script_names (spell_id, ScriptName) VALUES
 (144608, "spell_niuzao_charge"),
 (144610, "spell_niuzao_headbutt"),
 (144475, "spell_chi_ji_beacon_of_hope"),
-(144688, "spell_ordos_magma_crush");
+(144688, "spell_ordos_magma_crush"),
+(144634, "spell_xuen_crackling_lightning"),
+(144642, "spell_xuen_chi_barrage");
 
 DELETE FROM `creature_text` WHERE `CreatureID` IN (73303, 71955, 71954, 71953, 71952, 72057);
 INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `Comment`, `BroadcastTextId`) VALUES 
@@ -75,7 +77,6 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 (72057, 8, 0, "Burn!", 14, 0, 100, 0, 0, 38981, "Ordos", 76164),
 (72057, 9, 0, "Your pain will be endless.", 14, 0, 100, 0, 0, 38979, "Ordos", 76162);
 
--- 147654
 -- Loot Rework
 DELETE FROM creature_loot_template WHERE Entry IN (72775);
 INSERT INTO creature_loot_template (Entry, Item, Reference, Chance, QuestRequired, LootMode, GroupId, MinCount, MaxCount) VALUES
