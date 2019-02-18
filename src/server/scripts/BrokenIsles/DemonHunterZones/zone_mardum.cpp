@@ -411,14 +411,14 @@ struct npc_inquisitor_baleful : public ScriptedAI
     }
 };
 
-// 192709 Infernal Smash
+// 192709 - Infernal Smash
 class spell_mardum_infernal_smash : public SpellScript
 {
     PrepareSpellScript(spell_mardum_infernal_smash);
 
     void HandleDummy(SpellEffIndex /*effIndex*/)
     {
-        if (!GetCaster() || !GetHitUnit())
+        if (!GetCaster() || !GetHitUnit() || !(GetHitUnit()->GetTypeId() == TypeID::TYPEID_PLAYER)) 
             return;
 
         GetCaster()->CastSpell(GetHitUnit(), GetEffectValue(), true);
@@ -793,7 +793,7 @@ class PlayerScript_mardum_spec_choice : public PlayerScript
 public:
     PlayerScript_mardum_spec_choice() : PlayerScript("PlayerScript_mardum_spec_choice") {}
 
-    void OnCompleteQuestChoice(Player* player, uint32 choiceID, uint32 responseID)
+    void OnPlayerChoiceResponse(Player* player, uint32 choiceID, uint32 responseID) override
     {
         if (choiceID != PLAYER_CHOICE_DH_SPEC_SELECTION)
             return;
@@ -897,54 +897,6 @@ public:
     {
         player->KilledMonsterCredit(100651);
         return false;
-    }
-};
-
-// 192140 back to black temple
-class spell_mardum_back_to_black_temple : public SpellScript
-{
-    PrepareSpellScript(spell_mardum_back_to_black_temple);
-
-    void HandleOnCast()
-    {
-        if (Player* player = GetCaster()->ToPlayer())
-        {
-            player->AddMovieDelayedAction(471, [player]
-            {
-                //player->CastSpell(nullptr, 192141, true);
-
-                if (player->GetTeam() == ALLIANCE)
-                    player->TeleportTo(0, -8838.72f, 616.29f, 93.06f, 0.779564f);
-                else
-                    player->TeleportTo(1, 1569.96f, -4397.41f, 16.05f, 0.527317f);
-            });
-
-            player->GetScheduler().Schedule(Seconds(2), [](TaskContext context)
-            {
-                GetContextUnit()->RemoveAurasDueToSpell(192140); // Remove black screen
-            });
-
-            // TEMPFIX - Spells learned in next zone
-            if (player->GetSpecializationId() == TALENT_SPEC_DEMON_HUNTER_HAVOC)
-            {
-                player->LearnSpell(188499, false);
-                player->LearnSpell(198793, false);
-                player->LearnSpell(198589, false);
-                player->LearnSpell(179057, false);
-            }
-            else
-            {
-                player->LearnSpell(204596, false);
-                player->LearnSpell(203720, false);
-                player->LearnSpell(204021, false);
-                player->LearnSpell(185245, false);
-            }
-        }
-    }
-
-    void Register() override
-    {
-        OnCast += SpellCastFn(spell_mardum_back_to_black_temple::HandleOnCast);
     }
 };
 
@@ -1086,6 +1038,53 @@ public:
     }
 };
 
+// 192140 back to black temple
+class spell_mardum_back_to_black_temple : public SpellScript
+{
+    PrepareSpellScript(spell_mardum_back_to_black_temple);
+
+    void HandleOnCast()
+    {
+        if (Player* player = GetCaster()->ToPlayer())
+        {
+            // Should be spell 192141 but we can't cast after a movie right now
+            //player->AddMovieDelayedTeleport(471, 1468, 4325.94, -620.21, -281.41, 1.658936);
+
+            if (player->GetTeam() == ALLIANCE)
+                player->AddMovieDelayedTeleport(471, 0, -8838.72f,   616.29f, 93.06f, 0.779564f);
+            else
+                player->AddMovieDelayedTeleport(471, 1,  1569.96f, -4397.41f, 16.05f, 0.527317f);
+
+            player->GetScheduler().Schedule(Seconds(2), [](TaskContext context)
+            {
+                GetContextUnit()->RemoveAurasDueToSpell(192140); // Remove black screen
+            });
+
+            // TEMPFIX - Spells learned in next zone
+            if (player->GetSpecializationId() == TALENT_SPEC_DEMON_HUNTER_HAVOC)
+            {
+                player->LearnSpell(188499, false);
+                player->LearnSpell(198793, false);
+                player->LearnSpell(198589, false);
+                player->LearnSpell(179057, false);
+            }
+            else
+            {
+                player->LearnSpell(204596, false);
+                player->LearnSpell(203720, false);
+                player->LearnSpell(204021, false);
+                player->LearnSpell(185245, false);
+            }
+        }
+    }
+
+    void Register() override
+    {
+        OnCast += SpellCastFn(spell_mardum_back_to_black_temple::HandleOnCast);
+    }
+};
+
+
 void AddSC_zone_mardum()
 {
     new PlayerScript_mardum_welcome_scene_trigger();
@@ -1121,6 +1120,6 @@ void AddSC_zone_mardum()
     RegisterCreatureAI(npc_mardum_tyranna);
     new npc_mardum_kayn_sunfury_end();
     new go_mardum_the_keystone();
-    RegisterSpellScript(spell_mardum_back_to_black_temple);
     new go_q38727();
+    RegisterSpellScript(spell_mardum_back_to_black_temple);
 }
