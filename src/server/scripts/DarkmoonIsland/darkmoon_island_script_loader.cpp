@@ -23,7 +23,6 @@ void AddSC_darkmoon_tonk();
 void AddSC_darkmoon_whack_gnoll();
 void AddSC_event_darkmoon_faire();
 
-
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
 void AddDarkmoonIslandScripts()

@@ -1,5 +1,9 @@
+UPDATE creature SET spawntimesecs = 3600 WHERE id = 72775;
+
 UPDATE creature SET position_x = -741.8226, position_y = -5075.0253, position_z = -6.2773, orientation = 0.7702 WHERE guid = 10574987 AND id = 71955;
 UPDATE `creature_template` SET `faction` = 35, `unit_flags` = 256 WHERE `entry` IN (71952, 71955, 71953, 71954);
+DELETE FROM creature WHERE guid = 10655823 AND id = 73082;
+UPDATE creature SET spawndist = 10, MovementType = 1 WHERE id IN (72777);
 
 UPDATE `creature_template` SET `ScriptName` = "npc_emperor_shaohao" WHERE `entry` = 73303;
 UPDATE `creature_template` SET `ScriptName` = "boss_chi_ji_celestial" WHERE `entry` = 71952;
@@ -9,12 +13,14 @@ UPDATE `creature_template` SET `ScriptName` = "boss_yu_lon_celestial" WHERE `ent
 UPDATE `creature_template` SET `ScriptName` = "boss_ordos" WHERE entry = 72057;
 
 UPDATE creature_template SET faction = 16, ScriptName = "npc_child_of_chi_ji" WHERE entry = 71990;
-DELETE FROM spell_script_names WHERE spell_id IN (144608, 144610, 144475, 144688);
+DELETE FROM spell_script_names WHERE spell_id IN (144608, 144610, 144475, 144688, 144634, 144642);
 INSERT INTO spell_script_names (spell_id, ScriptName) VALUES
 (144608, "spell_niuzao_charge"),
 (144610, "spell_niuzao_headbutt"),
 (144475, "spell_chi_ji_beacon_of_hope"),
-(144688, "spell_ordos_magma_crush");
+(144688, "spell_ordos_magma_crush"),
+(144634, "spell_xuen_crackling_lightning"),
+(144642, "spell_xuen_chi_barrage");
 
 DELETE FROM `creature_text` WHERE `CreatureID` IN (73303, 71955, 71954, 71953, 71952, 72057);
 INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `Comment`, `BroadcastTextId`) VALUES 
@@ -71,7 +77,55 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 (72057, 8, 0, "Burn!", 14, 0, 100, 0, 0, 38981, "Ordos", 76164),
 (72057, 9, 0, "Your pain will be endless.", 14, 0, 100, 0, 0, 38979, "Ordos", 76162);
 
--- Rework
+-- Loot Rework
+DELETE FROM creature_loot_template WHERE Entry IN (72775);
+INSERT INTO creature_loot_template (Entry, Item, Reference, Chance, QuestRequired, LootMode, GroupId, MinCount, MaxCount) VALUES
+(72775, 105715, 0, 25, 0, 1, 0, 1, 1),
+(72775, 103982, 0, 4, 0, 1, 0, 1, 1),
+(72775, 103642, 0, 4, 0, 1, 0, 1, 1),
+(72775, 103641, 0, 4, 0, 1, 0, 1, 1),
+(72775, 103643, 0, 4, 0, 1, 0, 1, 1),
+(72775, 104169, 0, 3, 0, 1, 0, 1, 1),
+(72775, 102318, 0, 2, 0, 1, 0, 1, 1),
+(72775, 102291, 0, 1.2, 0, 1, 0, 1, 1),
+(72775, 102268, 0, 1.1, 0, 1, 0, 1, 1),
+(72775, 102278, 0, 0.9, 0, 1, 0, 1, 1),
+(72775, 102265, 0, 0.9, 0, 1, 0, 1, 1),
+(72775, 104347, 0, 0.8, 0, 1, 0, 1, 1),
+(72775, 102274, 0, 0.8, 0, 1, 0, 1, 1),
+(72775, 102288, 0, 0.8, 0, 1, 0, 1, 1),
+(72775, 102286, 0, 0.8, 0, 1, 0, 1, 1),
+(72775, 102276, 0, 0.8, 0, 1, 0, 1, 1),
+(72775, 102269, 0, 0.8, 0, 1, 0, 1, 1),
+(72775, 102322, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102279, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102281, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102272, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102320, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102267, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102321, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102277, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102283, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102270, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102275, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102273, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102266, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102290, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102287, 0, 0.7, 0, 1, 0, 1, 1),
+(72775, 102323, 0, 0.6, 0, 1, 0, 1, 1),
+(72775, 102271, 0, 0.6, 0, 1, 0, 1, 1),
+(72775, 102264, 0, 0.6, 0, 1, 0, 1, 1),
+(72775, 102285, 0, 0.6, 0, 1, 0, 1, 1),
+(72775, 102282, 0, 0.6, 0, 1, 0, 1, 1),
+(72775, 102280, 0, 0.6, 0, 1, 0, 1, 1),
+(72775, 102289, 0, 0.6, 0, 1, 0, 1, 1),
+(72775, 102284, 0, 0.5, 0, 1, 0, 1, 1),
+(72775, 104345, 0, 0.5, 0, 1, 0, 1, 1),
+(72775, 102263, 0, 0.5, 0, 1, 0, 1, 1);
+
+-- SAI Rework
+DELETE FROM `smart_scripts` WHERE `entryorguid` IN (72777, 72775) AND `source_type` = 0;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
 -- 72045
 -- 73161
 -- 72765
@@ -118,8 +172,10 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 -- 72809
 -- 72970
 
--- 72777
--- 72775
+(72777, 0, 0, 0, 0, 0, 100, 0, 5000, 8000, 12000, 15000, 11, 147655, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, "Gulp Frog - In Combat - Cast Spell 'Gulp Frog Toxin'"),
+(72777, 0, 1, 0, 2, 0, 100, 0, 0, 40, 15000, 15000, 11, 147654, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Gulp Frog - 0-40% HP - Cast Spell 'Toxic Skin'"),
+(72775, 0, 0, 0, 0, 0, 100, 0, 5000, 8000, 12000, 15000, 11, 147655, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, "Bufo - In Combat - Cast Spell 'Gulp Frog Toxin'"),
+(72775, 0, 1, 0, 2, 0, 100, 0, 0, 40, 15000, 15000, 11, 147654, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Bufo - 0-40% HP - Cast Spell 'Toxic Skin'");
 
 -- 72876
 -- 73167
@@ -168,7 +224,6 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 
 -- 73174
 -- 73666
--- 72775
 -- 73171
 -- 72045
 -- 73175

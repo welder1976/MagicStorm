@@ -42,53 +42,60 @@ public:
 
 enum XuenSpells
 {
-    SPELL_AGILITY                   = 144631,
-    SPELL_CHI_BARRAGE_TRIGGER       = 144643,
-    SPELL_CHI_BARRAGE               = 144642,
-    SPELL_CRACKLING_LIGHTNING       = 144635,
-    SPELL_LEAP                      = 144640,
-    SPELL_SPECTRAL_SWIPE_TRIGGER    = 144652,
-    SPELL_SPECTRAL_SWIPE            = 144638
+    SPELL_AGILITY                       = 144631,
+
+    SPELL_CHI_BARRAGE                   = 144642,
+    SPELL_CHI_BARRAGE_MISSILE           = 144643,
+    SPELL_CHI_BARRAGE_DMG               = 144644,
+
+    SPELL_CRACKLING_LIGHTNING_DMG       = 144633,
+    SPELL_CRACKLING_LIGHTNING_AOE       = 144634,
+    SPELL_CRACKLING_LIGHTNING_PERIODIC  = 144635,
+
+    SPELL_LEAP                          = 144640,
+
+    SPELL_SPECTRAL_SWIPE                = 144638,
+    SPELL_SPECTRAL_SWIPE_TRIGGER        = 144652
 };
 
 enum XuenEvents
 {
-    EVENT_SPECTRAL_SWIPES           = 1,
-    EVENT_CHI_BARRAGE_AOE,
-    EVENT_CRACKLING_LIGHTNING,
-    EVENT_AGILITY_SELF_BUFF,
-    EVENT_LEAP,
-    EVENT_DEFEATED,
-    EVENT_DEATH ,
-    EVENT_SHAO_DO_INTRO,
-    EVENT_SHAO_DO_INTRO_ATTACKABLE,
-    EVENT_SHAO_DO_OUTRO
+    EVENT_SPECTRAL_SWIPES               = 1,
+    EVENT_CHI_BARRAGE_AOE               = 2,
+    EVENT_CRACKLING_LIGHTNING           = 3,
+    EVENT_AGILITY_SELF_BUFF             = 4,
+    EVENT_LEAP                          = 5,
+    EVENT_DEFEATED                      = 6,
+    EVENT_DEATH                         = 7,
+    EVENT_SHAO_DO_INTRO                 = 8,
+    EVENT_SHAO_DO_INTRO_ATTACKABLE      = 9,
+    EVENT_SHAO_DO_OUTRO                 = 10
 };
 
 enum XuenTimers
 {
-    TIMER_SPECTRAL_SWIPES           = 5000,
-    TIMER_CHI_BARRAGE_AOE           = 20000,
-    TIMER_CRACKLING_LIGHTNING       = 30000,
-    TIMER_AGILITY_SELF_BUFF         = 40000,
-    TIMER_LEAP                      = 30000,
-    TIMER_DEFEATED                  = 1000
+    TIMER_SPECTRAL_SWIPES               = 5000,
+    TIMER_CHI_BARRAGE_AOE               = 20000,
+    TIMER_CRACKLING_LIGHTNING           = 30000,
+    TIMER_AGILITY_SELF_BUFF             = 40000,
+    TIMER_LEAP                          = 30000,
+    TIMER_DEFEATED                      = 1000
 };
 
 enum XuenActions
 {
-    ACTION_DEFEATED                 = 0
+    ACTION_DEFEATED                     = 0
 };
 
 enum XuenTexts
 {
-    SAY_AGGRO                       = 0,
-    SAY_INTRO                       = 1,
-    SAY_DEATH                       = 2,
-    SAY_KILL                        = 3,
-    SAY_AGILITY                     = 4,
-    SAY_CHI                         = 5,
-    SAY_CRACKLING                   = 6
+    SAY_AGGRO                           = 0,
+    SAY_INTRO                           = 1,
+    SAY_DEATH                           = 2,
+    SAY_KILL                            = 3,
+    SAY_AGILITY                         = 4,
+    SAY_CHI                             = 5,
+    SAY_CRACKLING                       = 6
 };
 
 class boss_xuen_celestial : public CreatureScript
@@ -248,11 +255,8 @@ class boss_xuen_celestial : public CreatureScript
                         }
                         case EVENT_CRACKLING_LIGHTNING:
                         {
-                            if (Unit* random_target = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                            {
-                                Talk(SAY_CRACKLING);
-                                DoCast(random_target, SPELL_CRACKLING_LIGHTNING, false);
-                            }
+                            Talk(SAY_CRACKLING);
+                            DoCastSelf(SPELL_CRACKLING_LIGHTNING_PERIODIC);
 
                             events.ScheduleEvent(urand(EVENT_CHI_BARRAGE_AOE, EVENT_AGILITY_SELF_BUFF), 15s, 25s);
                             events.ScheduleEvent(EVENT_LEAP, 30s);
@@ -261,7 +265,7 @@ class boss_xuen_celestial : public CreatureScript
                         case EVENT_CHI_BARRAGE_AOE:
                         {
                             Talk(SAY_CHI);
-                            DoCast(SPELL_CHI_BARRAGE);
+                            DoCastAOE(SPELL_CHI_BARRAGE);
                             events.ScheduleEvent(urand(EVENT_CHI_BARRAGE_AOE, EVENT_AGILITY_SELF_BUFF), 15s, 25s);
                             break;
                         }
@@ -308,66 +312,98 @@ class boss_xuen_celestial : public CreatureScript
 };
 
 // Chi Barrage - 144642
-class spell_xuen_ti_chi_barrage : public SpellScriptLoader
+class spell_xuen_chi_barrage : public SpellScript
 {
-    public:
-        spell_xuen_ti_chi_barrage() : SpellScriptLoader("spell_xuen_ti_chi_barrage") { }
+    PrepareSpellScript(spell_xuen_chi_barrage);
 
-        class spell_xuen_ti_chi_barrage_SpellScript : public SpellScript
+    void FilterTargets(std::list<WorldObject*>& targets)
+    {
+        if (!GetCaster())
+            return;
+
+        if (Creature* pCreature = GetCaster()->ToCreature())
         {
-            PrepareSpellScript(spell_xuen_ti_chi_barrage_SpellScript);
+            Unit* target = pCreature->AI()->SelectTarget(SELECT_TARGET_RANDOM, 0, -15.0f, true);
 
-            void HandleDummy(SpellEffIndex effIndex)
+            if (!target)
+                target = pCreature->AI()->SelectTarget(SELECT_TARGET_RANDOM, 0, 0.0f, true);
+
+            if (target)
             {
-                if (Unit* target = GetHitUnit())
-                    if (target->GetTypeId() == TYPEID_PLAYER)
-                        GetCaster()->CastSpell(target, GetSpellValue()->EffectBasePoints[effIndex], true);
+                targets.clear();
+                targets.push_back(target);
             }
-
-            void Register()
-            {
-                OnEffectHitTarget += SpellEffectFn(spell_xuen_ti_chi_barrage_SpellScript::HandleDummy, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
-            }
-        };
-
-        SpellScript* GetSpellScript() const override
-        {
-            return new spell_xuen_ti_chi_barrage_SpellScript();
         }
+
+        if (targets.size() > 1)
+        {
+            Trinity::Containers::RandomResize(targets, 1);
+        }
+    }
+
+    void HandleHitTarget(SpellEffIndex effIndex)
+    {
+        if (!GetCaster() || !GetHitUnit())
+            return;
+
+        GetCaster()->CastSpell(GetHitUnit(), SPELL_CHI_BARRAGE_MISSILE, true);
+    }
+
+    void Register()
+    {
+        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_xuen_chi_barrage::FilterTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ENEMY);
+        OnEffectHitTarget += SpellEffectFn(spell_xuen_chi_barrage::HandleHitTarget, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+    }
 };
 
 // Crackling Lightning - 144634
-class spell_xuen_ti_crackling_lightning : public SpellScriptLoader
+class spell_xuen_crackling_lightning : public SpellScript
 {
-    public:
-        spell_xuen_ti_crackling_lightning() : SpellScriptLoader("spell_xuen_ti_crackling_lightning") { }
+    PrepareSpellScript(spell_xuen_crackling_lightning);
 
-        class spell_xuen_ti_crackling_lightning_SpellScript : public SpellScript
+    void FilterTargets(std::list<WorldObject*>& targets)
+    {
+        if (!GetCaster())
+            return;
+
+        if (Creature* pCreature = GetCaster()->ToCreature())
         {
-            PrepareSpellScript(spell_xuen_ti_crackling_lightning_SpellScript);
+            Unit* target = pCreature->AI()->SelectTarget(SELECT_TARGET_RANDOM, 0, -15.0f, true);
 
-            void HandleChain(SpellEffIndex effIndex)
+            if (!target)
+                target = pCreature->AI()->SelectTarget(SELECT_TARGET_RANDOM, 0, 0.0f, true);
+
+            if (target)
             {
-                if (Unit* target = GetHitUnit())
-                    if (target->GetTypeId() == TYPEID_PLAYER)
-                        GetCaster()->CastSpell(target, GetSpellValue()->EffectBasePoints[effIndex], true);
+                targets.clear();
+                targets.push_back(target);
             }
-
-            void Register()
-            {
-                OnEffectHitTarget += SpellEffectFn(spell_xuen_ti_crackling_lightning_SpellScript::HandleChain, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
-            }
-        };
-
-        SpellScript* GetSpellScript() const override
-        {
-            return new spell_xuen_ti_crackling_lightning_SpellScript();
         }
+
+        if (targets.size() > 1)
+        {
+            Trinity::Containers::RandomResize(targets, 1);
+        }
+    }
+
+    void HandleHitTarget(SpellEffIndex effIndex)
+    {
+        if (!GetCaster() || !GetHitUnit())
+            return;
+
+        GetCaster()->CastSpell(GetHitUnit(), SPELL_CRACKLING_LIGHTNING_DMG, true);
+    }
+
+    void Register()
+    {
+        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_xuen_crackling_lightning::FilterTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ENEMY);
+        OnEffectHitTarget += SpellEffectFn(spell_xuen_crackling_lightning::HandleHitTarget, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+    }
 };
 
 void AddSC_boss_xuen()
 {
     new boss_xuen_celestial();
-    new spell_xuen_ti_chi_barrage();
-    new spell_xuen_ti_crackling_lightning();
+    RegisterSpellScript(spell_xuen_chi_barrage);
+    RegisterSpellScript(spell_xuen_crackling_lightning);
 }
