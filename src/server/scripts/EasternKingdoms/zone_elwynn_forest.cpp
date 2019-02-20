@@ -1142,7 +1142,7 @@ struct npc_hogger : public ScriptedAI
 
             case EVENT_ANDROMATH_TEXT:
                 GetAndromath()->AI()->Talk(SAY_TO_HAMMOND_TEXT);
-                GetHammond()->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+                GetAndromath()->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
                 GetAndromath()->EmoteWithDelay(2 * IN_MILLISECONDS, EMOTE_ONESHOT_SALUTE);
                 break;
 
