@@ -2328,6 +2328,21 @@ public:
     uint32 _raceId;
 };
 
+struct npc_puzzle_box_of_yogg_saron : public ScriptedAI
+{
+    npc_puzzle_box_of_yogg_saron(Creature* pCreature) : ScriptedAI(pCreature) { }
+
+    void IsSummonedBy(Unit* owner) override
+    {
+        if (owner->GetTypeId() == TYPEID_PLAYER)
+        {
+            me->PlayDirectSound(23414, owner->ToPlayer());
+            Talk(0, owner);
+        }
+        me->DespawnOrUnsummon(1000);
+    }
+};
+
 void AddSC_npcs_special()
 {
     new npc_air_force_bots();
@@ -2354,4 +2369,5 @@ void AddSC_npcs_special()
     new npc_allied_race_infos("npc_allied_race_infos_tauren", 28);
     new npc_allied_race_infos("npc_allied_race_infos_voidelf", 29);
     new npc_allied_race_infos("npc_allied_race_infos_draenei", 30);
+    RegisterCreatureAI(npc_puzzle_box_of_yogg_saron);
 }

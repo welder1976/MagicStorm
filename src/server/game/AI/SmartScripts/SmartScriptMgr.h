@@ -585,6 +585,7 @@ enum SMART_ACTION
     SMART_ACTION_ADD_FLYING_MOVEMENT_FLAG           = 213,    // Variation
     SMART_ACTION_REMOVE_FLYING_MOVEMENT_FLAG        = 214,    // Variation
     SMART_ACTION_CAST_SPELL_OFFSET                  = 215,    // SpellId, triggered if value = 1.
+    SMART_ACTION_RISE_UP                            = 216,    // distance
 
     SMART_ACTION_END
 };

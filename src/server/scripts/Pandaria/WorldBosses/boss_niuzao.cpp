@@ -368,7 +368,6 @@ class boss_niuzao_celestial : public CreatureScript
         }
 };
 
-// Headbutt - 144610
 class spell_niuzao_headbutt : public SpellScript
 {
     PrepareSpellScript(spell_niuzao_headbutt)
@@ -388,7 +387,6 @@ class spell_niuzao_headbutt : public SpellScript
     }
 };
 
-// Charge - 144608
 class spell_niuzao_charge : public AuraScript
 {
     PrepareAuraScript(spell_niuzao_charge);

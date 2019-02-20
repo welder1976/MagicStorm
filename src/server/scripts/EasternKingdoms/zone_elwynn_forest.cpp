@@ -16,12 +16,6 @@
 * with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
-/*######
-## npc_stormwind_infantry
-######*/
-
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
@@ -42,7 +36,38 @@
 #include "Player.h"
 #include "SpellScript.h"
 
-#define NPC_WOLF    49871
+enum ElwynnForest
+{
+    INFANTRY_HELP_YELL                 = 0,
+    INFANTRY_COMBAT_YELL               = 1,
+
+    NPC_BLACKROCK_BATTLE_WORG          = 49871,
+    NPC_STORMWIND_INFANTRY             = 49869,
+
+    SPELL_FORTITUDE                    = 13864,
+    SPELL_PENANCE                      = 66097,
+    SPELL_FLASH_HEAL                   = 38588,
+    SPELL_RENEW                        = 8362,
+    SPELL_REVIVE                       = 93799,
+
+    BROTHER_PAXTON_TEXT                = 0,
+    BROTHER_PAXTON_TEXT_PLAYER         = 1,
+
+    SPELL_HEAL                         = 93072,
+    SPELL_HEAL_VISUAL                  = 93097,
+
+    TEXT_INJURED_SOLDIER               = 0,
+
+    SPELL_SPYING                       = 92857,
+    SPELL_SNEAKING                     = 93046,
+    SPELL_SPYGLASS                     = 80676,
+
+    TEXT_BLACKROCK_SPY_COMBAT          = 0
+};
+
+/*######
+## npc_stormwind_infantry
+######*/
 
 class npc_stormwind_infantry : public CreatureScript
 {
@@ -56,8 +81,14 @@ public:
 
     struct npc_stormwind_infantryAI : public ScriptedAI
     {
-        npc_stormwind_infantryAI(Creature* creature) : ScriptedAI(creature) {}
+        npc_stormwind_infantryAI(Creature* creature) : ScriptedAI(creature)
+        {
+            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, Emote::EMOTE_STATE_READY1H);
+        }
 
+        uint32 Yell;
+        uint32 WillSay;
+        uint32 SayChance;
         uint32 waitTime;
         ObjectGuid wolfTarget;
 
@@ -65,6 +96,9 @@ public:
         {
             wolfTarget = ObjectGuid::Empty;
             me->SetSheath(SHEATH_STATE_MELEE);
+            Yell = urand(40, 60) * IN_MILLISECONDS;
+            WillSay = urand(0, 100);
+            SayChance = urand(1, 15);
             waitTime = urand(0, 2000);
         }
 
@@ -84,6 +118,16 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
+            if (Yell <= diff)
+            {
+                if (WillSay <= SayChance)
+                {
+                    Talk(INFANTRY_COMBAT_YELL);
+                    Yell = urand(40, 60) * IN_MILLISECONDS;
+                }
+            }
+            else Yell -= diff;
+
             DoMeleeAttackIfReady();
 
             if (waitTime && waitTime >= diff)
@@ -122,7 +166,7 @@ public:
                 float z = me->GetMap()->GetHeight(me->GetPhaseShift(), wolfPos.GetPositionX(), wolfPos.GetPositionY(), wolfPos.GetPositionZ());
                 wolfPos.m_positionZ = z;
 
-                if (Creature* wolf = me->SummonCreature(NPC_WOLF, wolfPos))
+                if (Creature* wolf = me->SummonCreature(NPC_BLACKROCK_BATTLE_WORG, wolfPos))
                 {
                     me->getThreatManager().addThreat(wolf, 1000000.0f);
                     wolf->getThreatManager().addThreat(me, 1000000.0f);
@@ -136,11 +180,165 @@ public:
 };
 
 /*######
-## npc_stormwind_injured_soldier
+## npc_brother_paxton
 ######*/
 
-#define SPELL_HEAL          93072
-#define SPELL_HEAL_VISUAL   93097
+struct npc_brother_paxton : public ScriptedAI
+{
+    npc_brother_paxton(Creature *c) : ScriptedAI(c) { }
+
+    EventMap _events;
+
+    uint32 _cooldownTimer;
+
+    bool _cooldown;
+
+    void Reset()
+    {
+        _events.Reset();
+
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
+        me->SetReactState(REACT_PASSIVE);
+
+        _cooldown = false;
+        _cooldownTimer = 0;
+    }
+
+    void EnterCombat(Unit * who) override { }
+
+    void MoveInLineOfSight(Unit* who) override
+    {
+        if (who && who->GetTypeId() == TYPEID_PLAYER && !who->HasAura(SPELL_FORTITUDE) && me->GetDistance(who) < 10.0f)
+        {
+            if (roll_chance_i(30) && !_cooldown)
+            {
+                me->CastSpell(who, SPELL_FORTITUDE);
+                me->CastSpell(who, SPELL_RENEW, true);
+                Talk(BROTHER_PAXTON_TEXT_PLAYER, who);
+                _cooldown = true;
+            }
+        }
+    }
+
+    void MovementInform(uint32 type, uint32 id)
+    {
+        if (type == 2 && id == 5 || id == 13 || id == 20 || id == 30 || id == 37 || id == 47 || id == 55 || id == 57)
+        {
+            switch(urand(0, 3))
+            {
+                case 0:
+                    _events.ScheduleEvent(1, 500ms);
+                    break;
+                case 1:
+                    _events.ScheduleEvent(5, 500ms);
+                    break;
+                case 2:
+                    _events.ScheduleEvent(9, 500ms);
+                    break;
+                case 3:
+                    _events.ScheduleEvent(13, 500ms);
+                    break;
+            }
+        }
+    }
+
+    void UpdateAI(uint32 diff) override
+    {
+        if (_cooldownTimer <= diff)
+        {
+            _cooldown = false;
+            _cooldownTimer = 20 * IN_MILLISECONDS;
+        }
+        else _cooldownTimer -= diff;
+
+        _events.Update(diff);
+
+        switch (_events.ExecuteEvent())
+        {
+            case 1:
+                if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
+                    stormwind_infantry->AI()->Talk(INFANTRY_HELP_YELL);
+                _events.ScheduleEvent(2, 1s);
+                break;
+            case 2:
+                if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
+                    me->SetFacingTo(me->GetAngle(stormwind_infantry));
+                _events.ScheduleEvent(3, 2s);
+                break;
+            case 3:
+                Talk(BROTHER_PAXTON_TEXT);
+                _events.ScheduleEvent(4, 1s);
+                break;
+            case 4:
+                if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
+                    me->CastSpell(stormwind_infantry, SPELL_PENANCE);
+                break;
+            case 5:
+                if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
+                    stormwind_infantry->AI()->Talk(INFANTRY_HELP_YELL);
+                _events.ScheduleEvent(6, 1s);
+                break;
+            case 6:
+                if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
+                    me->SetFacingTo(me->GetAngle(stormwind_infantry));
+                _events.ScheduleEvent(7, 2s);
+                break;
+            case 7:
+                Talk(BROTHER_PAXTON_TEXT);
+                _events.ScheduleEvent(8, 1s);
+                break;
+            case 8:
+                if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
+                    me->CastSpell(stormwind_infantry, SPELL_FLASH_HEAL);
+                break;
+            case 9:
+                if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
+                    stormwind_infantry->AI()->Talk(INFANTRY_HELP_YELL);
+                _events.ScheduleEvent(10, 1s);
+                break;
+            case 10:
+                if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
+                    me->SetFacingTo(me->GetAngle(stormwind_infantry));
+                _events.ScheduleEvent(11, 2s);
+                break;
+            case 11:
+                Talk(BROTHER_PAXTON_TEXT);
+                _events.ScheduleEvent(12, 1s);
+                break;
+            case 12:
+                if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
+                    me->CastSpell(stormwind_infantry, SPELL_RENEW);
+                break;
+            case 13:
+                if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
+                    stormwind_infantry->AI()->Talk(INFANTRY_HELP_YELL);
+                _events.ScheduleEvent(14, 1s);
+                break;
+            case 14:
+                if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
+                    me->SetFacingTo(me->GetAngle(stormwind_infantry));
+                _events.ScheduleEvent(15, 2s);
+                break;
+            case 15:
+                Talk(BROTHER_PAXTON_TEXT);
+                _events.ScheduleEvent(16, 1s);
+                break;
+            case 16:
+                if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
+                    me->CastSpell(stormwind_infantry, SPELL_REVIVE);
+                break;
+        }
+
+        if (!UpdateVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+/*######
+## npc_stormwind_injured_soldier
+######*/
 
 class npc_stormwind_injured_soldier : public CreatureScript
 {
@@ -154,7 +352,7 @@ public:
 
     struct npc_stormwind_injured_soldierAI : public npc_escortAI
     {
-        npc_stormwind_injured_soldierAI(Creature* creature) : npc_escortAI(creature) {}
+        npc_stormwind_injured_soldierAI(Creature* creature) : npc_escortAI(creature) { }
 
         void Reset() override
         {
@@ -179,7 +377,8 @@ public:
                 if (_clicker)
                     me->SetFacingToObject(_clicker);
 
-                me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
+                Talk(TEXT_INJURED_SOLDIER, _clicker);
+                me->HandleEmoteCommand(RAND(EMOTE_ONESHOT_SALUTE, EMOTE_ONESHOT_CHEER));
             });
 
             me->GetScheduler().Schedule(Milliseconds(3000), [this](TaskContext /*task*/)
@@ -204,6 +403,90 @@ public:
 
         Unit* _clicker;
     };
+};
+
+/*######
+## npc_blackrock_spy
+######*/
+
+struct npc_blackrock_spy : public ScriptedAI
+{
+    npc_blackrock_spy(Creature *c) : ScriptedAI(c) { }
+
+    uint32 _animatePhase;
+    uint32 _animateTimer;
+
+    void Reset()
+    {
+        _animatePhase = 0;
+        _animateTimer = 0;
+    }
+
+    void EnterCombat(Unit* who) override
+    {
+        Talk(TEXT_BLACKROCK_SPY_COMBAT, who);
+        me->RemoveAllAuras();
+        _animatePhase = 0;
+        _animateTimer = 0;
+    }
+
+    void MovementInform(uint32 type, uint32 id) override
+    {
+        if (me->IsInCombat())
+            return;
+
+        if (type == 2 && id == 1 || id == 3)
+        {
+            uint8 r1 = urand(0, 100);
+            uint8 r2 = urand(0, 100);
+            uint8 r3 = urand(0, 100);
+
+            if (r1 < 33)
+            {
+                me->CastSpell(me, SPELL_SPYGLASS);
+                _animatePhase = 1;
+                _animateTimer = 4.8 * IN_MILLISECONDS;
+            }
+
+            if (r2 < 50)
+                me->HandleEmoteCommand(EMOTE_STATE_KNEEL);
+
+            if (r3 < 50)
+                me->CastSpell(me, SPELL_SPYING);
+            else
+                me->CastSpell(me, SPELL_SNEAKING);
+        }
+    }
+
+    void UpdateAI(uint32 diff) override
+    {
+        if (_animateTimer <= diff)
+            Animation();
+        else
+            _animateTimer -= diff;
+
+        if (!UpdateVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+
+    void Animation()
+    {
+        if (me->IsInCombat())
+            return;
+
+        switch (_animatePhase)
+        {
+            case 1:
+                me->RemoveAllAuras();
+                _animatePhase = 0;
+                _animateTimer = 0;
+                break;
+            case 2:
+                break;
+        }
+    }
 };
 
 /*######
@@ -879,7 +1162,9 @@ struct npc_hogger_minion : public ScriptedAI
 void AddSC_elwyn_forest()
 {
     new npc_stormwind_infantry();
+    RegisterCreatureAI(npc_brother_paxton);
     new npc_stormwind_injured_soldier();
+    RegisterCreatureAI(npc_blackrock_spy);
     new npc_training_dummy_start_zones();
     new spell_quest_fear_no_evil();
     new spell_quest_extincteur();
