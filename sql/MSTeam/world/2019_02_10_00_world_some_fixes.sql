@@ -330,7 +330,6 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 (448, 4, 0, "Hogger is eating!  Stop him!", 41, 0, 0, 0, 0, 0, 46939, 0, 'Hogger'),
 (448, 5, 0, "Grrr...", 12, 0, 0, 0, 0, 0, 46937, 0, 'Hogger'),
 (448, 6, 0, "Nooooo...", 12, 0, 0, 0, 0, 0, 46938, 0, 'Hogger'),
-
 (46941, 0, 0, "Right away, General!", 12, 0, 0, 0, 0, 0, 147279, 0, 'High Sorcerer Andromath');
 
 -- 179871 179874 179873 179877 179876

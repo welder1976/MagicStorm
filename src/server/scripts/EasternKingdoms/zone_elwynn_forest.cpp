@@ -176,9 +176,11 @@ static const Position HoggerCoordinates[1] =
     { -10136.9f, 670.009f, 36.03682f }
 };
 
-static const Position RagamuffinCoordinates[4] =
+static const Position RagamuffinCoordinates[6] =
 {
     // Validated positions
+    { -10124.63f, 641.84f, 35.5660f },
+    { -10116.86f, 644.02f, 36.0649f },
     { -10127.00f, 651.0f, 36.05776f },
     { -10123.0f, 651.0f,  36.06887f },
     { -10102.18f, 630.2f, 36.35133f },
@@ -862,7 +864,7 @@ struct npc_hogger : public ScriptedAI
         if (Creature* target = me->FindNearestCreature(NPC_EATING_TARGET, 100.0f))
         {
             me->SetReactState(REACT_PASSIVE);
-            me->GetMotionMaster()->MovePoint(0, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), true);
+            me->GetMotionMaster()->MovePoint(0, target->GetPositionX()+2.0f, target->GetPositionY(), target->GetPositionZ(), true);
             _events.ScheduleEvent(EVENT_CHECK_EAT_RANGE, 200);
         }
     }
@@ -961,17 +963,23 @@ struct npc_hogger : public ScriptedAI
     {
         TempSummon* Ragamuffin1 = me->SummonCreature(NPC_RAGAMUFFIN, RagamuffinCoordinates[0], TEMPSUMMON_TIMED_DESPAWN, 10000);
         if (Ragamuffin1)
+        {
+            Ragamuffin1->GetMotionMaster()->MovePoint(0, RagamuffinCoordinates[2], true);
             _Ragamuffin1GUID = Ragamuffin1->GetGUID();
+        }
         TempSummon* Ragamuffin2 = me->SummonCreature(NPC_RAGAMUFFIN, RagamuffinCoordinates[1], TEMPSUMMON_TIMED_DESPAWN, 10000);
         if (Ragamuffin2)
+        {
+            Ragamuffin2->GetMotionMaster()->MovePoint(0, RagamuffinCoordinates[3], true);
             _Ragamuffin2GUID = Ragamuffin2->GetGUID();
+        }
     }
 
     void SummonMinions()
     {
         me->CastStop();
         Talk(SAY_HOGGER_SUMMON_MINIONS);
-        //DoCastSelf(SPELL_SUMMON_MINIONS, true); This works, but the minions just sit there, and then despawn
+
         for (float distance : { 0.5f, 1.5f, 2.5f })
         {
             Position hogPos = me->GetPosition();
@@ -993,10 +1001,10 @@ struct npc_hogger : public ScriptedAI
     {
         if (GetHammond() && GetAndromath() && GetDumas())
         {
-            GetHammond()->CastSpell(GetHammond(), SPELL_TELEPORT_VISUAL_ONLY_2, true);
+            GetHammond()->CastSpell(GetHammond(), SPELL_TELEPORT_VISUAL_ONLY_1, true);
             GetAndromath()->CastSpell(GetAndromath(), SPELL_TELEPORT_VISUAL_ONLY_2, true);
-            GetDumas()->CastSpell(GetDumas(), SPELL_TELEPORT_VISUAL_ONLY_2, true);
-            DoCastSelf(SPELL_TELEPORT_VISUAL_ONLY_2, true);
+            GetDumas()->CastSpell(GetDumas(), SPELL_TELEPORT_VISUAL_ONLY_1, true);
+            DoCastSelf(SPELL_TELEPORT_VISUAL_ONLY_1, true);
 
             me->DisappearAndDie();
             GetHammond()->DisappearAndDie();
@@ -1063,8 +1071,8 @@ struct npc_hogger : public ScriptedAI
                 break;
 
             case EVENT_RUN_1:
-                GetRagamuffin1()->SetSpeed(MOVE_RUN, 1.0f);
-                GetRagamuffin1()->GetMotionMaster()->MovePoint(0, RagamuffinCoordinates[3], true);
+                GetRagamuffin1()->SetWalk(false);
+                GetRagamuffin1()->GetMotionMaster()->MovePoint(0, RagamuffinCoordinates[5], true);
                 break;
 
             case EVENT_RAGAMUFFIN_SAY_CLAY:
@@ -1074,8 +1082,8 @@ struct npc_hogger : public ScriptedAI
                 break;
 
             case EVENT_RUN_2:
-                GetRagamuffin2()->SetSpeed(MOVE_RUN, 1.0f);
-                GetRagamuffin2()->GetMotionMaster()->MovePoint(0, RagamuffinCoordinates[4], true);
+                GetRagamuffin2()->SetWalk(false);
+                GetRagamuffin2()->GetMotionMaster()->MovePoint(0, RagamuffinCoordinates[6], true);
                 break;
 
             case EVENT_DISMOUNT_HAMMOND_CLAY:
@@ -1125,6 +1133,8 @@ struct npc_hogger : public ScriptedAI
                     GetHammond()->SetFacingToObject(GetAndromath());
                     GetAndromath()->SetFacingToObject(GetHammond());
                     GetHammond()->AI()->Talk(SAY_TO_ANDROMATH);
+                    GetHammond()->HandleEmoteCommand(EMOTE_ONESHOT_POINT);
+                    GetHammond()->EmoteWithDelay(2 * IN_MILLISECONDS, EMOTE_ONESHOT_TALK);
                 }
                 _events.ScheduleEvent(EVENT_ANDROMATH_TEXT, 3s);
                 _events.ScheduleEvent(EVENT_TELEPORT_BACK, 7s);
@@ -1132,6 +1142,7 @@ struct npc_hogger : public ScriptedAI
 
             case EVENT_ANDROMATH_TEXT:
                 GetAndromath()->AI()->Talk(SAY_TO_HAMMOND_TEXT);
+                GetHammond()->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
                 GetAndromath()->EmoteWithDelay(2 * IN_MILLISECONDS, EMOTE_ONESHOT_SALUTE);
                 break;
 
