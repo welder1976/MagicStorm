@@ -38,31 +38,151 @@
 
 enum ElwynnForest
 {
-    INFANTRY_HELP_YELL                 = 0,
-    INFANTRY_COMBAT_YELL               = 1,
+    /// Infantries vs. Wolfs
+    // Texts
+    INFANTRY_HELP_YELL                    = 0,
+    INFANTRY_COMBAT_YELL                  = 1,
+    // Creatures
+    NPC_BLACKROCK_BATTLE_WORG             = 49871,
+    NPC_STORMWIND_INFANTRY                = 49869,
 
-    NPC_BLACKROCK_BATTLE_WORG          = 49871,
-    NPC_STORMWIND_INFANTRY             = 49869,
+    /// Brother Paxton
+    // Spells
+    SPELL_FORTITUDE                       = 13864,
+    SPELL_PENANCE                         = 66097,
+    SPELL_FLASH_HEAL                      = 38588,
+    SPELL_RENEW                           = 8362,
+    SPELL_REVIVE                          = 93799,
+    // Texts
+    BROTHER_PAXTON_TEXT                   = 0,
+    BROTHER_PAXTON_TEXT_PLAYER            = 1,
 
-    SPELL_FORTITUDE                    = 13864,
-    SPELL_PENANCE                      = 66097,
-    SPELL_FLASH_HEAL                   = 38588,
-    SPELL_RENEW                        = 8362,
-    SPELL_REVIVE                       = 93799,
+    /// Injured Soldier
+    // Spells
+    SPELL_HEAL                            = 93072,
+    SPELL_HEAL_VISUAL                     = 93097,
+    // Texts
+    TEXT_INJURED_SOLDIER                  = 0,
 
-    BROTHER_PAXTON_TEXT                = 0,
-    BROTHER_PAXTON_TEXT_PLAYER         = 1,
+    /// Blackrock Spy
+    // Spells
+    SPELL_SPYING                          = 92857,
+    SPELL_SNEAKING                        = 93046,
+    SPELL_SPYGLASS                        = 80676,
+    // Texts
+    TEXT_BLACKROCK_SPY_COMBAT             = 0,
 
-    SPELL_HEAL                         = 93072,
-    SPELL_HEAL_VISUAL                  = 93097,
+    /// Fire trigger
+    NPC_FIRE                              = 42940,
 
-    TEXT_INJURED_SOLDIER               = 0,
+    /// Training dummy
+    SPELL_CHARGE                          = 100,
+    SPELL_AUTORITE                        = 105361,
+    SPELL_ASSURE                          = 56641,
+    SPELL_EVISCERATION                    = 2098,
+    SPELL_MOT_DOULEUR_1                   = 589,
+    SPELL_MOT_DOULEUR_2                   = 124464,
+    SPELL_NOVA                            = 122,
+    SPELL_CORRUPTION_1                    = 172,
+    SPELL_CORRUPTION_2                    = 87389,
+    SPELL_CORRUPTION_3                    = 131740,
+    SPELL_PAUME_TIGRE                     = 100787,
 
-    SPELL_SPYING                       = 92857,
-    SPELL_SNEAKING                     = 93046,
-    SPELL_SPYGLASS                     = 80676,
+    /// Hogger + End Event
+    // Spells
+    SPELL_SUMMON_MINIONS                  = 87366,
+    SPELL_VICIOUS_SLICE                   = 87337,
+    SPELL_EATING                          = 87351,
+    SPELL_TELEPORT_VISUAL_ONLY_1          = 87459,
+    SPELL_TELEPORT_VISUAL_ONLY_2          = 64446,
+    SPELL_BLOODY_STRIKE                   = 87359,
+    // Events
+    EVENT_VICIOUS_SLICE                   = 1,
+    EVENT_HAMMOND_GROUP_START_WALKING     = 2,
+    EVENT_RAGAMUFFIN_SAY_WOW              = 3,
+    EVENT_RAGAMUFFIN_SAY_CLAY             = 4,
+    EVENT_DISMOUNT_HAMMOND_CLAY           = 5,
+    EVENT_HOGGER_SAY_GRR                  = 6,
+    EVENT_CLAYS_EXPLAINATION              = 7,
+    EVENT_CLAY_SAYS_TAKE_HIM              = 8,
+    EVENT_HOGGER_SAYS_NOO                 = 9,
+    EVENT_CLAY_SPEAKS_TO_ANDROMATH        = 10,
+    EVENT_ANDROMATH_TEXT                  = 11,
+    EVENT_TELEPORT_BACK                   = 12,
+    EVENT_CHECK_EAT_RANGE                 = 13,
+    EVENT_BLOODY_STRIKE                   = 14,
+    EVENT_RUN_1                           = 15,
+    EVENT_RUN_2                           = 16,
+    // Texts
+    SAY_HOGGER_AGGRO                      = 0,
+    SAY_HOGGER_SUMMON_MINIONS             = 1,
+    SAY_EATING                            = 2,
+    SAY_STUNNED                           = 3,
+    SAY_BEG                               = 4,
+    SAY_RAND                              = 5,
+    SAY_FINAL                             = 6,
+    // General Hammond Clay Texts
+    YELL_OPENING                          = 0,
+    SAY_EXPLAINATION                      = 1,
+    SAY_TAKE_HIM                          = 2,
+    SAY_TO_ANDROMATH                      = 3,
+    // Ragamuffin Texts
+    SAY_CLAY                              = 0,
+    SAY_WOW                               = 1,
+    // High Sorcerer Andromath Texts
+    SAY_TO_HAMMOND_TEXT                   = 0,
+    // Creatures
+    NPC_GENERAL_HAMMOND_CLAY              = 65153,
+    NPC_ANDROMATH                         = 46941,
+    NPC_DUMAS                             = 46940,
+    NPC_HOGGER                            = 448,
+    NPC_EATING_TARGET                     = 45979,
+    NPC_RAGAMUFFIN                        = 46943,
+    NPC_HOGGER_MINION                     = 46932,
+    // Misc
+    DISPLAYID_GENERAL_HAMMOND_CLAYS_MOUNT = 2410,
+    // Hogger Minion Spells
+    SPELL_ADVENTURERS_RUSH                = 87402
+};
 
-    TEXT_BLACKROCK_SPY_COMBAT          = 0
+static const Position GeneralHammondClayCoordinates[4] =
+{
+    // Validated positions
+    { -10125.35f, 650.7324f, 36.05776f },
+    { -10128.3f,  656.4648f, 36.05776f },
+    { -10131.25f, 662.1973f, 36.05776f },
+    { -10135.73f, 668.389f,  35.74807f }
+};
+
+static const Position HighSorcererAndromathCoordinates[3] =
+{
+    // Validated positions
+    { -10119.2f, 647.913f, 36.36745f },
+    { -10123.0f, 656.875f, 36.05776f },
+    { -10126.8f, 665.837f, 35.74807f }
+};
+
+static const Position HighSorcererDumasCoordinates[3] =
+{
+    // Validated positions
+    { -10130.1f, 647.7671f, 36.04665f },
+    { -10132.9f, 653.5605f, 36.05776f },
+    { -10135.7f, 659.354f,  36.06887f }
+};
+
+static const Position HoggerCoordinates[1] =
+{
+    // Validated positions
+    { -10136.9f, 670.009f, 36.03682f }
+};
+
+static const Position RagamuffinCoordinates[4] =
+{
+    // Validated positions
+    { -10127.00f, 651.0f, 36.05776f },
+    { -10123.0f, 651.0f,  36.06887f },
+    { -10102.18f, 630.2f, 36.35133f },
+    { -10103.63f, 619.34f, 38.2921f }
 };
 
 /*######
@@ -81,10 +201,7 @@ public:
 
     struct npc_stormwind_infantryAI : public ScriptedAI
     {
-        npc_stormwind_infantryAI(Creature* creature) : ScriptedAI(creature)
-        {
-            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, Emote::EMOTE_STATE_READY1H);
-        }
+        npc_stormwind_infantryAI(Creature* creature) : ScriptedAI(creature) { }
 
         uint32 Yell;
         uint32 WillSay;
@@ -173,6 +290,7 @@ public:
                     AttackStart(wolf);
                     wolf->SetFacingToObject(me);
                     wolfTarget = wolf->GetGUID();
+                    wolf->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                 }
             }
         }
@@ -493,21 +611,6 @@ struct npc_blackrock_spy : public ScriptedAI
 ## npc_training_dummy_elwynn
 ######*/
 
-enum eTrainingDummySpells
-{
-    SPELL_CHARGE        = 100,
-    SPELL_AUTORITE      = 105361, // OnDamage
-    SPELL_ASSURE        = 56641,
-    SPELL_EVISCERATION  = 2098,
-    SPELL_MOT_DOULEUR_1 = 589,
-    SPELL_MOT_DOULEUR_2 = 124464, // Je ne sais pas si un des deux est le bon
-    SPELL_NOVA          = 122,
-    SPELL_CORRUPTION_1  = 172,
-    SPELL_CORRUPTION_2  = 87389,
-    SPELL_CORRUPTION_3  = 131740,
-    SPELL_PAUME_TIGRE   = 100787
-};
-
 class npc_training_dummy_start_zones : public CreatureScript
 {
 public:
@@ -647,17 +750,11 @@ public:
     {
         return new spell_quest_fear_no_evil_SpellScript();
     }
-
 };
 
 /*######
 ## spell_quest_extincteur
 ######*/
-
-enum eSpellQuestExtincteur
-{
-    NPC_FIRE = 42940,
-};
 
 class spell_quest_extincteur : public SpellScriptLoader
 {
@@ -695,115 +792,11 @@ public:
     {
         return new spell_quest_extincteur_SpellScript();
     }
-
 };
 
 /*######
 ## npc_hogger
 ######*/
-
-enum HoggerSpellData
-{
-    SPELL_SUMMON_MINIONS = 87366,
-    SPELL_VICIOUS_SLICE = 87337,
-    SPELL_EATING = 87351,
-    SPELL_TELEPORT_VISUAL_ONLY_1 = 87459,
-    SPELL_TELEPORT_VISUAL_ONLY_2 = 64446,
-    SPELL_BLOODY_STRIKE = 87359
-};
-
-enum HoggerEventData
-{
-    EVENT_VICIOUS_SLICE = 1,
-    EVENT_HAMMOND_GROUP_START_WALKING = 2,
-    EVENT_DISMOUNT_HAMMOND_CLAY = 3,
-    EVENT_HOGGER_SAY_GRR = 4,
-    EVENT_CLAYS_EXPLAINATION = 5,
-    EVENT_CLAY_SAYS_TAKE_HIM = 6,
-    EVENT_HOGGER_SAYS_NOO = 7,
-    EVENT_CLAY_SPEAKS_TO_ANDROMATH = 8,
-    EVENT_TELEPORT_BACK = 9,
-    EVENT_CHECK_EAT_RANGE = 10,
-    EVENT_BLOODY_STRIKE = 11
-};
-
-enum HoggerTextData
-{
-    SAY_HOGGER_SUMMON_MINIONS = 2,
-    SAY_EATING = 3,
-    SAY_STUNNED = 4,
-    SAY_BEG = 5,
-    SAY_RAND = 6,
-    SAY_FINAL = 7
-};
-
-enum HammondTextData
-{
-    YELL_OPENING = 0,
-    SAY_EXPLAINATION = 1,
-    SAY_TAKE_HIM = 2,
-    SAY_TO_ANDROMATH = 3
-};
-
-enum RagamuffinTextData
-{
-    SAY_CLAY = 0,
-    SAY_WOW = 1,
-};
-
-enum HoggerCreatures
-{
-    NPC_GENERAL_HAMMOND_CLAY = 65153,
-    NPC_ANDROMATH = 46941,
-    NPC_DUMAS = 46940,
-    NPC_HOGGER = 448,
-    NPC_EATING_TARGET = 45979,
-    NPC_RAGAMUFFIN = 46943,
-    NPC_HOGGER_MINION = 46932
-};
-
-enum HoggerMiscData
-{
-    DISPLAYID_GENERAL_HAMMOND_CLAYS_MOUNT = 2410
-};
-
-// validated positions
-static const Position generalHammondClayPositions[4] =
-{
-    { -10125.35f, 650.7324f, 36.05776f },
-    { -10128.3f,  656.4648f, 36.05776f },
-    { -10131.25f, 662.1973f, 36.05776f },
-    { -10135.73f, 668.389f,  35.74807f }
-};
-
-// validated positions
-static const Position andromathPositions[3] =
-{
-    { -10119.2f, 647.913f, 36.36745f },
-    { -10123.0f, 656.875f, 36.05776f },
-    { -10126.8f, 665.837f, 35.74807f }
-};
-
-// validated positions
-static const Position dumasPositions[3] =
-{
-    { -10130.1f, 647.7671f, 36.04665f },
-    { -10132.9f, 653.5605f, 36.05776f },
-    { -10135.7f, 659.354f,  36.06887f }
-};
-
-// validated positions
-static const Position hoggerPositions[1] =
-{
-    { -10136.9f, 670.009f, 36.03682f }
-};
-
-// validated positions
-static const Position ragamuffinPositions[2] =
-{
-    { -10127.00f, 651.0f, 36.05776f },
-    { -10123.0f, 651.0f,  36.06887f }
-};
 
 struct npc_hogger : public ScriptedAI
 {
@@ -818,7 +811,7 @@ struct npc_hogger : public ScriptedAI
         _alreadyEaten = false;
         _isEating = false;
 
-        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
         me->SetReactState(REACT_AGGRESSIVE);
         me->SetWalk(false);
     }
@@ -854,9 +847,12 @@ struct npc_hogger : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit* /*who*/) override
+    void EnterCombat(Unit* who) override
     {
-        _events.ScheduleEvent(EVENT_VICIOUS_SLICE, 3000);
+        if (who->GetTypeId() == TYPEID_PLAYER && roll_chance_i(30))
+            Talk(SAY_HOGGER_AGGRO);
+
+        _events.ScheduleEvent(EVENT_VICIOUS_SLICE, 3s);
     }
 
     void MoveToEatingPosition()
@@ -877,17 +873,19 @@ struct npc_hogger : public ScriptedAI
         _events.Reset();
 
         me->SetReactState(REACT_PASSIVE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
         me->StopMoving();
         me->AttackStop();
+        me->CombatStop(true);
 
         Talk(SAY_BEG);
 
         SummonGeneralHammondClay();
         SummonAndromath();
         SummonDumas();
+        SummonRagamuffins();
 
-        _events.ScheduleEvent(EVENT_HAMMOND_GROUP_START_WALKING, 1000);
+        _events.ScheduleEvent(EVENT_HAMMOND_GROUP_START_WALKING, 1s);
     }
 
     void RewardPlayers()
@@ -899,21 +897,13 @@ struct npc_hogger : public ScriptedAI
 
     void SummonGeneralHammondClay()
     {
-        if (TempSummon* hammond = me->SummonCreature(NPC_GENERAL_HAMMOND_CLAY, generalHammondClayPositions[0]))
+        if (TempSummon* GeneralHammondClay = me->SummonCreature(NPC_GENERAL_HAMMOND_CLAY, GeneralHammondClayCoordinates[0]))
         {
-            _generalHammondGUID = hammond->GetGUID();
-            hammond->CastSpell(hammond, SPELL_TELEPORT_VISUAL_ONLY_1, true);
-            hammond->Mount(DISPLAYID_GENERAL_HAMMOND_CLAYS_MOUNT);
-            hammond->AI()->Talk(YELL_OPENING);
-        }
-        // summon ragamuffins and do text
-        if (TempSummon* ragamuffin1 = me->SummonCreature(NPC_RAGAMUFFIN, ragamuffinPositions[0], TEMPSUMMON_TIMED_DESPAWN, 5000))
-        {
-            ragamuffin1->AI()->Talk(SAY_CLAY);
-        }
-        if (TempSummon* ragamuffin2 = me->SummonCreature(NPC_RAGAMUFFIN, ragamuffinPositions[1], TEMPSUMMON_TIMED_DESPAWN, 5000))
-        {
-            ragamuffin2->AI()->Talk(SAY_WOW);
+            _generalHammondGUID = GeneralHammondClay->GetGUID();
+            GeneralHammondClay->CastSpell(GeneralHammondClay, SPELL_TELEPORT_VISUAL_ONLY_1, true);
+            GeneralHammondClay->Mount(DISPLAYID_GENERAL_HAMMOND_CLAYS_MOUNT);
+            GeneralHammondClay->AI()->Talk(YELL_OPENING);
+            GeneralHammondClay->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
         }
     }
 
@@ -922,14 +912,16 @@ struct npc_hogger : public ScriptedAI
         if (GetHammond())
         {
             GetHammond()->SetWalk(true);
-            GetHammond()->GetMotionMaster()->MovePoint(0, generalHammondClayPositions[2], true);
-            _events.ScheduleEvent(EVENT_DISMOUNT_HAMMOND_CLAY, 8500);
+            GetHammond()->GetMotionMaster()->MovePoint(0, GeneralHammondClayCoordinates[2], true);
+            _events.ScheduleEvent(EVENT_RAGAMUFFIN_SAY_WOW, 2s);
+            _events.ScheduleEvent(EVENT_RAGAMUFFIN_SAY_CLAY, 3s);
+            _events.ScheduleEvent(EVENT_DISMOUNT_HAMMOND_CLAY, 8s + 500ms);
         }
     }
 
     void SummonAndromath()
     {
-        TempSummon* andromath = me->SummonCreature(NPC_ANDROMATH, andromathPositions[0]);
+        TempSummon* andromath = me->SummonCreature(NPC_ANDROMATH, HighSorcererAndromathCoordinates[0]);
         if (andromath)
         {
             _andromathGUID = andromath->GetGUID();
@@ -942,13 +934,13 @@ struct npc_hogger : public ScriptedAI
         if (GetAndromath())
         {
             GetAndromath()->SetWalk(true);
-            GetAndromath()->GetMotionMaster()->MovePoint(0, andromathPositions[2], true);
+            GetAndromath()->GetMotionMaster()->MovePoint(0, HighSorcererAndromathCoordinates[2], true);
         }
     }
 
     void SummonDumas()
     {
-        TempSummon* dumas = me->SummonCreature(NPC_DUMAS, dumasPositions[0]);
+        TempSummon* dumas = me->SummonCreature(NPC_DUMAS, HighSorcererDumasCoordinates[0]);
         if (dumas)
         {
             _dumasGUID = dumas->GetGUID();
@@ -961,8 +953,18 @@ struct npc_hogger : public ScriptedAI
         if (GetDumas())
         {
             GetDumas()->SetWalk(true);
-            GetDumas()->GetMotionMaster()->MovePoint(0, dumasPositions[2], true);
+            GetDumas()->GetMotionMaster()->MovePoint(0, HighSorcererDumasCoordinates[2], true);
         }
+    }
+
+    void SummonRagamuffins()
+    {
+        TempSummon* Ragamuffin1 = me->SummonCreature(NPC_RAGAMUFFIN, RagamuffinCoordinates[0], TEMPSUMMON_TIMED_DESPAWN, 10000);
+        if (Ragamuffin1)
+            _Ragamuffin1GUID = Ragamuffin1->GetGUID();
+        TempSummon* Ragamuffin2 = me->SummonCreature(NPC_RAGAMUFFIN, RagamuffinCoordinates[1], TEMPSUMMON_TIMED_DESPAWN, 10000);
+        if (Ragamuffin2)
+            _Ragamuffin2GUID = Ragamuffin2->GetGUID();
     }
 
     void SummonMinions()
@@ -984,7 +986,7 @@ struct npc_hogger : public ScriptedAI
     void MoveHoggerToFinalPosition()
     {
         me->SetWalk(true);
-        me->GetMotionMaster()->MovePoint(0, hoggerPositions[0]);
+        me->GetMotionMaster()->MovePoint(0, HoggerCoordinates[0]);
     }
 
     void TeleportBack()
@@ -1018,6 +1020,16 @@ struct npc_hogger : public ScriptedAI
         return me->GetMap()->GetCreature(_dumasGUID);
     }
 
+    Creature* GetRagamuffin1()
+    {
+        return me->GetMap()->GetCreature(_Ragamuffin1GUID);
+    }
+
+    Creature* GetRagamuffin2()
+    {
+        return me->GetMap()->GetCreature(_Ragamuffin2GUID);
+    }
+
     void UpdateAI(uint32 diff) override
     {
         if (!UpdateVictim() && !_endingSceneActive)
@@ -1044,38 +1056,67 @@ struct npc_hogger : public ScriptedAI
                 MoveHoggerToFinalPosition();
                 break;
 
+            case EVENT_RAGAMUFFIN_SAY_WOW:
+                GetRagamuffin1()->AI()->Talk(SAY_WOW);
+                GetRagamuffin1()->SetFacingTo(GetRagamuffin1()->GetAngle(me));
+                _events.ScheduleEvent(EVENT_RUN_1, 5s);
+                break;
+
+            case EVENT_RUN_1:
+                GetRagamuffin1()->SetSpeed(MOVE_RUN, 1.0f);
+                GetRagamuffin1()->GetMotionMaster()->MovePoint(0, RagamuffinCoordinates[3], true);
+                break;
+
+            case EVENT_RAGAMUFFIN_SAY_CLAY:
+                GetRagamuffin2()->AI()->Talk(SAY_CLAY);
+                GetRagamuffin2()->SetFacingTo(GetRagamuffin2()->GetAngle(me));
+                _events.ScheduleEvent(EVENT_RUN_2, 4s);
+                break;
+
+            case EVENT_RUN_2:
+                GetRagamuffin2()->SetSpeed(MOVE_RUN, 1.0f);
+                GetRagamuffin2()->GetMotionMaster()->MovePoint(0, RagamuffinCoordinates[4], true);
+                break;
+
             case EVENT_DISMOUNT_HAMMOND_CLAY:
                 if (GetHammond())
                 {
                     me->SetFacingToObject(GetHammond());
 
                     GetHammond()->Dismount();
-                    GetHammond()->GetMotionMaster()->MovePoint(0, generalHammondClayPositions[3], true);
+                    GetHammond()->GetMotionMaster()->MovePoint(0, GeneralHammondClayCoordinates[3], true);
 
-                    _events.ScheduleEvent(EVENT_HOGGER_SAY_GRR, 3000);
+                    _events.ScheduleEvent(EVENT_HOGGER_SAY_GRR, 3s);
                 }
                 break;
 
             case EVENT_HOGGER_SAY_GRR:
                 Talk(SAY_RAND);
-                _events.ScheduleEvent(EVENT_CLAYS_EXPLAINATION, 3000);
+                _events.ScheduleEvent(EVENT_CLAYS_EXPLAINATION, 3s);
                 break;
 
             case EVENT_CLAYS_EXPLAINATION:
                 if (GetHammond())
+                {
                     GetHammond()->AI()->Talk(SAY_EXPLAINATION);
-                _events.ScheduleEvent(EVENT_CLAY_SAYS_TAKE_HIM, 4500);
+                    GetHammond()->HandleEmoteCommand(EMOTE_ONESHOT_POINT);
+                    GetHammond()->EmoteWithDelay(4 * IN_MILLISECONDS, EMOTE_ONESHOT_EXCLAMATION);
+                }
+                _events.ScheduleEvent(EVENT_CLAY_SAYS_TAKE_HIM, 7s + 500ms);
                 break;
 
             case EVENT_CLAY_SAYS_TAKE_HIM:
                 if (GetHammond())
+                {
                     GetHammond()->AI()->Talk(SAY_TAKE_HIM);
-                _events.ScheduleEvent(EVENT_HOGGER_SAYS_NOO, 2000);
+                    GetHammond()->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+                }
+                _events.ScheduleEvent(EVENT_HOGGER_SAYS_NOO, 2s);
                 break;
 
             case EVENT_HOGGER_SAYS_NOO:
                 Talk(SAY_FINAL);
-                _events.ScheduleEvent(EVENT_CLAY_SPEAKS_TO_ANDROMATH, 3000);
+                _events.ScheduleEvent(EVENT_CLAY_SPEAKS_TO_ANDROMATH, 3s);
                 break;
 
             case EVENT_CLAY_SPEAKS_TO_ANDROMATH:
@@ -1085,7 +1126,13 @@ struct npc_hogger : public ScriptedAI
                     GetAndromath()->SetFacingToObject(GetHammond());
                     GetHammond()->AI()->Talk(SAY_TO_ANDROMATH);
                 }
-                _events.ScheduleEvent(EVENT_TELEPORT_BACK, 4000);
+                _events.ScheduleEvent(EVENT_ANDROMATH_TEXT, 3s);
+                _events.ScheduleEvent(EVENT_TELEPORT_BACK, 7s);
+                break;
+
+            case EVENT_ANDROMATH_TEXT:
+                GetAndromath()->AI()->Talk(SAY_TO_HAMMOND_TEXT);
+                GetAndromath()->EmoteWithDelay(2 * IN_MILLISECONDS, EMOTE_ONESHOT_SALUTE);
                 break;
 
             case EVENT_TELEPORT_BACK:
@@ -1095,14 +1142,14 @@ struct npc_hogger : public ScriptedAI
             case EVENT_CHECK_EAT_RANGE:
                 if (!me->FindNearestCreature(NPC_EATING_TARGET, 3.0f))
                 {
-                    _events.ScheduleEvent(EVENT_CHECK_EAT_RANGE, 200);
+                    _events.ScheduleEvent(EVENT_CHECK_EAT_RANGE, 200ms);
                     break;
                 }
                 else
                 {
                     DoCast(SPELL_EATING);
                     Talk(SAY_EATING);
-                    _events.ScheduleEvent(EVENT_BLOODY_STRIKE, 100);
+                    _events.ScheduleEvent(EVENT_BLOODY_STRIKE, 100ms);
                     _isEating = true;
                 }
                 break;
@@ -1112,7 +1159,7 @@ struct npc_hogger : public ScriptedAI
                 {
                     if (Creature* dummy = me->FindNearestCreature(NPC_EATING_TARGET, 10.0f))
                         DoCast(dummy, SPELL_BLOODY_STRIKE, true);
-                    _events.ScheduleEvent(EVENT_BLOODY_STRIKE, 1000);
+                    _events.ScheduleEvent(EVENT_BLOODY_STRIKE, 1s);
                 }
 
             default:
@@ -1135,16 +1182,13 @@ private:
     ObjectGuid _generalHammondGUID;
     ObjectGuid _andromathGUID;
     ObjectGuid _dumasGUID;
+    ObjectGuid _Ragamuffin1GUID;
+    ObjectGuid _Ragamuffin2GUID;
 };
 
 /*######
 ## npc_hogger_minion
 ######*/
-
-enum HoggerMinionSpellData
-{
-    SPELL_ADVENTURERS_RUSH = 87402
-};
 
 struct npc_hogger_minion : public ScriptedAI
 {

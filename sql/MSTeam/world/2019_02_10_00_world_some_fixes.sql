@@ -296,11 +296,41 @@ INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `positio
 (178233*10, 6, -8823.47, -26.203, 89.645, 0, 0),
 (178233*10, 7, -8834.408, -22.7703, 88.771, 0, 0),
 (178233*10, 8, -8839.365, -29.207, 88.939, 0, 0);
-
-DELETE FROM `creature_text` WHERE `CreatureID` = 49874;
+DELETE FROM `creature_text` WHERE `CreatureID` IN (49874, 42937);
 INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `Comment`, `BroadcastTextID`) VALUES
 (49874, 0, 0, "Orc KILL $r!", 12, 0, 50, 0, 0, 0, 'Blackrock Spy', 42876),
 (49874, 0, 1, "Blackrock take forest!", 12, 0, 50, 0, 0, 0, 'Blackrock Spy', 42879),
 (49874, 0, 2, "The grapes were VERY TASTY!", 12, 0, 50, 0, 0, 0, 'Blackrock Spy', 42880),
-(49874, 0, 3, "Beg for life!", 12, 0, 50, 0, 0, 0, 'Blackrock Spy', 42877);
+(49874, 0, 3, "Beg for life!", 12, 0, 50, 0, 0, 0, 'Blackrock Spy', 42877),
+(49874, 0, 4, "Eat you!", 12, 0, 50, 0, 0, 0, 'Blackrock Spy', 42878),
+(42937, 0, 0, "Orc KILL $r!", 12, 0, 50, 0, 0, 0, 'Blackrock Invader', 42876),
+(42937, 0, 1, "Blackrock take forest!", 12, 0, 50, 0, 0, 0, 'Blackrock Invader', 42879),
+(42937, 0, 2, "The grapes were VERY TASTY!", 12, 0, 50, 0, 0, 0, 'Blackrock Invader', 42880),
+(42937, 0, 3, "Beg for life!", 12, 0, 50, 0, 0, 0, 'Blackrock Invader', 42877),
+(42937, 0, 4, "Eat you!", 12, 0, 50, 0, 0, 0, 'Blackrock Invader', 42878);
+UPDATE creature SET spawndist = 0, MovementType = 0 WHERE guid = 302867 AND id = 62;
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 42940 AND `source_type` = 0;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(42940, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 80175, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Northshire Vineyards Fire Trigger - Cast Aura 'Vineyard Fire'"),
+(42940, 0, 1, 2, 8, 0, 100, 1, 80208, 0, 0, 0, 11, 80223, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Northshire Vineyards Fire Trigger - Cast Effect 'Steam' (No Repeat)"),
+(42940, 0, 2, 0, 61, 0, 100, 1, 0, 0, 0, 0, 41, 1900, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Northshire Vineyards Fire Trigger - Forced Despawn (No Repeat)");
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 197 AND `source_type` = 0;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(197, 0, 0, 2, 19, 0, 100, 0, 54, 0, 0, 0, 1, 0, 2000, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, "Marshal McBride - On Quest 'Report to Goldshire' Taken - Say Line 0"),
+(197, 0, 1, 0, 52, 0, 100, 0, 0, 197, 0, 0, 5, 66, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Marshal McBride - On Text Line 0 Over - Play Emote (66)"),
+(197, 0, 2, 0, 61, 0, 100, 0, 0, 0, 0, 0, 5, 66, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, "Marshal McBride - On Quest 'Report to Goldshire' (Link) Taken - Play Emote (66)");
+UPDATE creature SET spawndist = 0, MovementType = 0 WHERE guid = 177848 AND id = 448;
+DELETE FROM `creature_text` WHERE `CreatureID` IN (448, 46941);
+INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `BroadcastTextId`, `TextRange`, `comment`) VALUES
+(448, 0, 0, "More bones to gnaw on...", 12, 0, 100, 0, 0, 0, 1871, 0, 'Hogger'),
+(448, 0, 1, "Grrrr... fresh meat!", 12, 0, 100, 0, 0, 0, 1870, 0, 'Hogger'),
+(448, 1, 0, "Yipe!  Help Hogger!", 14, 0, 0, 0, 0, 0, 46936, 0, 'Hogger'),
+(448, 2, 0, "No hurt Hogger!", 14, 0, 0, 0, 0, 0, 47000, 0, 'Hogger'),
+(448, 3, 0, "Hogger is stunned!", 41, 0, 0, 0, 0, 0, 46940, 0, 'Hogger'),
+(448, 4, 0, "Hogger is eating!  Stop him!", 41, 0, 0, 0, 0, 0, 46939, 0, 'Hogger'),
+(448, 5, 0, "Grrr...", 12, 0, 0, 0, 0, 0, 46937, 0, 'Hogger'),
+(448, 6, 0, "Nooooo...", 12, 0, 0, 0, 0, 0, 46938, 0, 'Hogger'),
+
+(46941, 0, 0, "Right away, General!", 12, 0, 0, 0, 0, 0, 147279, 0, 'High Sorcerer Andromath');
+
 -- 179871 179874 179873 179877 179876
