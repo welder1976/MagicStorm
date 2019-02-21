@@ -179,8 +179,8 @@ static const Position HoggerCoordinates[1] =
 static const Position RagamuffinCoordinates[6] =
 {
     // Validated positions
-    { -10124.63f, 641.84f, 35.5660f },
-    { -10116.86f, 644.02f, 36.0649f },
+    { -10120.19f, 635.509f, 35.415f },
+    { -10109.51f, 633.51f, 35.8421f },
     { -10127.00f, 651.0f, 36.05776f },
     { -10123.0f, 651.0f,  36.06887f },
     { -10102.18f, 630.2f, 36.35133f },
@@ -916,7 +916,7 @@ struct npc_hogger : public ScriptedAI
             GetHammond()->SetWalk(true);
             GetHammond()->GetMotionMaster()->MovePoint(0, GeneralHammondClayCoordinates[2], true);
             _events.ScheduleEvent(EVENT_RAGAMUFFIN_SAY_WOW, 2s);
-            _events.ScheduleEvent(EVENT_RAGAMUFFIN_SAY_CLAY, 3s);
+            _events.ScheduleEvent(EVENT_RAGAMUFFIN_SAY_CLAY, 4s + 500ms);
             _events.ScheduleEvent(EVENT_DISMOUNT_HAMMOND_CLAY, 8s + 500ms);
         }
     }
@@ -1104,11 +1104,14 @@ struct npc_hogger : public ScriptedAI
                 break;
 
             case EVENT_CLAYS_EXPLAINATION:
-                if (GetHammond())
+                if (GetHammond() && GetAndromath() && GetDumas())
                 {
                     GetHammond()->AI()->Talk(SAY_EXPLAINATION);
                     GetHammond()->HandleEmoteCommand(EMOTE_ONESHOT_POINT);
                     GetHammond()->EmoteWithDelay(4 * IN_MILLISECONDS, EMOTE_ONESHOT_EXCLAMATION);
+
+                    GetAndromath()->SetFacingToObject(me);
+                    GetDumas()->SetFacingToObject(me);
                 }
                 _events.ScheduleEvent(EVENT_CLAY_SAYS_TAKE_HIM, 7s + 500ms);
                 break;
