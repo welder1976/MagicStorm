@@ -31,66 +31,74 @@
 
 enum YuLonSpells
 {
-    SPELL_JADEFIRE_BREATH       = 144530,
-    SPELL_JADEFIRE_BUFFET       = 144630,
-    SPELL_JADEFIRE_WALL_VISUAL  = 144533,
-    SPELL_JADEFIRE_WALL_DMG     = 144539,
-    SPELL_JADEFIRE_BLAZE_BOLT   = 144532
+    SPELL_JADEFIRE_BREATH                = 144530,
+
+    SPELL_JADEFLAME_BUFFET               = 144630,
+
+    SPELL_JADEFIRE_BOLT_SUMMON           = 144541,
+    SPELL_JADEFIRE_BOLT_AOE              = 144545,
+    SPELL_JADEFIRE_BOLT_MISSILE          = 144532,
+
+    SPELL_JADEFIRE_BLAZE_AURA            = 144537,
+    SPELL_JADEFIRE_BLAZE_DMG             = 144538,
+
+    SPELL_JADEFIRE_WALL_VISUAL           = 144533,
+    SPELL_JADEFIRE_WALL_DMG              = 144539
 };
 
 enum YuLonEvents
 {
-    EVENT_TIMER_HEALTH_POOL     = 1,
-    EVENT_TIMER_JADE_BREATH,
-    EVENT_TIMER_JADEFIRE_WALL,
-    EVENT_TIMER_JADEFIRE_BOLT,
-    EVENT_TIMER_JADEFIRE_BUFFET,
-    EVENT_TIMER_SHAO_DO_INTRO,
-    EVENT_TIMER_SHAO_DO_INTRO_ATTACKABLE,
-    EVENT_TIMER_SHAO_DO_OUTRO,
-    EVENT_TIMER_DEATH
+    EVENT_TIMER_HEALTH_POOL              = 1,
+    EVENT_TIMER_JADE_BREATH              = 2,
+    EVENT_TIMER_JADEFIRE_WALL            = 3,
+    EVENT_TIMER_JADEFIRE_BOLT            = 4,
+    EVENT_TIMER_JADEFLAME_BUFFET         = 5,
+    EVENT_TIMER_SHAO_DO_INTRO            = 6,
+    EVENT_TIMER_SHAO_DO_INTRO_ATTACKABLE = 7,
+    EVENT_TIMER_SHAO_DO_OUTRO            = 8,
+    EVENT_TIMER_DEATH                    = 9
 };
 
 enum YuLonCreatures
 {
-    MOB_JADEFIRE_WALL           = 72020,
-    MOB_JADEFIRE_BLAZE          = 72016
+    NPC_JADEFIRE_WALL                    = 72020,
+    NPC_JADEFIRE_BLAZE                   = 72016
 };
 
 enum YuLonTexts
 {
-    SAY_AGGRO                   = 0,
-    SAY_INTRO                   = 1,
-    SAY_DEATH                   = 2,
-    SAY_KILL                    = 3,
-    SAY_WALL                    = 4,
-    SAY_WALL_2                  = 5,
-    SAY_WALL_3                  = 6,
-    SAY_WALL_ANN                = 7
+    SAY_AGGRO                            = 0,
+    SAY_INTRO                            = 1,
+    SAY_DEATH                            = 2,
+    SAY_KILL                             = 3,
+    SAY_WALL                             = 4,
+    SAY_WALL_2                           = 5,
+    SAY_WALL_3                           = 6,
+    SAY_WALL_ANN                         = 7
 };
 
 enum YuLonActions
 {
-    ACTION_JADEFIRE_WALL        = 1,
-    ACTION_JADEFIRE_BLAZE       = 2
+    ACTION_JADEFIRE_WALL                 = 1,
+    ACTION_JADEFIRE_BLAZE                = 2
 };
 
 enum wallEvent
 {
-    WALL_EVENT_TIMER_DESPAWN    = 1,
+    WALL_EVENT_TIMER_DESPAWN             = 1,
     WALL_EVENT_TIMER_GO,
     WALL_EVENT_TIMER_DAMAGE
 };
 
 enum wallAction
 {
-    WALL_ACTION_GO              = 1,
+    WALL_ACTION_GO                       = 1,
     WALL_ACTION_RETURN
 };
 
 enum wallMovement
 {
-    WALL_MOVEMENT_FORWARD       = 1
+    WALL_MOVEMENT_FORWARD                = 1
 };
 
 Position wallStartPos = { -561.17f, -5091.70f, -6.277f, MIDDLE_FACING_ANGLE };
@@ -141,7 +149,7 @@ class boss_yu_lon_celestial : public CreatureScript
                 events.ScheduleEvent(EVENT_TIMER_JADE_BREATH, 6s);
                 events.ScheduleEvent(EVENT_TIMER_JADEFIRE_WALL, 40s);
                 events.ScheduleEvent(EVENT_TIMER_JADEFIRE_BOLT, 15s);
-                events.ScheduleEvent(EVENT_TIMER_JADEFIRE_BUFFET, 30s);
+                events.ScheduleEvent(EVENT_TIMER_JADEFLAME_BUFFET, 30s);
             }
 
             void DamageTaken(Unit* caster, uint32 &dmg) override
@@ -190,7 +198,7 @@ class boss_yu_lon_celestial : public CreatureScript
                     events.ScheduleEvent(EVENT_TIMER_SHAO_DO_INTRO, CELESTIAL_COURT_BOSS_INTRO_TIMER_1);
                     me->SetFacingTo(MIDDLE_FACING_ANGLE);
                     me->setFaction(FACTION_HOSTILE_NEUTRAL);
-                    me->GetCreatureListWithEntryInGrid(_wallList, MOB_JADEFIRE_WALL, 250.0f);
+                    me->GetCreatureListWithEntryInGrid(_wallList, NPC_JADEFIRE_WALL, 250.0f);
                     me->SetHomePosition(_timelessIsleMiddle);
                 }
             }
@@ -256,7 +264,7 @@ class boss_yu_lon_celestial : public CreatureScript
                         if (!_targets.empty())
                             if (auto target = Trinity::Containers::SelectRandomContainerElement(_targets))
                                 if (target->GetTypeId() == TYPEID_PLAYER)
-                                    me->CastSpell(target, SPELL_JADEFIRE_BLAZE_BOLT, true);
+                                    me->CastSpell(target, SPELL_JADEFIRE_BOLT_MISSILE, true);
                         break;
                     }
                     default: break;
@@ -283,10 +291,10 @@ class boss_yu_lon_celestial : public CreatureScript
                             me->SetMaxHealth(INITIAL_HEALTH_POINTS);
                             break;
                         }
-                        case EVENT_TIMER_JADEFIRE_BUFFET:
+                        case EVENT_TIMER_JADEFLAME_BUFFET:
                         {
-                            DoCastToAllHostilePlayers(SPELL_JADEFIRE_BUFFET);
-                            events.ScheduleEvent(EVENT_TIMER_JADEFIRE_BUFFET, 30s);
+                            DoCastToAllHostilePlayers(SPELL_JADEFLAME_BUFFET);
+                            events.ScheduleEvent(EVENT_TIMER_JADEFLAME_BUFFET, 30s);
                             break;
                         }
                         case EVENT_TIMER_JADEFIRE_BOLT:
@@ -366,117 +374,104 @@ class boss_yu_lon_celestial : public CreatureScript
         }
 };
 
-// Jadefire Wall
-class npc_jadefire_wall : public CreatureScript
+struct npc_jadefire_wall : public ScriptedAI
 {
-    public:
-        npc_jadefire_wall() : CreatureScript("npc_jadefire_wall") { }
+    npc_jadefire_wall(Creature* creature) : ScriptedAI(creature) { }
 
-        struct npc_jadefire_wallAI : public ScriptedAI
+    void Reset()
+    {
+        me->setActive(true);
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);
+    }
+
+    void EnterCombat(Unit* target) override { }
+
+    void MovementInform(uint32 type, uint32 point) override
+    {
+        if (type != POINT_MOTION_TYPE)
+            return;
+
+        if (point == WALL_MOVEMENT_FORWARD)
+            DoAction(WALL_ACTION_RETURN);
+    }
+
+    void DoAction(const int32 action) override
+    {
+        switch (action)
         {
-            npc_jadefire_wallAI(Creature* creature) : ScriptedAI(creature) { }
-
-            void Reset()
+            case WALL_ACTION_GO:
             {
-                me->setActive(true);
-                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED);
+                events.ScheduleEvent(WALL_EVENT_TIMER_GO, 1s + 500ms);
+                break;
             }
-
-            void EnterCombat(Unit* target) override { }
-
-            void MovementInform(uint32 type, uint32 point) override
+            case WALL_ACTION_RETURN:
             {
-                if (type != POINT_MOTION_TYPE)
+                events.ScheduleEvent(WALL_EVENT_TIMER_DESPAWN, 5s);
+                hitPlayers.clear();
+                me->RemoveAura(SPELL_JADEFIRE_WALL_VISUAL);
+                shouldTele = true;
+                break;
+            }
+            default:
+                break;
+        };
+    };
+
+    void UpdateAI(const uint32 diff)
+    {
+        events.Update(diff);
+
+        switch (events.ExecuteEvent())
+        {
+            case WALL_EVENT_TIMER_GO:
+            {
+                me->GetMotionMaster()->MovePoint(WALL_MOVEMENT_FORWARD, me->GetPositionX(), me->GetPositionY() + WALLS_Y_M, me->GetPositionZ());
+                events.ScheduleEvent(WALL_EVENT_TIMER_DAMAGE, 500ms);
+                break;
+            }
+            case WALL_EVENT_TIMER_DESPAWN:
+            {
+                if (!shouldTele)
                     return;
 
-                if (point == WALL_MOVEMENT_FORWARD)
-                    DoAction(WALL_ACTION_RETURN);
+                Position home = me->GetHomePosition();
+                me->NearTeleportTo(home.GetPositionX(), home.GetPositionY(), home.GetPositionZ(), home.GetOrientation());
+                shouldTele = false;
+                break;
             }
-
-            void DoAction(const int32 action) override
+            case WALL_EVENT_TIMER_DAMAGE:
             {
-                switch (action)
+                if (!me->HasAura(SPELL_JADEFIRE_WALL_VISUAL))
+                    return;
+
+                std::list<Player*> plrs;
+                me->GetPlayerListInGrid(plrs, 15.0f);
+                for (auto plr : hitPlayers)
+                    plrs.remove(plr);
+
+                for (auto plr : plrs)
                 {
-                    case WALL_ACTION_GO:
-                    {
-                        events.ScheduleEvent(WALL_EVENT_TIMER_GO, 1s + 500ms);
-                        break;
-                    }
-                    case WALL_ACTION_RETURN:
-                    {
-                        events.ScheduleEvent(WALL_EVENT_TIMER_DESPAWN, 5s);
-                        hitPlayers.clear();
-                        me->RemoveAura(SPELL_JADEFIRE_WALL_VISUAL);
-                        shouldTele = true;
-                        break;
-                    }
-                    default:
-                        break;
-                };
-            };
+                    if (!plr->isInFront(me))
+                        continue;
 
-            void UpdateAI(const uint32 diff)
-            {
-                events.Update(diff);
-
-                switch (events.ExecuteEvent())
-                {
-                    case WALL_EVENT_TIMER_GO:
-                    {
-                        me->GetMotionMaster()->MovePoint(WALL_MOVEMENT_FORWARD, me->GetPositionX(), me->GetPositionY() + WALLS_Y_M, me->GetPositionZ());
-                        events.ScheduleEvent(WALL_EVENT_TIMER_DAMAGE, 500ms);
-                        break;
-                    }
-                    case WALL_EVENT_TIMER_DESPAWN:
-                    {
-                        if (!shouldTele)
-                            return;
-
-                        //me->Respawn();
-                        Position home = me->GetHomePosition();
-                        me->NearTeleportTo(home.GetPositionX(), home.GetPositionY(), home.GetPositionZ(), home.GetOrientation());
-                        shouldTele = false;
-                        break;
-                    }
-                    case WALL_EVENT_TIMER_DAMAGE:
-                    {
-                        if (!me->HasAura(SPELL_JADEFIRE_WALL_VISUAL))
-                            return;
-
-                        std::list<Player*> plrs;
-                        me->GetPlayerListInGrid(plrs, 15.0f);
-                        for (auto plr : hitPlayers)
-                            plrs.remove(plr);
-
-                        for (auto plr : plrs)
-                        {
-                            if (!plr->isInFront(me))
-                                continue;
-
-                            plr->CastSpell(plr, SPELL_JADEFIRE_WALL_DMG, true, NULL, NULL, me->GetGUID());
-                            hitPlayers.push_back(plr);
-                        }
-
-                        events.ScheduleEvent(WALL_EVENT_TIMER_DAMAGE, 500ms);
-                    }
-                    default: break;
+                    plr->CastSpell(plr, SPELL_JADEFIRE_WALL_DMG, true, NULL, NULL, me->GetGUID());
+                    hitPlayers.push_back(plr);
                 }
+
+                events.ScheduleEvent(WALL_EVENT_TIMER_DAMAGE, 500ms);
             }
-
-            private:
-                bool shouldTele = false;
-                EventMap events;
-                std::list<Player*> hitPlayers;
-        };
-
-        CreatureAI* GetAI(Creature* creature) const override
-        {
-            return new npc_jadefire_wallAI(creature);
+            default: break;
         }
+    }
+
+    private:
+        bool shouldTele = false;
+        EventMap events;
+        std::list<Player*> hitPlayers;
 };
 
 void AddSC_boss_yu_lon()
 {
     new boss_yu_lon_celestial();
-    new npc_jadefire_wall();
+    RegisterCreatureAI(npc_jadefire_wall);
 }

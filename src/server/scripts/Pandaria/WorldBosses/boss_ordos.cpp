@@ -45,11 +45,15 @@ enum OrdosSpells
     SPELL_ANCIENT_FLAME_S   = 144695,
     SPELL_ANCIENT_FLAME_A   = 144691,
     SPELL_ANCIENT_FLAME_D   = 144699,
+
     SPELL_BURNING_SOUL      = 144689,
     SPELL_BURNING_SOUL_EX   = 144690,
+
     SPELL_MAGMA_CRUSH       = 144688,
+
     SPELL_POOL_OF_FIRE      = 144692,
     SPELL_POOL_OF_FIRE_A    = 144693,
+
     SPELL_ETERNAL_AGONY     = 144696
 };
 
@@ -59,7 +63,6 @@ enum OrdosEvents
     EVENT_BURNING_SOUL      = 2,
     EVENT_POOL_OF_FIRE      = 3,
     EVENT_MAGMA_CRUSH       = 4,
-
     EVENT_ETERNAL_AGONY     = 5
 };
 
@@ -106,7 +109,7 @@ class boss_ordos : public CreatureScript
                     Talk(SAY_SLAY);
             }
 
-            void EnterEvade()
+            void EnterEvadeMode(EvadeReason /*why*/) override
             {
                 Reset();
                 me->DeleteThreatList();
@@ -194,75 +197,53 @@ class boss_ordos : public CreatureScript
         }
 };
 
-// Ancient Flames 144691.
-class spell_ancient_flames : public SpellScriptLoader
+class spell_ordos_ancient_flames : public AuraScript
 {
-    public:
-        spell_ancient_flames() : SpellScriptLoader("spell_ancient_flames") { }
+    PrepareAuraScript(spell_ordos_ancient_flames);
 
-    private:
-        class spell_ancient_flames_AuraScript : public AuraScript
-        {
-            PrepareAuraScript(spell_ancient_flames_AuraScript);
+    void HandlePeriodicTick(AuraEffect const* /*aurEff*/)
+    {
+        PreventDefaultAction();
+        //if (Unit* target = ObjectAccessor::GetUnit(*GetCaster(), GetCaster()->GetGuidValue(UNIT_FIELD_CHANNEL_DATA)))
+            //GetCaster()->CastSpell(target, GetSpellInfo()->Effects[EFFECT_0].TriggerSpell, true);
+            //GetCaster()->CastSpell(target, GetSpellValue()->EffectTriggerSpell[EFFECT_0], true);
+    }
 
-            void HandlePeriodicTick(AuraEffect const* /*aurEff*/)
-            {
-                PreventDefaultAction();
-                //if (Unit* target = ObjectAccessor::GetUnit(*GetCaster(), GetCaster()->GetGuidValue(UNIT_FIELD_CHANNEL_DATA)))
-                    //GetCaster()->CastSpell(target, GetSpellInfo()->Effects[EFFECT_0].TriggerSpell, true);
-                
-                //GetCaster()->CastSpell(target, GetSpellValue()->EffectTriggerSpell[EFFECT_0], true);
-                
-            }
-
-            void Register()
-            {
-                OnEffectPeriodic += AuraEffectPeriodicFn(spell_ancient_flames_AuraScript::HandlePeriodicTick, EFFECT_1, SPELL_AURA_PERIODIC_TRIGGER_SPELL);
-            }
-        };
-
-        AuraScript* GetAuraScript() const
-        {
-            return new spell_ancient_flames_AuraScript();
-        }
+    void Register()
+    {
+        OnEffectPeriodic += AuraEffectPeriodicFn(spell_ordos_ancient_flames::HandlePeriodicTick, EFFECT_1, SPELL_AURA_PERIODIC_TRIGGER_SPELL);
+    }
 };
 
-// Ordos Burning Soul 144689.
-class spell_ordos_burning_soul_aura : public SpellScriptLoader
+class spell_ordos_burning_soul_aura : public AuraScript
 {
-    public:
-        spell_ordos_burning_soul_aura() : SpellScriptLoader("spell_ordos_burning_soul_aura") { }
+    PrepareAuraScript(spell_ordos_burning_soul_aura);
 
-        class spell_ordos_burning_soul_aura_AuraScript : public AuraScript
-        {
-            PrepareAuraScript(spell_ordos_burning_soul_aura_AuraScript);
+    void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes mode)
+    {
+        if (!(mode & AURA_EFFECT_HANDLE_REAL))
+            return;
 
-            void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
-            {
-                switch (GetTargetApplication()->GetRemoveMode())
-                {
-                    case AURA_REMOVE_BY_EXPIRE:
-                        break;
+        Unit* target = GetTarget();
 
-                    default: return;
-                }
+        if (!target || !GetTargetApplication() || !GetAura())
+            return;
 
-                GetTarget()->CastSpell(GetTarget(), SPELL_BURNING_SOUL_EX, true);
-            }
+        if (target->GetTypeId() != TYPEID_PLAYER)
+            return;
 
-            void Register()
-            {
-                AfterEffectRemove += AuraEffectRemoveFn(spell_ordos_burning_soul_aura_AuraScript::OnRemove, EFFECT_1, SPELL_AURA_MOD_FEAR, AURA_EFFECT_HANDLE_REAL);
-            }
-        };
+        if (GetTargetApplication()->GetRemoveMode() != AURA_REMOVE_BY_EXPIRE)
+            return;
 
-        AuraScript* GetAuraScript() const
-        {
-            return new spell_ordos_burning_soul_aura_AuraScript();
-        }
+        target->CastSpell(target, SPELL_BURNING_SOUL_EX, true);
+    }
+
+    void Register()
+    {
+        OnEffectRemove += AuraEffectRemoveFn(spell_ordos_burning_soul_aura::OnRemove, EFFECT_0, SPELL_AURA_PERIODIC_DAMAGE, AURA_EFFECT_HANDLE_REAL);
+    }
 };
 
-// Magma Crush - 144688
 class spell_ordos_magma_crush : public SpellScript
 {
     PrepareSpellScript(spell_ordos_magma_crush);
@@ -322,8 +303,8 @@ public:
 void AddSC_boss_ordos()
 {
     new boss_ordos();
-    new spell_ancient_flames();
-    new spell_ordos_burning_soul_aura();
+    RegisterAuraScript(spell_ordos_ancient_flames);
+    RegisterAuraScript(spell_ordos_burning_soul_aura);
     RegisterSpellScript(spell_ordos_magma_crush);
     //new spell_area_ordos_pool_of_fire();
 }

@@ -30,15 +30,24 @@
 
 enum ChiJiSpells
 {
-    SPELL_FIRESTORM                   = 144461,
     SPELL_INSPIRING_SONG              = 144468,
-    SPELL_BEACON_OF_HOPE              = 144473,
+
+    SPELL_FIRESTORM_SUMMON            = 144461,
+    SPELL_FIRESTORM_DMG               = 144462,
+    SPELL_FIRESTORM_AURA              = 144463,
+
+    SPELL_BEACON_OF_HOPE_SUMMON       = 144473,
+    SPELL_BEACON_OF_HOPE_AURA         = 144474,
+    SPELL_BEACON_OF_HOPE_BUFF         = 144475,
+
     SPELL_BLAZING_SONG                = 144471,
+    SPELL_BLAZING_SONG_DMG            = 144472,
+
     SPELL_CRANE_RUSH                  = 144470,
-    SPELL_FIRESTORM_VISUAL            = 144463,
+    SPELL_CRANE_RUSH_SUMMON           = 144495,
+
     SPELL_BLAZING_NOVA_AURA           = 144493,
-    SPELL_BLAZING_NOVA                = 144494,
-    SPELL_BEACON_OF_HOPE_AURA         = 144475
+    SPELL_BLAZING_NOVA                = 144494
 };
 
 enum ChiJiEvents
@@ -263,13 +272,15 @@ class boss_chi_ji_celestial : public CreatureScript
                     }
                     case EVENT_INSPIRING_SONG:
                     {
-                        DoCast(me, SPELL_INSPIRING_SONG);
+                        DoCastSelf(SPELL_INSPIRING_SONG);
                         events.ScheduleEvent(urand(EVENT_FIRESTORM, EVENT_INSPIRING_SONG), 8s, 12s);
                         break;
                     }
                     case EVENT_FIRESTORM:
                     {
-                        DoCast(SPELL_FIRESTORM);
+                        if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 15.0f, true))
+                            DoCast(target, SPELL_FIRESTORM_SUMMON);
+
                         events.ScheduleEvent(urand(EVENT_FIRESTORM, EVENT_INSPIRING_SONG), 8s, 12s);
                         break;
                     }
@@ -277,7 +288,7 @@ class boss_chi_ji_celestial : public CreatureScript
                     {
                         if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 15.0f, true))
                         {
-                            DoCast(target, SPELL_BEACON_OF_HOPE, true);
+                            DoCast(target, SPELL_BEACON_OF_HOPE_SUMMON, true);
 
                             DoCast(SPELL_BLAZING_SONG);
                             Talk(SAY_SPELL);
@@ -425,7 +436,41 @@ class npc_child_of_chi_ji : public CreatureScript
         }
 };
 
-// Blazing Of Hope - 144475
+struct npc_chi_ji_firestorm : public ScriptedAI
+{
+    npc_chi_ji_firestorm(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_PC);
+        me->SetReactState(REACT_PASSIVE);
+    }
+
+    void Reset()
+    {
+        me->AddAura(SPELL_FIRESTORM_AURA, me);
+    }
+
+    void IsSummonedBy(Unit* owner)
+    {
+        me->GetMotionMaster()->MoveRandom(5.0f);
+    }
+};
+
+struct npc_chi_ji_becon_of_hope : public Scripted_NoMovementAI
+{
+    npc_chi_ji_becon_of_hope(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
+    {
+        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_PC);
+        me->SetReactState(REACT_PASSIVE);
+    }
+
+    void Reset()
+    {
+        me->AddAura(SPELL_BEACON_OF_HOPE_AURA, me);
+    }
+
+    void EnterEvadeMode(EvadeReason /*why*/) override { }
+};
+
 class spell_chi_ji_beacon_of_hope : public SpellScriptLoader
 {
     public:
@@ -472,5 +517,7 @@ void AddSC_boss_chi_ji()
 {
     new boss_chi_ji_celestial();
     new npc_child_of_chi_ji();
+    RegisterCreatureAI(npc_chi_ji_firestorm);
+    RegisterCreatureAI(npc_chi_ji_becon_of_hope);
     new spell_chi_ji_beacon_of_hope();
 }

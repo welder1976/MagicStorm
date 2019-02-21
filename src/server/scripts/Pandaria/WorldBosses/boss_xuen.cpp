@@ -311,52 +311,26 @@ class boss_xuen_celestial : public CreatureScript
         }
 };
 
-// Chi Barrage - 144642
 class spell_xuen_chi_barrage : public SpellScript
 {
     PrepareSpellScript(spell_xuen_chi_barrage);
 
-    void FilterTargets(std::list<WorldObject*>& targets)
-    {
-        if (!GetCaster())
-            return;
-
-        if (Creature* pCreature = GetCaster()->ToCreature())
-        {
-            Unit* target = pCreature->AI()->SelectTarget(SELECT_TARGET_RANDOM, 0, -15.0f, true);
-
-            if (!target)
-                target = pCreature->AI()->SelectTarget(SELECT_TARGET_RANDOM, 0, 0.0f, true);
-
-            if (target)
-            {
-                targets.clear();
-                targets.push_back(target);
-            }
-        }
-
-        if (targets.size() > 1)
-        {
-            Trinity::Containers::RandomResize(targets, 1);
-        }
-    }
-
-    void HandleHitTarget(SpellEffIndex effIndex)
+    void HandleDummy(SpellEffIndex effIndex)
     {
         if (!GetCaster() || !GetHitUnit())
             return;
 
-        GetCaster()->CastSpell(GetHitUnit(), SPELL_CHI_BARRAGE_MISSILE, true);
+        if (Unit* target = GetHitUnit())
+            if (target->GetTypeId() == TYPEID_PLAYER)
+                GetCaster()->CastSpell(target, SPELL_CHI_BARRAGE_MISSILE, true);
     }
 
     void Register()
     {
-        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_xuen_chi_barrage::FilterTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ENEMY);
-        OnEffectHitTarget += SpellEffectFn(spell_xuen_chi_barrage::HandleHitTarget, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+        OnEffectHitTarget += SpellEffectFn(spell_xuen_chi_barrage::HandleDummy, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
     }
 };
 
-// Crackling Lightning - 144634
 class spell_xuen_crackling_lightning : public SpellScript
 {
     PrepareSpellScript(spell_xuen_crackling_lightning);
