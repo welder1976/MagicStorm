@@ -333,3 +333,7 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 (46941, 0, 0, "Right away, General!", 12, 0, 0, 0, 0, 0, 147279, 0, 'High Sorcerer Andromath');
 
 -- 179871 179874 179873 179877 179876
+
+
+INSERT INTO `areatrigger` VALUES ('49', '100007', '1712', '245760', '-3442.35', '9521.4', '9.57194', '');
+INSERT INTO `areatrigger` VALUES ('48', '100010', '1669', '1', '-3217.97', '9423.45', '-172.491', '');
