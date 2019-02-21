@@ -880,6 +880,11 @@ struct npc_hogger : public ScriptedAI
         me->AttackStop();
         me->CombatStop(true);
 
+        std::list<Creature*> minions;
+        me->GetCreatureListWithEntryInGrid(minions, NPC_HOGGER_MINION, 200.0f);
+        for (Creature* unit : minions)
+            unit->DisappearAndDie();
+
         Talk(SAY_BEG);
 
         SummonGeneralHammondClay();
@@ -986,7 +991,7 @@ struct npc_hogger : public ScriptedAI
             GetPositionWithDistInFront(me, distance, hogPos);
             float z = me->GetMap()->GetHeight(me->GetPhaseShift(), hogPos.GetPositionX(), hogPos.GetPositionY(), hogPos.GetPositionZ());
             hogPos.m_positionZ = z;
-            me->SummonCreature(NPC_HOGGER_MINION, hogPos);
+            me->SummonCreature(NPC_HOGGER_MINION, hogPos, TEMPSUMMON_TIMED_DESPAWN, 40 * IN_MILLISECONDS);
         }
         _minionsSummoned = true;
     }
