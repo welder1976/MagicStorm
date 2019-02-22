@@ -142,8 +142,8 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 (951, 0, 0, 'BY THE LIGHT BE RENEWED!', 12, 0, 100, 0, 0, 0, 'Brother Paxton', 49892),
 (951, 0, 1, 'AND I LAY MY HANDS UPON YOU!', 12, 0, 100, 0, 0, 0, 'Brother Paxton', 49890),
 (951, 0, 2, 'Let the Holy Light embrace you!', 12, 0, 100, 0, 0, 0, 'Brother Paxton', 49891),
-(951, 1, 0, 'Be healed, $gbrother:sister;!', 12, 0, 100, 0, 0, 0, 'Brother Paxton', 49889),
-(951, 1, 1, 'FIGHT ON, $GBROTHER:SISTER;!', 12, 0, 100, 0, 0, 0, 'Brother Paxton', 49893);
+(951, 1, 0, 'Be healed, $g brother:sister;!', 12, 0, 100, 0, 0, 0, 'Brother Paxton', 49889),
+(951, 1, 1, 'FIGHT ON, $G BROTHER:SISTER;!', 12, 0, 100, 0, 0, 0, 'Brother Paxton', 49893);
 DELETE FROM `waypoint_data` WHERE `id` = 951*100;
 INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES
 (951*100, 1, -8833.074, -152.085, 80.349, 0),
@@ -235,13 +235,17 @@ UPDATE creature SET spawndist = 0, MovementType = 0 WHERE id = 49874;
 UPDATE creature_template SET AIName = "", ScriptName = "" WHERE entry = 49874;
 DELETE FROM `smart_scripts` WHERE `entryorguid` = 49874 AND `source_type` = 0;
 DELETE FROM creature_template_addon WHERE entry = 49874;
-UPDATE creature SET MovementType = 2 WHERE guid IN (178204, 178233) AND id = 49874;
-UPDATE creature SET MovementType = 2, ScriptName = "npc_blackrock_spy" WHERE guid IN (178280, 178205, 178460, 178347, 178342, 178345) AND id = 49874;
+UPDATE creature SET MovementType = 2 WHERE guid IN (178204, 178233, 178240) AND id = 49874;
+UPDATE creature SET MovementType = 2, ScriptName = "npc_blackrock_spy" WHERE guid IN (178280, 178205, 178460, 178347, 178342, 178345, 178184, 178475, 178248) AND id = 49874;
 UPDATE creature SET position_x = -8901.361, position_y = -42.065, position_z = 87.123, orientation = 5.2409 WHERE guid = 178205 AND id = 49874;
 UPDATE creature SET position_x = -8826.83, position_y = -77.074, position_z = 86.163, orientation = 5.638 WHERE guid = 178347 AND id = 49874;
 UPDATE creature SET position_x = -8837.45, position_y = -119.131, position_z = 80.527, orientation = 5.968 WHERE guid = 178342 AND id = 49874;
 UPDATE creature SET position_x = -8822.1, position_y = -102.17, position_z = 84.22, orientation = 6.282 WHERE guid = 178345 AND id = 49874;
-DELETE FROM creature_addon WHERE guid IN (178280, 178205, 178204, 178460, 178347, 178242, 178342, 178345, 178341, 178238, 178233);
+UPDATE creature SET position_x = -8980.23, position_y = -43.169, position_z = 90.891, orientation = 5.571 WHERE guid = 178484 AND id = 49874;
+UPDATE creature SET position_x = -8986.609, position_y = -257.11, position_z = 72.776, orientation = 1.076 WHERE guid = 178432 AND id = 49874;
+UPDATE creature SET position_x = -8965.578, position_y = -178.499, position_z = 81.464, orientation = 0.771 WHERE guid = 178249 AND id = 49874;
+UPDATE creature SET position_x = -8930.5996, position_y = -246.447, position_z = 79.099, orientation = 1.738 WHERE guid = 178254 AND id = 49874;
+DELETE FROM creature_addon WHERE guid IN (178280, 178205, 178204, 178460, 178347, 178242, 178342, 178345, 178341, 178238, 178233, 178184, 178484, 178250, 178475, 178240, 178432, 178249, 178248, 178254, 178340, 178271);
 INSERT INTO creature_addon (guid, path_id, bytes1, bytes2, emote, auras) VALUES
 (178280, 178280*10, 0, 1, 0, ""),
 (178205, 178205*10, 0, 1, 0, ""),
@@ -253,8 +257,19 @@ INSERT INTO creature_addon (guid, path_id, bytes1, bytes2, emote, auras) VALUES
 (178345, 178345*10, 0, 1, 0, ""),
 (178341, 0, 8, 1, 0, "80676"),
 (178238, 0, 8, 1, 0, "80676"),
-(178233, 178233*10, 0, 1, 0, "92857");
-DELETE FROM `waypoint_data` WHERE `id` IN (178280*10, 178205*10, 178204*10, 178460*10, 178347*10, 178342*10, 178345*10, 178233*10);
+(178233, 178233*10, 0, 1, 0, "92857"),
+(178184, 178184*10, 0, 1, 0, ""),
+(178484, 0, 8, 1, 0, "80676"),
+(178250, 0, 8, 1, 0, "80676"),
+(178475, 178475*10, 0, 1, 0, ""),
+(178240, 178240*10, 0, 1, 0, "92857"),
+(178432, 0, 8, 1, 0, "80676"),
+(178249, 0, 8, 1, 0, "80676"),
+(178248, 178248*10, 0, 1, 0, ""),
+(178254, 0, 8, 1, 0, "80676"),
+(178340, 0, 8, 1, 0, "80676"),
+(178271, 0, 8, 1, 0, "80676");
+DELETE FROM `waypoint_data` WHERE `id` IN (178280*10, 178205*10, 178204*10, 178460*10, 178347*10, 178342*10, 178345*10, 178233*10, 178184*10, 178475*10, 178240*10, 178248*10);
 INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`) VALUES
 (178280*10, 1, -8928.65, -68.88, 89.889, 0, 0),
 (178280*10, 2, -8921.778, -72.851, 88.831, 5.255, 6000),
@@ -295,7 +310,27 @@ INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `positio
 (178233*10, 5, -8823.33, -64.355, 88.549, 0, 0),
 (178233*10, 6, -8823.47, -26.203, 89.645, 0, 0),
 (178233*10, 7, -8834.408, -22.7703, 88.771, 0, 0),
-(178233*10, 8, -8839.365, -29.207, 88.939, 0, 0);
+(178233*10, 8, -8839.365, -29.207, 88.939, 0, 0),
+(178184*10, 1, -8962.82, -61.281, 92.232, 0, 0),
+(178184*10, 2, -8959.72, -65.52, 92.061, 5.257, 6000),
+(178184*10, 3, -8962.82, -61.281, 92.232, 0, 0),
+(178184*10, 4, -8970.68, -61.11, 91.473, 3.632, 6000),
+(178475*10, 1, -9022.95, -180.919, 76.628, 0, 0),
+(178475*10, 2, -9002.93, -187.57, 76.652, 0.916, 6000),
+(178475*10, 3, -9022.95, -180.919, 76.628, 0, 0),
+(178475*10, 4, -9018.98, -165.101, 79.339, 0.462, 6000),
+(178240*10, 1, -9048.471, -173.768, 76.868, 0, 0),
+(178240*10, 2, -9057.178, -184.681, 75.1504, 0, 0),
+(178240*10, 3, -9049.224, -197.697, 72.661, 0, 0),
+(178240*10, 4, -9011.597, -216.476, 71.143, 0, 0),
+(178240*10, 5, -8987.513, -211.775, 73.592, 0, 0),
+(178240*10, 6, -8996.908, -186.188, 76.552, 0, 0),
+(178240*10, 7, -9015.125, -185.63, 77.044, 0, 0),
+(178240*10, 8, -9021.097, -176.85, 76.993, 0, 0),
+(178248*10, 1, -8975.58, -210.867, 74.394, 0, 0),
+(178248*10, 2, -8972.08, -211.329, 74.651, 0.9808, 6000),
+(178248*10, 3, -8975.58, -210.867, 74.394, 0, 0),
+(178248*10, 4, -8984.532, -199.957, 74.765, 0.8002, 6000);
 DELETE FROM `creature_text` WHERE `CreatureID` IN (49874, 42937);
 INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `Comment`, `BroadcastTextID`) VALUES
 (49874, 0, 0, "Orc KILL $r!", 12, 0, 50, 0, 0, 0, 'Blackrock Spy', 42876),
@@ -331,7 +366,84 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 (448, 5, 0, "Grrr...", 12, 0, 0, 0, 0, 0, 46937, 0, 'Hogger'),
 (448, 6, 0, "Nooooo...", 12, 0, 0, 0, 0, 0, 46938, 0, 'Hogger'),
 (46941, 0, 0, "Right away, General!", 12, 0, 0, 0, 0, 0, 147279, 0, 'High Sorcerer Andromath');
+UPDATE creature_template SET AIName = "", ScriptName = "npc_hogger" WHERE entry = 448;
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 448 AND `source_type` = 0;
+DELETE FROM `smart_scripts` WHERE `entryorguid` IN (94, 116) AND `source_type` = 0;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(94, 0, 0, 0, 67, 0, 100, 0, 3900, 6900, 0, 0, 11, 37685, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, "Cutpurse - Is Behind Target - Cast Spell 'Backstab'"),
+(94, 0, 1, 0, 4, 0, 35, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Cutpurse - On Aggro - Say Text Line 0 (No Repeat)"),
+(116, 0, 0, 0, 0, 0, 100, 0, 8500, 10500, 37100, 42100, 11, 8646, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, "Bandit - In Combat - Cast Spell 'Snap Kick'"),
+(116, 0, 1, 0, 4, 0, 35, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Bandit - On Aggro - Say Text Line 0 (No Repeat)");
+DELETE FROM `creature_text` WHERE `CreatureID` IN (94, 116);
+INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `BroadcastTextId`, `TextRange`, `comment`) VALUES
+(94, 0, 0, "Give me all your gold!", 12, 0, 100, 0, 0, 0, 42881, 0, 'Cutpurse'),
+(94, 0, 1, "You're in the wrong place at the wrong time, $g pal:missy;!", 12, 0, 100, 0, 0, 0, 42883, 0, 'Cutpurse'),
+(94, 0, 2, "No one here gets out alive!", 12, 0, 100, 0, 0, 0, 42882, 0, 'Cutpurse'),
+(94, 0, 3, "Your money or your life!", 12, 0, 100, 0, 0, 0, 42884, 0, 'Cutpurse'),
+(94, 0, 4, "Fate has brought you to me!", 12, 0, 100, 0, 0, 0, 42885, 0, 'Cutpurse'),
+(116, 0, 0, "Give me all your gold!", 12, 0, 100, 0, 0, 0, 42881, 0, 'Bandit'),
+(116, 0, 1, "You're in the wrong place at the wrong time, $g pal:missy;!", 12, 0, 100, 0, 0, 0, 42883, 0, 'Bandit'),
+(116, 0, 2, "No one here gets out alive!", 12, 0, 100, 0, 0, 0, 42882, 0, 'Bandit'),
+(116, 0, 3, "Your money or your life!", 12, 0, 100, 0, 0, 0, 42884, 0, 'Bandit'),
+(116, 0, 4, "Fate has brought you to me!", 12, 0, 100, 0, 0, 0, 42885, 0, 'Bandit');
+UPDATE `creature` SET `spawndist` = 0, `MovementType` = 2, `position_x` = -9946.83, `position_y` = 408.503, `position_z` = 34.89249 WHERE `guid` = 180100 AND id = 330;
+DELETE FROM creature_template_addon WHERE entry = 330;
+DELETE FROM `creature_addon` WHERE `guid` = 180100;
+INSERT INTO `creature_addon` (`guid`, `path_id`, `mount`, `bytes1`, `bytes2`, `emote`, `auras`) VALUES
+(180100, 180100*10, 0, 0, 1, 0, "87519");
+DELETE FROM `waypoint_data` WHERE `id` = 180100*10;
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`, `move_type`) VALUES
+(180100*10,1,-9946.83,408.503,34.89249,0,0,0),
+(180100*10,2,-9934.89,375.823,35.15996,0,0,0),
+(180100*10,3,-9905.29,378.352,35.28614,0,0,0),
+(180100*10,4,-9889.87,404.354,35.3951,0,0,0),
+(180100*10,5,-9911.25,423.392,35.39784,0,0,0);
+UPDATE creature_template SET AIName = "SmartAI" WHERE entry = 251;
+UPDATE creature SET spawntimesecs = 60 WHERE guid = 179761 AND id = 251;
+DELETE FROM `smart_scripts` WHERE `entryorguid` IN (253, 251) AND `source_type` = 0;
+DELETE FROM `smart_scripts` WHERE `entryorguid` IN (253*100, 251*100) AND `source_type` = 9;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(253, 0, 0, 0, 20, 0, 100, 0, 112, 0, 0, 0, 80, 253*100, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "William Pestle - On Quest 'Collecting Kelp' Finished - Run Script"),
+(253*100, 9, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "William Pestle - On Script - Say Text Line 0"),
+(253*100, 9, 1, 0, 0, 0, 100, 0, 1000, 1000, 0, 0, 66, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 1.45219, "William Pestle - On Script - Set Orientation (1.45219)"),
+(253*100, 9, 2, 0, 0, 0, 100, 0, 1000, 1000, 0, 0, 5, 69, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "William Pestle - On Script - Play Emote (69)"),
+(253*100, 9, 3, 0, 0, 0, 100, 0, 3000, 3000, 0, 0, 66, 0, 0, 0, 0, 0, 0, 21, 10, 0, 0, 0, 0, 0, 0, "William Pestle - On Script - Set Orientation (Closest Player)"),
+(253*100, 9, 4, 0, 0, 0, 100, 0, 1000, 1000, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "William Pestle - On Script - Say Text Line 1"),
+(251, 0, 0, 0, 20, 0, 100, 0, 114, 0, 0, 0, 80, 251*100, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Maybell Maclure - On Quest 'The Escape' Finished - Run Script"),
+(251*100, 9, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 66, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 5.39307, "Maybell Maclure - On Script - Set Orientation (5.39307)"),
+(251*100, 9, 1, 0, 0, 0, 100, 0, 2000, 2000, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "On Script - Say Text Line 0"),
+(251*100, 9, 2, 0, 0, 0, 100, 0, 2000, 2000, 0, 0, 5, 7, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "On Script - Play Emote (7)"),
+(251*100, 9, 3, 0, 0, 0, 100, 0, 4000, 4000, 0, 0, 41, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "On Script - Despawn Instant");
+UPDATE creature SET spawndist = 0, MovementType = 0 WHERE guid = 178007 AND id = 12423;
+DELETE FROM creature_addon WHERE guid IN (177315, 318773);
+UPDATE `creature_template` SET `AIName` = "SmartAI" WHERE `entry` IN (913, 927);
+DELETE FROM `smart_scripts` WHERE `entryorguid` IN (913, 927) AND `source_type` = 0;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(913, 0, 0, 0, 60, 0, 100, 0, 7000, 12000, 7000, 12000, 10, 396, 273, 274, 6, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lyria Du Lac - On Update - Play Random Emote (396, 273, 274, 6)"),
+(927, 0, 0, 0, 60, 0, 100, 0, 7000, 12000, 7000, 12000, 10, 396, 273, 274, 6, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Brother Wilhelm - On Update - Play Random Emote (396, 273, 274, 6)");
+UPDATE `creature` SET `spawndist` = 0, `MovementType` = 2, `position_x` = -9427.082, `position_y` = 124.8642, `position_z` = 59.36305 WHERE `guid` = 177928 AND id = 797;
+DELETE FROM creature_template_addon WHERE entry = 797;
+DELETE FROM `creature_addon` WHERE `guid` = 177928;
+INSERT INTO `creature_addon` (`guid`,`path_id`,`mount`,`bytes1`,`bytes2`,`emote`,`auras`) VALUES
+(177928, 177928*10, 0, 0, 1, 0, "");
+DELETE FROM `waypoint_data` WHERE `id` = 177928*10;
+INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`,`orientation`,`delay`,`move_type`) VALUES
+(177928*10,1,-9427.082,124.8642,59.36305,0,46000,1),
+(177928*10,2,-9446.757,132.8065,58.79227,0,0,1),
+(177928*10,3,-9453.114,128.8822,58.91727,0,0,1),
+(177928*10,4,-9460.528,123.3364,59.0911,0,0,1),
+(177928*10,5,-9465.454,112.1725,57.79227,0,0,1),
+(177928*10,6,-9464.705,105.2042,58.28145,0,0,1),
+(177928*10,7,-9460.628,94.35499,58.54224,0,46000,1),
+(177928*10,8,-9464.572,107.5604,57.637,0,0,1),
+(177928*10,9,-9463.494,121.7567,58.65861,0,0,1),
+(177928*10,10,-9456.734,126.0858,59.16288,0,0,1),
+(177928*10,11,-9444.896,135.8292,58.48393,0,0,1),
+(177928*10,12,-9438.719,134.7248,58.30473,0,0,1);
 
+-- WP Childs
+-- WP Murlocs
+-- WP Kobolds
 -- 179871 179874 179873 179877 179876
 
 
