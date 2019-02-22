@@ -247,10 +247,85 @@ public:
     }
 };
 
+// 96665 kayn
+class npc_khadgar : public CreatureScript
+{
+public:
+    npc_khadgar() : CreatureScript("npc_khadgar") { }
+
+    bool OnQuestReward(Player* player, Creature* creature, Quest const* quest, uint32 /*opt*/) override
+    {
+        if (quest->GetQuestId() == 39690)
+            player->CastSpell(player, 192758, true);
+
+        if (quest->GetQuestId() == 39689)
+            player->CastSpell(player, 192757, true);
+
+        return true;
+    }
+};
+
+// 92986 Altruis
+class npc_altruis : public CreatureScript
+{
+public:
+    npc_altruis() : CreatureScript("npc_altruis") { }
+
+    bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest) override
+    {
+        if (quest->GetQuestId() == 38689) // Fel Infusion
+            player->CastSpell(player, 133508, true);
+
+        return true;
+    }
+
+    bool OnQuestReward(Player* player, Creature* creature, Quest const* quest, uint32 /*opt*/) override
+    {
+        if (quest->GetQuestId() == 38689) // Fel Infusion
+            player->RemoveAurasDueToSpell(133508);
+
+        return true;
+    }
+};
+
+class npc_altruis_cell : public CreatureScript
+{
+public:
+    npc_altruis_cell() : CreatureScript("npc_altruis_cell") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        player->CastSpell(creature, 184012, true);
+        player->KilledMonsterCredit(112287, ObjectGuid::Empty);
+        player->KilledMonsterCredit(112277, ObjectGuid::Empty);
+
+        return true;
+    }
+};
+
+class npc_kayn_cell : public CreatureScript
+{
+public:
+    npc_kayn_cell() : CreatureScript("npc_kayn_cell") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        player->CastSpell(creature, 177803, true);
+        player->KilledMonsterCredit(99326, ObjectGuid::Empty);
+        player->KilledMonsterCredit(112276, ObjectGuid::Empty);
+        return true;
+    }
+};
+
+
 void AddSC_zone_vault_of_wardens()
 {
     new npc_bastillax();
     new npc_immolanth();
     RegisterCreatureAI(npc_vault_of_the_wardens_sledge_or_crusher);
     RegisterCreatureAI(npc_vault_of_the_wardens_vampiric_felbat);
+    new npc_khadgar();
+    new npc_altruis();
+    new npc_kayn_cell();
+    new npc_altruis_cell();
 }
