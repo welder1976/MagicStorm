@@ -601,3 +601,16 @@ UPDATE `creature_template` SET `AIName`="SmartAI" WHERE `entry`=@ENTRY;
 DELETE FROM `smart_scripts` WHERE `entryorguid`=@ENTRY AND `source_type`=0;
 INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type`,`event_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action_type`,`action_param1`,`action_param2`,`action_param3`,`action_param4`,`action_param5`,`action_param6`,`target_type`,`target_param1`,`target_param2`,`target_param3`,`target_x`,`target_y`,`target_z`,`target_o`,`comment`) VALUES
 (@ENTRY,0,0,0,8,0,100,0,204588,0,0,0,33,99709,0,0,0,0,0,7,0,0,0,0,0,0,0,"Countermeasures 99709 - On Spellhit 'Spell Id204588' - Quest Credit 'Countermeasures 99709'");
+
+update `gameobject_template` set `ScriptName` = "go_warden_ascent" where `entry` = 244644;
+update `gameobject_template` set `ScriptName` = "go_pool_of_judgements" where `entry` = 244455;
+update `creature_template` set `ScriptName` = "npc_korvas_2" where `entry` = 97644;
+update `creature_template` set `ScriptName` = "npc_altruis" where `entry` = 92986;
+update `creature_template` set `ScriptName` = "npc_altruis_cell" where `entry` = 103655;
+update `creature_template` set `ScriptName` = "npc_kayn_cell" where `entry` = 103658;
+
+
+
+
+
+
