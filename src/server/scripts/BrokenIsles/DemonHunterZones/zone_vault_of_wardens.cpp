@@ -17,6 +17,22 @@
 
 
 #include "ScriptedEscortAI.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
+#include "Player.h"
+#include "QuestPackets.h"
+#include "ScenePackets.h"
+#include "GameObject.h"
+#include "GameObjectAI.h"
+#include "ObjectAccessor.h"
+#include "SpellAuras.h"
+#include "SpellScript.h"
+#include "SpellAuraEffects.h"
+#include "SpellHistory.h"
+#include "MotionMaster.h"
+#include "WorldSession.h"
+#include "PhasingHandler.h"
 
 enum eVaultOfWardens
 {
@@ -317,6 +333,399 @@ public:
     }
 };
 
+// 97644
+class npc_korvas_2 : public CreatureScript
+{
+public:
+    npc_korvas_2() : CreatureScript("npc_korvas_2") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (creature->IsQuestGiver())
+            player->PrepareQuestMenu(creature->GetGUID());
+
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Kayn", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Altruis", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        SendGossipMenuFor(player, player->GetGossipTextId(creature), creature->GetGUID());
+
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        player->PlayerTalkClass->ClearMenus();
+
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF:
+            player->CastSpell(player, 196661, true);
+            CloseGossipMenuFor(player);
+            break;
+        case GOSSIP_ACTION_INFO_DEF + 1:
+            player->CastSpell(player, 196662, true);
+            CloseGossipMenuFor(player);
+            break;
+        }
+
+        return true;
+    }
+};
+
+// 243967 Illidari Banner
+class go_pool_of_judgements : public GameObjectScript
+{
+public:
+    go_pool_of_judgements() : GameObjectScript("go_pool_of_judgements") { }
+
+    bool OnGossipHello(Player* player, GameObject* go) override
+    {
+        player->KilledMonsterCredit(100166, ObjectGuid::Empty);
+        player->SendMovieStart(478);
+        return true;
+    }
+};
+
+// 244644 Warden's Ascent
+class go_warden_ascent : public GameObjectScript
+{
+public:
+    go_warden_ascent() : GameObjectScript("go_warden_ascent") { }
+
+    struct go_warden_ascentAI : public GameObjectAI
+    {
+        go_warden_ascentAI(GameObject* pGO) : GameObjectAI(pGO)
+        {
+        }
+
+        uint32 giveKillCredit;
+
+        void Reset()
+        {
+            giveKillCredit = 1000;
+        }
+
+        void UpdateAI(uint32 diff)
+        {
+            if (Player* player = go->FindNearestPlayer(5.0f))
+            {
+                if (player->GetQuestStatus(39686) == QUEST_STATUS_INCOMPLETE) // Arriba del todo
+                {
+                    if (giveKillCredit <= diff)
+                    {
+                        if (player->GetPositionZ() >= 253.0f)
+                            player->KilledMonsterCredit(96814, ObjectGuid::Empty);
+
+                        giveKillCredit = 1000;
+                    }
+                    else
+                        giveKillCredit -= diff;
+                }
+            }
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* pGO) const
+    {
+        return new go_warden_ascentAI(pGO);
+    }
+};
+
+// 204588
+class spell_activate_countermeasure : public SpellScriptLoader
+{
+public:
+    spell_activate_countermeasure() : SpellScriptLoader("spell_activate_countermeasure") { }
+
+    class spell_activate_countermeasure_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_activate_countermeasure_SpellScript);
+
+        void HandleKillCredit()
+        {
+            if (Creature* creature = GetCaster()->ToPlayer()->FindNearestCreature(99732, 5.0f))
+                GetCaster()->ToPlayer()->KilledMonsterCredit(99732, ObjectGuid::Empty);
+
+            if (Creature* creature = GetCaster()->ToPlayer()->FindNearestCreature(99731, 5.0f))
+                GetCaster()->ToPlayer()->KilledMonsterCredit(99731, ObjectGuid::Empty);
+
+            if (Creature* creature = GetCaster()->ToPlayer()->FindNearestCreature(99709, 5.0f))
+                GetCaster()->ToPlayer()->KilledMonsterCredit(99709, ObjectGuid::Empty);
+        }
+
+        void Register() override
+        {
+            OnCast += SpellCastFn(spell_activate_countermeasure_SpellScript::HandleKillCredit);
+        }
+    };
+
+    SpellScript* GetSpellScript() const override
+    {
+        return new spell_activate_countermeasure_SpellScript();
+    }
+};
+
+// 96665 kayn
+class npc_kayn_3 : public CreatureScript
+{
+public:
+    npc_kayn_3() : CreatureScript("npc_kayn_3") { }
+
+    bool OnQuestReward(Player* player, Creature* creature, Quest const* quest, uint32 /*opt*/) override
+    {
+        if (quest->GetQuestId() == 38690)
+        {
+            if (GameObject* go = player->FindNearestGameObject(245467, 200.0f))
+                go->UseDoorOrButton();
+
+            if (GameObject* go = player->FindNearestGameObject(244404, 200.0f))
+                go->UseDoorOrButton();
+        }
+        return true;
+    }
+};
+
+enum BarbarusExtermineitor
+{
+    // Events
+    EVENT_ANNIHILATE = 0,
+    EVENT_BRUTAL_ATTACKS = 1,
+    EVENT_SHOULDER_CHARGE = 2,
+    EVENT_LEAPING_RETREAT = 3,
+
+    // Spells
+    SPELL_ANNIHILATE = 199604,
+    SPELL_BRUTAL_ATTACKS = 199556,
+    SPELL_SHOULDER_CHARGE = 199476,
+    SPELL_LEAPING_RETREAT = 199474,
+};
+
+class npc_extermineitor : public CreatureScript
+{
+public:
+    npc_extermineitor() : CreatureScript("npc_extermineitor") { }
+
+    struct npc_extermineitorAI : public ScriptedAI
+    {
+        npc_extermineitorAI(Creature* creature) : ScriptedAI(creature)
+        {
+        }
+
+        void Reset() override
+        {
+            events.Reset();
+        }
+
+        void JustDied(Unit* killer) override
+        {
+            if (killer->GetTypeId() == TYPEID_PLAYER)
+                killer->ToPlayer()->KilledMonsterCredit(99303, ObjectGuid::Empty);
+        }
+
+        void EnterCombat(Unit* who) override
+        {
+            if (who->GetTypeId() == TYPEID_PLAYER)
+                who->ToPlayer()->KilledMonsterCredit(99303, ObjectGuid::Empty);
+
+            me->KillSelf();
+            events.ScheduleEvent(EVENT_ANNIHILATE, urand(35000, 40000));
+            events.ScheduleEvent(EVENT_BRUTAL_ATTACKS, urand(3000, 6000));
+            events.ScheduleEvent(EVENT_SHOULDER_CHARGE, urand(12000, 14000));
+            events.ScheduleEvent(EVENT_LEAPING_RETREAT, urand(15000, 22000));
+        }
+
+        void UpdateAI(uint32 diff) override
+        {
+            events.Update(diff);
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                case EVENT_ANNIHILATE:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(me, SPELL_ANNIHILATE, true);
+
+                    events.ScheduleEvent(EVENT_ANNIHILATE, 36000);
+                    break;
+                case EVENT_BRUTAL_ATTACKS:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(target, SPELL_BRUTAL_ATTACKS, true);
+
+                    events.ScheduleEvent(EVENT_BRUTAL_ATTACKS, urand(8000, 10000));
+                    break;
+                case EVENT_LEAPING_RETREAT:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(target, SPELL_LEAPING_RETREAT, true);
+
+                    events.ScheduleEvent(EVENT_LEAPING_RETREAT, urand(1500, 22000));
+                    break;
+                case EVENT_SHOULDER_CHARGE:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(target, SPELL_SHOULDER_CHARGE, true);
+
+                    events.ScheduleEvent(EVENT_SHOULDER_CHARGE, urand(10000, 12000));
+                    break;
+                }
+            }
+
+            //if (UpdateVictim())
+            //DoMeleeAttackIfReady();
+        }
+    private:
+        EventMap events;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_extermineitorAI(creature);
+    }
+};
+
+class npc_barbarus : public CreatureScript
+{
+public:
+    npc_barbarus() : CreatureScript("npc_barbarus") { }
+
+    struct npc_barbarusAI : public ScriptedAI
+    {
+        npc_barbarusAI(Creature* creature) : ScriptedAI(creature)
+        {
+        }
+
+        void Reset() override
+        {
+            events.Reset();
+        }
+
+        void JustDied(Unit* killer) override
+        {
+            if (killer->GetTypeId() == TYPEID_PLAYER)
+                killer->ToPlayer()->KilledMonsterCredit(106241, ObjectGuid::Empty);
+        }
+
+        void EnterCombat(Unit* who) override
+        {
+            if (who->GetTypeId() == TYPEID_PLAYER)
+                who->ToPlayer()->KilledMonsterCredit(106241, ObjectGuid::Empty);
+
+            me->KillSelf();
+            /*events.ScheduleEvent(EVENT_ANNIHILATE, urand(20000, 30000));
+            events.ScheduleEvent(EVENT_BRUTAL_ATTACKS, urand(3000, 6000));
+            events.ScheduleEvent(EVENT_SHOULDER_CHARGE, urand(12000, 14000));
+            events.ScheduleEvent(EVENT_LEAPING_RETREAT, urand(15000, 22000));*/
+        }
+
+        void UpdateAI(uint32 diff) override
+        {
+            events.Update(diff);
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                case EVENT_ANNIHILATE:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(me, SPELL_ANNIHILATE, true);
+
+                    events.ScheduleEvent(EVENT_ANNIHILATE, 30000);
+                    break;
+                case EVENT_BRUTAL_ATTACKS:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(target, SPELL_BRUTAL_ATTACKS, true);
+
+                    events.ScheduleEvent(EVENT_BRUTAL_ATTACKS, urand(8000, 10000));
+                    break;
+                case EVENT_LEAPING_RETREAT:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(target, SPELL_LEAPING_RETREAT, true);
+
+                    events.ScheduleEvent(EVENT_LEAPING_RETREAT, urand(1500, 22000));
+                    break;
+                case EVENT_SHOULDER_CHARGE:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(target, SPELL_SHOULDER_CHARGE, true);
+
+                    events.ScheduleEvent(EVENT_SHOULDER_CHARGE, urand(10000, 12000));
+                    break;
+                }
+            }
+
+            //if (UpdateVictim())
+            //DoMeleeAttackIfReady();
+        }
+    private:
+        EventMap events;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_barbarusAI(creature);
+    }
+};
+
+class npc_fel_infusion : public CreatureScript
+{
+public:
+    npc_fel_infusion() : CreatureScript("npc_fel_infusion") { }
+
+    struct npc_fel_infusionAI : public ScriptedAI
+    {
+        npc_fel_infusionAI(Creature* creature) : ScriptedAI(creature)
+        {
+            Initialize();
+        }
+
+        void Initialize()
+        {
+
+        }
+
+        void Reset() override
+        {
+            Initialize();
+            events.Reset();
+        }
+
+        void JustDied(Unit* killer) override
+        {
+            if (killer->GetTypeId() == TYPEID_PLAYER)
+            {
+                killer->ToPlayer()->SetPower(POWER_ALTERNATE_POWER, killer->GetPower(POWER_ALTERNATE_POWER) + 10);
+
+                for (uint8 i = 0; i < 10; ++i)
+                    killer->ToPlayer()->KilledMonsterCredit(89297, ObjectGuid::Empty);
+            }
+        }
+
+        void EnterCombat(Unit* who) override
+        {
+
+        }
+
+        void UpdateAI(uint32 diff) override
+        {
+            events.Update(diff);
+
+            /*while (uint32 eventId = events.ExecuteEvent())
+            {
+            switch (eventId)
+            {
+            }
+            }*/
+
+            if (UpdateVictim())
+                DoMeleeAttackIfReady();
+        }
+
+    private:
+        EventMap events;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_fel_infusionAI(creature);
+    }
+};
 
 void AddSC_zone_vault_of_wardens()
 {
@@ -328,4 +737,12 @@ void AddSC_zone_vault_of_wardens()
     new npc_altruis();
     new npc_kayn_cell();
     new npc_altruis_cell();
+    new go_pool_of_judgements();
+    new npc_fel_infusion();
+    new npc_barbarus();
+    new spell_activate_countermeasure();
+    new npc_extermineitor();
+    new npc_kayn_3();
+    new go_warden_ascent();
+    new npc_korvas_2();
 }

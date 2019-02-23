@@ -2749,6 +2749,15 @@ GameObject* WorldObject::FindNearestGameObjectOfType(GameobjectTypes type, float
     return go;
 }
 
+Player* WorldObject::FindNearestPlayer(float range, bool alive)
+{
+    Player* player = NULL;
+    Trinity::AnyPlayerInObjectRangeCheck check(this, range, alive);
+    Trinity::PlayerSearcher<Trinity::AnyPlayerInObjectRangeCheck> searcher(this, player, check);
+    Cell::VisitWorldObjects(this, searcher, range);
+    return player;
+}
+
 Player* WorldObject::SelectNearestPlayer(float distance) const
 {
     Player* target = nullptr;
