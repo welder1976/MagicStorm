@@ -802,11 +802,12 @@ public:
 
 struct npc_hogger : public ScriptedAI
 {
-    npc_hogger(Creature* creature) : ScriptedAI(creature) { }
+    npc_hogger(Creature* creature) : ScriptedAI(creature), summons(me) { }
 
     void Reset() override
     {
         _events.Reset();
+        summons.DespawnAll();
 
         _minionsSummoned = false;
         _endingSceneActive = false;
@@ -816,6 +817,21 @@ struct npc_hogger : public ScriptedAI
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
         me->SetReactState(REACT_AGGRESSIVE);
         me->SetWalk(false);
+    }
+
+    void JustSummoned(Creature* summon)
+    {
+        summons.Summon(summon);
+
+        if (summon->GetEntry() == NPC_HOGGER_MINION)
+        {
+            for (auto itr : me->getThreatManager().getThreatList())
+                if (Player* player = ObjectAccessor::GetPlayer(*me, itr->getUnitGuid()))
+                {
+                    summon->SetTarget(player->GetGUID());
+                    summon->AI()->AttackStart(player);
+                }
+        }
     }
 
     void DamageTaken(Unit* /*attacker*/, uint32& damage) override
@@ -878,6 +894,7 @@ struct npc_hogger : public ScriptedAI
         _events.Reset();
 
         me->SetReactState(REACT_PASSIVE);
+        me->RemoveAllAuras();
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
         me->StopMoving();
         me->AttackStop();
@@ -911,7 +928,8 @@ struct npc_hogger : public ScriptedAI
             if (Player* player = ObjectAccessor::GetPlayer(*me, itr->getUnitGuid()))
             {
                 me->SetTarget(player->GetGUID());
-                me->IsInCombatWith(player);
+                me->AI()->AttackStart(player);
+                me->setActive(true);
             }
     }
 
@@ -1214,6 +1232,7 @@ struct npc_hogger : public ScriptedAI
 
 private:
     EventMap _events;
+    SummonList summons;
 
     bool _minionsSummoned;
     bool _endingSceneActive;
@@ -1235,12 +1254,49 @@ struct npc_hogger_minion : public ScriptedAI
 {
     npc_hogger_minion(Creature* creature) : ScriptedAI(creature) { }
 
+    EventMap _events;
+
+    bool _hoggerHealed;
+
     void Reset() override
     {
+        _events.Reset();
+
+        _hoggerHealed = false;
+
         me->SetReactState(REACT_AGGRESSIVE);
 
-        if (Creature* hogger = me->FindNearestCreature(NPC_HOGGER, 35.0f, true))
-            me->CastSpell(hogger, SPELL_ADVENTURERS_RUSH, true);
+        if (!_hoggerHealed && roll_chance_i(50))
+        {
+            _events.ScheduleEvent(1, 1s);
+            _hoggerHealed = true;
+        }
+    }
+
+    void UpdateAI(uint32 diff) override
+    {
+        if (!UpdateVictim())
+            return;
+
+        _events.Update(diff);
+
+        if (me->HasUnitState(UNIT_STATE_CASTING))
+            return;
+
+        while (uint32 eventId = _events.ExecuteEvent())
+        {
+            switch (eventId)
+            {
+                case 1:
+                    if (Creature* hogger = me->FindNearestCreature(NPC_HOGGER, 35.0f, true))
+                        me->CastSpell(hogger, SPELL_ADVENTURERS_RUSH, true);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        DoMeleeAttackIfReady();
     }
 };
 
