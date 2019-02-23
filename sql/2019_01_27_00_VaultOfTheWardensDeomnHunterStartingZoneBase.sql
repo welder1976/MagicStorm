@@ -608,6 +608,8 @@ update `creature_template` set `ScriptName` = "npc_korvas_2" where `entry` = 976
 update `creature_template` set `ScriptName` = "npc_altruis" where `entry` = 92986;
 update `creature_template` set `ScriptName` = "npc_altruis_cell" where `entry` = 103655;
 update `creature_template` set `ScriptName` = "npc_kayn_cell" where `entry` = 103658;
+update `creature_template` set `ScriptName` = "npc_khadgar" where `entry` = 97978;
+update `creature_template` set `ScriptName` = "npc_kayn_3" where `entry` = 96665;
 
 DELETE FROM `creature_queststarter` WHERE `id` IN (92986);
 DELETE FROM `creature_questender` WHERE `id` IN (92986);
