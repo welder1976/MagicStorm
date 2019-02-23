@@ -609,7 +609,23 @@ update `creature_template` set `ScriptName` = "npc_altruis" where `entry` = 9298
 update `creature_template` set `ScriptName` = "npc_altruis_cell" where `entry` = 103655;
 update `creature_template` set `ScriptName` = "npc_kayn_cell" where `entry` = 103658;
 
-
+DELETE FROM `creature_queststarter` WHERE `id` IN (92986);
+DELETE FROM `creature_questender` WHERE `id` IN (92986);
+INSERT INTO `creature_queststarter` VALUES
+(92986, 38689); -- Altruis the Sufferer, Fel Infusion
+INSERT INTO `creature_questender` VALUES
+(92986, 38689); -- Altruis the Sufferer, Fel Infusion
+DELETE FROM `creature_questender` WHERE `id` IN (92980);
+INSERT INTO `creature_queststarter` VALUES
+(92980, 38690); -- Kayn Sunfury, Rise of the Illidari
+DELETE FROM `creature_queststarter` WHERE `id` IN (96665);
+DELETE FROM `creature_questender` WHERE `id` IN (96665);
+INSERT INTO `creature_queststarter` VALUES
+(96665, 39682); -- Kayn Sunfury, Grand Theft Felbat
+INSERT INTO `creature_questender` VALUES
+(96665, 38690), -- Kayn Sunfury, Rise of the Illidari
+(96665, 38723), -- Kayn Sunfury, Stop Gul'dan!
+(96665, 40253); -- Kayn Sunfury, Stop Gul'dan!
 
 
 
