@@ -2911,6 +2911,16 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
 
             break;
         }
+        case SMART_ACTION_MOVE_FORWARD:
+        {
+            if (!me)
+                break;
+
+            float x, y, z;
+            me->GetClosePoint(x, y, z, me->GetObjectSize() / 3, (float)e.action.moveRandom.distance);
+            me->GetMotionMaster()->MovePoint(SMART_RANDOM_POINT, x, y, z);
+            break;
+        }
         case SMART_ACTION_RISE_UP:
         {
             if (!me)

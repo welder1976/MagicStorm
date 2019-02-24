@@ -205,3 +205,13 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 (-260291, 0, 1, 0, 9, 0, 100, 512, 0, 5, 7000, 9000, 11, 81502, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, "Fledgling Brave - Within 0-5 Range - Cast Spell 'Cleave'"),
 (-260291, 0, 2, 0, 9, 0, 100, 512, 0, 5, 17000, 22000, 11, 81500, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Fledgling Brave - Within 0-5 Range - Cast Spell 'War Stomp'"),
 (-260291, 0, 3, 0, 60, 0, 100, 512, 1000, 1000, 10000, 10000, 49, 0, 0, 0, 0, 0, 0, 19, 36943, 15, 0, 0, 0, 0, 0, "Fledgling Brave - On Update - Attack Start (Creature ID: 36943)");
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 38345 AND `source_type` = 0;
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 38345*100 AND `source_type` = 9;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(38345, 0, 0, 0, 38, 0, 100, 1, 1, 1, 0, 0, 80, 3834500, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Data Set 1 1 - Run Script"),
+(38345*100, 9, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 59, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Set Run On"),
+(38345*100, 9, 1, 0, 0, 0, 100, 0, 0, 0, 0, 0, 91, 8, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Remove Field Bytes 8 (Kneel State)"),
+(38345*100, 9, 2, 0, 0, 0, 100, 0, 1500, 1500, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Say Text Line 0"),
+(38345*100, 9, 3, 0, 0, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Set Active On"),
+(38345*100, 9, 4, 0, 0, 0, 100, 0, 3000, 3000, 0, 0, 46, 100, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Move Forward (100 Yards)"),
+(38345*100, 9, 5, 0, 0, 0, 100, 0, 4000, 4000, 0, 0, 41, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Force Despawn");
