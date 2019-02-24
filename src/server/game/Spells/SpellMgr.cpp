@@ -3679,6 +3679,11 @@ void SpellMgr::LoadSpellInfoCorrections()
         }
     });
 
+    // Hyjal Intro Flight
+    ApplySpellFix({ 73518 }, [](SpellInfo* spellInfo)
+    {
+        spellInfo->RangeEntry = sSpellRangeStore.LookupEntry(7);  // 10yd
+    });
 
     ApplySpellFix({
         70661, // See quest invis 1

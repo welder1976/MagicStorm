@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2008-2019 by MAGICSTORMTEAM
+* Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the
@@ -322,7 +322,7 @@ struct npc_mh_twilight_inciter : public ScriptedAI
         _events.Reset();
     }
 
-    void JustEngagedWith(Unit* /*who*/) 
+    void JustEngagedWith(Unit* /*who*/)
     {
         _events.ScheduleEvent(EVENT_INFILTRATOR_SHADOWSTEP, 25s);
     }
@@ -429,9 +429,107 @@ Position const EmeraldFlamesPositions[] =
 
 QuaternionData const emeraldFlameRotation = QuaternionData();
 
+struct npc_mh_emerald_flameweaver : public PassiveAI
+{
+    npc_mh_emerald_flameweaver(Creature* creature) : PassiveAI(creature) { }
+
+    void IsSummonedBy(Unit* /*summoner*/) override
+    {
+        me->GetMotionMaster()->MoveSmoothPath(POINT_NONE, EmeraldFlameweaverPath1, 5, false, true);
+        _events.ScheduleEvent(EVENT_SUMMON_EMERALD_FLAMES, 5s + 500ms);
+    }
+
+    void UpdateAI(uint32 diff) override
+    {
+        _events.Update(diff);
+
+        while (uint32 eventId = _events.ExecuteEvent())
+        {
+            switch (eventId)
+            {
+                case EVENT_SUMMON_EMERALD_FLAMES:
+                    for (uint8 i = 0; i < 10; i++)
+                        //if (GameObject* flame = me->SummonGameObject(GO_EMERALD_FLAME, EmeraldFlamesPositions[i], emeraldFlameRotation, 0, GO_SUMMON_TIMED_DESPAWN))
+                            //flame->DespawnOrUnsummon(20s);
+
+                    DoCastAOE(SPELL_EMERALD_FRAMEWEAVER_DRAKE_BREATH);
+
+                    if (TempSummon* summon = me->ToTempSummon())
+                        if (Unit* target = summon->GetSummoner())
+                            if (Player* player = target->ToPlayer())
+                                player->KilledMonsterCredit(me->GetEntry());
+
+                    me->GetMotionMaster()->MoveSmoothPath(POINT_NONE, EmeraldFlameweaverPath2, 6, false, true);
+                    me->DespawnOrUnsummon(9s);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        DoMeleeAttackIfReady();
+    }
+private:
+    EventMap _events;
+};
+
+class spell_mh_summon_emerald_flameweaver : public SpellScript
+{
+    PrepareSpellScript(spell_mh_summon_emerald_flameweaver);
+
+    void SetDest(SpellDestination& dest)
+    {
+        dest.Relocate(EmeraldFlameweaverSummonPos);
+    }
+
+    void Register()
+    {
+        OnDestinationTargetSelect += SpellDestinationTargetSelectFn(spell_mh_summon_emerald_flameweaver::SetDest, EFFECT_0, TARGET_DEST_NEARBY_ENTRY);
+    }
+};
+
+Position const RagnarosSummonPos = { 4039.558f, -3061.701f, 972.6672f, 0.104719f };
+
+class spell_mh_ragnaros : public SpellScript
+{
+    PrepareSpellScript(spell_mh_ragnaros);
+
+    void SetDest(SpellDestination& dest)
+    {
+        dest.Relocate(RagnarosSummonPos);
+    }
+
+    void Register()
+    {
+        OnDestinationTargetSelect += SpellDestinationTargetSelectFn(spell_mh_ragnaros::SetDest, EFFECT_0, TARGET_DEST_NEARBY_ENTRY);
+    }
+};
+
+//class spell_mh_flamebreaker : public AuraScript
+//{
+   // PrepareAuraScript(spell_mh_flamebreaker);
+
+    //void HandleTick(AuraEffect const* /*aurEff*/)
+    //{
+       // PreventDefaultAction();
+       // Unit* caster = GetTarget();
+       // if (Unit* target = ObjectAccessor::GetCreature(*caster, caster->GetChannelObjectGuid()))
+           // caster->CastSpell(target, GetSpellInfo()->Effects[EFFECT_0].TriggerSpell, true);
+   // }
+
+   // void Register() override
+   // {
+   //     OnEffectPeriodic += AuraEffectPeriodicFn(spell_mh_flamebreaker::HandleTick, EFFECT_0, SPELL_AURA_PERIODIC_TRIGGER_SPELL);
+   // }
+//};
+
 void AddSC_mount_hyjal()
 {
     RegisterCreatureAI(npc_mh_aronus);
     RegisterCreatureAI(npc_mh_faerie_dragon);
     RegisterCreatureAI(npc_mh_twilight_inciter);
+    RegisterCreatureAI(npc_mh_emerald_flameweaver);
+    RegisterSpellScript(spell_mh_summon_emerald_flameweaver);
+    RegisterSpellScript(spell_mh_ragnaros);
+    //RegisterAuraScript(spell_mh_flamebreaker);
 }
