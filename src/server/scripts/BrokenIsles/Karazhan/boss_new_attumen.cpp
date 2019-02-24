@@ -4,7 +4,14 @@
 #include "AreaTriggerAI.h"
 #include "AreaTrigger.h"
 #include "Vehicle.h"
+#include "SpellMgr.h"
+#include "Spell.h"
+#include "SpellInfo.h"
+#include "SpellMgr.h"
+#include "SpellScript.h"
+#include "GameObject.h"
 #include "new_karazhan.h"
+#include <G3D/Vector3.h>
 
 enum Spells
 {
@@ -732,6 +739,153 @@ class spell_attumen_intagible_presence : public SpellScriptLoader
         }
 };
 
+class spell_attumen_spectral_charge : public SpellScriptLoader
+{
+    public:
+        spell_attumen_spectral_charge() : SpellScriptLoader("spell_attumen_spectral_charge")
+        {}
+
+        class spell_spectral_charge_SpellScript : public SpellScript
+        {
+            public:
+                PrepareSpellScript(spell_spectral_charge_SpellScript);
+
+                G3D::Vector2 PosToVec2(const Position & src)
+                {
+                    Vector2 ret = { src.GetPositionX(), src.GetPositionY() };
+                    return ret;
+                }
+
+                void SummonHorseLine(uint8 horses, const Position& src, const Position& tgt)
+                {
+                    Vector2 tgtV(PosToVec2(tgt));
+                    Vector2 srcV(PosToVec2(src));
+
+                    Vector2 diff = (tgtV - srcV).direction();
+                    SpellCastTargets target;
+                    SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(SPELL_SPECTRAL_CHARGE_AREA);
+
+                    if (!spellInfo)
+                        return;
+
+                    for (uint8 i = 0; i < horses; ++i)
+                    {
+                        srcV += diff;
+                        target.SetDst(srcV.x, srcV.y, GetCaster()->GetPositionZ(), tgt.GetOrientation());
+
+                        GetCaster()->CastSpell(target, spellInfo, nullptr, TRIGGERED_FULL_MASK);
+                    }
+                }
+
+                void HandleDummy()
+                {
+                    uint8 horses = urand(5, 15);
+                    Position tgtL, tgtR, src;
+
+                    tgtL = GetCaster()->GetNearPosition(22.36f,  float(M_PI)/4.f);
+                    src = GetCaster()->GetNearPosition(22.36f, 0);
+
+                    tgtL.SetOrientation(tgtL.GetOrientation() + float(M_PI));
+
+                    SummonHorseLine(horses, src, tgtL);
+
+                    horses = urand(5, 10);
+                    tgtR = GetCaster()->GetNearPosition(22.36f,  float(M_PI) + float(M_PI)/4.f);
+                    src = GetCaster()->GetNearPosition(22.36f, float(M_PI));
+
+                    SummonHorseLine(horses, src, tgtR);
+                }
+
+                void Register() override
+                {
+                    OnCast += SpellCastFn(spell_spectral_charge_SpellScript::HandleDummy);
+                }
+        };
+
+        SpellScript* GetSpellScript() const override
+        {
+            return new spell_spectral_charge_SpellScript();
+        }
+};
+
+class at_kara_spectral_charge : public AreaTriggerEntityScript
+{
+    public:
+        at_kara_spectral_charge() : AreaTriggerEntityScript("at_kara_spectral_charge")
+        {}
+
+        struct at_kara_spectral_charge_AI : public AreaTriggerAI
+        {
+            explicit at_kara_spectral_charge_AI(AreaTrigger* at) : AreaTriggerAI(at)
+            {}
+
+            void SetupSpline()
+            {
+                if (!at->GetCaster())
+                    return;
+
+                std::vector<G3D::Vector3> points;
+                float dist = 100.f;
+
+                G3D::Vector3 src = { at->GetPositionX(), at->GetPositionY(), at->GetPositionZ() };
+                G3D::Vector3 tgt;
+
+                tgt.x = src.x + (dist * cosf(at->GetOrientation()));
+                tgt.y = src.y + (dist * sinf(at->GetOrientation()));
+                tgt.z = src.z;
+
+                float dx = (tgt.x - src.x);
+                float dy = (tgt.y - src.y);
+                float dz = (tgt.z - src.z);
+
+                for (uint32 i = 0; i < 100; ++i)
+                {
+                    src.x += (dx/dist);
+                    src.y += (dy/dist);
+
+                    points.push_back(src);
+                }
+
+                at->InitSplines(points, at->GetDuration() * 1.5f);
+            }
+
+            void OnInitialize() override
+            {
+                _borned = false;
+                _timerBorn = 0;
+            }
+
+            void OnUnitEnter(Unit* target) override
+            {
+                if (target && target->GetTypeId() == TYPEID_PLAYER)
+                    at->GetCaster()->CastSpell(target, SPELL_SPECTRAL_CHARGE_DMG, true);
+            }
+
+            void OnUpdate(uint32 diff) override
+            {
+                if (_borned)
+                    return;
+
+                _timerBorn += diff;
+
+                if (_timerBorn >= 250)
+                {
+                    _borned = true;
+                    SetupSpline();
+                }
+            }
+
+            private:
+                bool _borned;
+                uint32 _timerBorn;
+        };
+
+        AreaTriggerAI* GetAI(AreaTrigger* at) const override
+        {
+            return new at_kara_spectral_charge_AI(at);
+        }
+};
+
 void AddSC_boss_new_attumen()
 {
     new boss_new_attumen();
@@ -739,4 +893,6 @@ void AddSC_boss_new_attumen()
     new npc_kara_intagible_presence();
     new spell_attumen_riderless();
     new spell_attumen_intagible_presence();
+    new spell_attumen_spectral_charge();
+    new at_kara_spectral_charge();
 }

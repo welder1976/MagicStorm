@@ -5,7 +5,7 @@
 #include "Creature.h"
 #include "ObjectMgr.h"
 
-#define COSScriptName "freakz_instance_court_of_stars"
+#define COSScriptName "instance_court_of_stars"
 #define DataHeader "COS"
 
 constexpr uint32 EncounterCount = 3;
