@@ -191,112 +191,101 @@ static const Position RagamuffinCoordinates[6] =
 ## npc_stormwind_infantry
 ######*/
 
-class npc_stormwind_infantry : public CreatureScript
+struct npc_stormwind_infantry : public ScriptedAI
 {
-public:
-    npc_stormwind_infantry() : CreatureScript("npc_stormwind_infantry") { }
+    npc_stormwind_infantry(Creature* creature) : ScriptedAI(creature) { }
 
-    CreatureAI* GetAI(Creature* creature) const override
+    uint32 Yell;
+    uint32 WillSay;
+    uint32 SayChance;
+    uint32 waitTime;
+    ObjectGuid wolfTarget;
+
+    void Reset() override
     {
-        return new npc_stormwind_infantryAI (creature);
+        wolfTarget = ObjectGuid::Empty;
+        me->SetSheath(SHEATH_STATE_MELEE);
+        Yell = urand(40, 60) * IN_MILLISECONDS;
+        WillSay = urand(0, 100);
+        SayChance = urand(1, 15);
+        waitTime = urand(0, 2000);
     }
 
-    struct npc_stormwind_infantryAI : public ScriptedAI
+    void DamageTaken(Unit* doneBy, uint32& damage) override
     {
-        npc_stormwind_infantryAI(Creature* creature) : ScriptedAI(creature) { }
+        if (doneBy->ToCreature())
+            if (me->GetHealth() <= damage || me->GetHealthPct() <= 80.0f)
+                damage = 0;
+    }
 
-        uint32 Yell;
-        uint32 WillSay;
-        uint32 SayChance;
-        uint32 waitTime;
-        ObjectGuid wolfTarget;
+    void DamageDealt(Unit* target, uint32& damage, DamageEffectType /*damageType*/) override
+    {
+        if (target->ToCreature())
+            if (target->GetHealth() <= damage || target->GetHealthPct() <= 70.0f)
+                damage = 0;
+    }
 
-        void Reset() override
+    void UpdateAI(uint32 diff) override
+    {
+        if (Yell <= diff)
         {
-            wolfTarget = ObjectGuid::Empty;
-            me->SetSheath(SHEATH_STATE_MELEE);
-            Yell = urand(40, 60) * IN_MILLISECONDS;
-            WillSay = urand(0, 100);
-            SayChance = urand(1, 15);
-            waitTime = urand(0, 2000);
-        }
-
-        void DamageTaken(Unit* doneBy, uint32& damage) override
-        {
-            if (doneBy->ToCreature())
-                if (me->GetHealth() <= damage || me->GetHealthPct() <= 80.0f)
-                    damage = 0;
-        }
-
-        void DamageDealt(Unit* target, uint32& damage, DamageEffectType /*damageType*/) override
-        {
-            if (target->ToCreature())
-                if (target->GetHealth() <= damage || target->GetHealthPct() <= 70.0f)
-                    damage = 0;
-        }
-
-        void UpdateAI(uint32 diff) override
-        {
-            if (Yell <= diff)
+            if (WillSay <= SayChance)
             {
-                if (WillSay <= SayChance)
-                {
-                    Talk(INFANTRY_COMBAT_YELL);
-                    Yell = urand(40, 60) * IN_MILLISECONDS;
-                }
+                Talk(INFANTRY_COMBAT_YELL);
+                Yell = urand(40, 60) * IN_MILLISECONDS;
             }
-            else Yell -= diff;
+        }
+        else Yell -= diff;
 
-            DoMeleeAttackIfReady();
+        DoMeleeAttackIfReady();
 
-            if (waitTime && waitTime >= diff)
+        if (waitTime && waitTime >= diff)
+        {
+            waitTime -= diff;
+            return;
+        }
+
+        waitTime = urand(10000, 20000);
+
+        if (!wolfTarget.IsEmpty())
+        {
+            if (Creature* wolf = ObjectAccessor::GetCreature(*me, wolfTarget))
             {
-                waitTime -= diff;
-                return;
-            }
-
-            waitTime = urand(10000, 20000);
-
-            if (!wolfTarget.IsEmpty())
-            {
-                if (Creature* wolf = ObjectAccessor::GetCreature(*me, wolfTarget))
+                if (wolf->IsAlive())
                 {
-                    if (wolf->IsAlive())
+                    if (me->GetVictim() != wolf)
                     {
-                        if (me->GetVictim() != wolf)
-                        {
-                            me->getThreatManager().addThreat(wolf, 1000000.0f);
-                            wolf->getThreatManager().addThreat(me, 1000000.0f);
-                            me->Attack(wolf, true);
-                        }
-                    }
-                    else
-                    {
-                        wolf->DespawnOrUnsummon();
-                        wolfTarget = ObjectGuid::Empty;
+                        me->getThreatManager().addThreat(wolf, 1000000.0f);
+                        wolf->getThreatManager().addThreat(me, 1000000.0f);
+                        me->Attack(wolf, true);
                     }
                 }
-            }
-            else
-            {
-                Position wolfPos = me->GetPosition();
-                GetPositionWithDistInFront(me, 2.5f, wolfPos);
-
-                float z = me->GetMap()->GetHeight(me->GetPhaseShift(), wolfPos.GetPositionX(), wolfPos.GetPositionY(), wolfPos.GetPositionZ());
-                wolfPos.m_positionZ = z;
-
-                if (Creature* wolf = me->SummonCreature(NPC_BLACKROCK_BATTLE_WORG, wolfPos))
+                else
                 {
-                    me->getThreatManager().addThreat(wolf, 1000000.0f);
-                    wolf->getThreatManager().addThreat(me, 1000000.0f);
-                    AttackStart(wolf);
-                    wolf->SetFacingToObject(me);
-                    wolfTarget = wolf->GetGUID();
-                    wolf->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+                    wolf->DespawnOrUnsummon();
+                    wolfTarget = ObjectGuid::Empty;
                 }
             }
         }
-    };
+        else
+        {
+            Position wolfPos = me->GetPosition();
+            GetPositionWithDistInFront(me, 2.5f, wolfPos);
+
+            float z = me->GetMap()->GetHeight(me->GetPhaseShift(), wolfPos.GetPositionX(), wolfPos.GetPositionY(), wolfPos.GetPositionZ());
+            wolfPos.m_positionZ = z;
+
+            if (Creature* wolf = me->SummonCreature(NPC_BLACKROCK_BATTLE_WORG, wolfPos))
+            {
+                me->getThreatManager().addThreat(wolf, 1000000.0f);
+                wolf->getThreatManager().addThreat(me, 1000000.0f);
+                AttackStart(wolf);
+                wolf->SetFacingToObject(me);
+                wolfTarget = wolf->GetGUID();
+                wolf->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+            }
+        }
+    }
 };
 
 /*######
@@ -460,69 +449,58 @@ struct npc_brother_paxton : public ScriptedAI
 ## npc_stormwind_injured_soldier
 ######*/
 
-class npc_stormwind_injured_soldier : public CreatureScript
+struct npc_stormwind_injured_soldier : public npc_escortAI
 {
-public:
-    npc_stormwind_injured_soldier() : CreatureScript("npc_stormwind_injured_soldier") { }
+    npc_stormwind_injured_soldier(Creature* creature) : npc_escortAI(creature) { }
 
-    CreatureAI* GetAI(Creature* creature) const override
+    void Reset() override
     {
-        return new npc_stormwind_injured_soldierAI(creature);
+        _clicker = nullptr;
+
+        me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+        me->SetStandState(UNIT_STAND_STATE_DEAD);
     }
 
-    struct npc_stormwind_injured_soldierAI : public npc_escortAI
+    void OnSpellClick(Unit* Clicker, bool& /*result*/) override
     {
-        npc_stormwind_injured_soldierAI(Creature* creature) : npc_escortAI(creature) { }
-
-        void Reset() override
-        {
-            _clicker = nullptr;
-
-            me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
-            me->SetStandState(UNIT_STAND_STATE_DEAD);
-        }
-
-        void OnSpellClick(Unit* Clicker, bool& /*result*/) override
-        {
-            if (!Clicker->IsPlayer())
-                return;
-
-            _clicker = Clicker;
-            me->CastSpell(me, SPELL_HEAL_VISUAL, true);
-            me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
-            me->SetStandState(UNIT_STAND_STATE_STAND);
-
-            me->GetScheduler().Schedule(Milliseconds(1000), [this](TaskContext /*task*/)
-            {
-                if (_clicker)
-                    me->SetFacingToObject(_clicker);
-
-                Talk(TEXT_INJURED_SOLDIER, _clicker);
-                me->HandleEmoteCommand(RAND(EMOTE_ONESHOT_SALUTE, EMOTE_ONESHOT_CHEER));
-            });
-
-            me->GetScheduler().Schedule(Milliseconds(3000), [this](TaskContext /*task*/)
-            {
-                Start(false, true);
-            });
-        }
-
-        void WaypointReached(uint32 waypointId) override
-        {
-            if (waypointId == 5)
-            {
-                me->DespawnOrUnsummon(1000);
-                me->SetRespawnDelay(10);
-            }
-        }
-
-        void EnterCombat(Unit* /*who*/) override
-        {
+        if (!Clicker->IsPlayer())
             return;
-        }
 
-        Unit* _clicker;
-    };
+        _clicker = Clicker;
+        me->CastSpell(me, SPELL_HEAL_VISUAL, true);
+        me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+        me->SetStandState(UNIT_STAND_STATE_STAND);
+
+        me->GetScheduler().Schedule(Milliseconds(1000), [this](TaskContext /*task*/)
+        {
+            if (_clicker)
+                me->SetFacingToObject(_clicker);
+
+            Talk(TEXT_INJURED_SOLDIER, _clicker);
+            me->HandleEmoteCommand(RAND(EMOTE_ONESHOT_SALUTE, EMOTE_ONESHOT_CHEER));
+        });
+
+        me->GetScheduler().Schedule(Milliseconds(3000), [this](TaskContext /*task*/)
+        {
+            Start(false, true);
+        });
+    }
+
+    void WaypointReached(uint32 waypointId) override
+    {
+        if (waypointId == 5)
+        {
+            me->DespawnOrUnsummon(1000);
+            me->SetRespawnDelay(10);
+        }
+    }
+
+    void EnterCombat(Unit* /*who*/) override
+    {
+        return;
+    }
+
+    Unit* _clicker;
 };
 
 /*######
@@ -613,112 +591,99 @@ struct npc_blackrock_spy : public ScriptedAI
 ## npc_training_dummy_elwynn
 ######*/
 
-class npc_training_dummy_start_zones : public CreatureScript
+struct npc_training_dummy_start_zones : Scripted_NoMovementAI
 {
-public:
-    npc_training_dummy_start_zones() : CreatureScript("npc_training_dummy_start_zones") { }
+    npc_training_dummy_start_zones(Creature* creature) : Scripted_NoMovementAI(creature) { }
 
-    struct npc_training_dummy_start_zonesAI : Scripted_NoMovementAI
+    uint32 resetTimer;
+
+    void Reset() override
     {
-        npc_training_dummy_start_zonesAI(Creature* creature) : Scripted_NoMovementAI(creature)
-        {}
+        me->SetControlled(true, UNIT_STATE_STUNNED);//disable rotate
+        me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK, true);//imune to knock aways like blast wave
 
-        uint32 resetTimer;
+        resetTimer = 5000;
+    }
 
-        void Reset() override
+    void EnterEvadeMode(EvadeReason /*why*/) override
+    {
+        if (!_EnterEvadeMode())
+            return;
+
+        Reset();
+    }
+
+    void MoveInLineOfSight(Unit* p_Who) override
+    {
+        if (!me->IsWithinDistInMap(p_Who, 25.f) && p_Who->IsInCombat())
         {
-            me->SetControlled(true, UNIT_STATE_STUNNED);//disable rotate
-            me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK, true);//imune to knock aways like blast wave
-
-            resetTimer = 5000;
+            me->RemoveAllAurasByCaster(p_Who->GetGUID());
+            me->getHostileRefManager().deleteReference(p_Who);
         }
+    }
 
-        void EnterEvadeMode(EvadeReason /*why*/) override
+    void DamageTaken(Unit* doneBy, uint32& damage) override
+    {
+        resetTimer = 5000;
+        damage = 0;
+
+        if (doneBy->HasAura(SPELL_AUTORITE))
         {
-            if (!_EnterEvadeMode())
-                return;
-
-            Reset();
-        }
-
-        void MoveInLineOfSight(Unit* p_Who) override
-        {
-            if (!me->IsWithinDistInMap(p_Who, 25.f) && p_Who->IsInCombat())
+            if (Player* player = doneBy->ToPlayer())
             {
-                me->RemoveAllAurasByCaster(p_Who->GetGUID());
-                me->getHostileRefManager().deleteReference(p_Who);
+                player->KilledMonsterCredit(44175);
+                player->KilledMonsterCredit(44548);
             }
         }
+    }
 
-        void DamageTaken(Unit* doneBy, uint32& damage) override
+    void EnterCombat(Unit* /*who*/) override
+    {
+        return;
+    }
+
+    void SpellHit(Unit* Caster, const SpellInfo* Spell) override
+    {
+        switch (Spell->Id)
         {
-            resetTimer = 5000;
-            damage = 0;
-
-            if (doneBy->HasAura(SPELL_AUTORITE))
+            case SPELL_CHARGE:
+            case SPELL_ASSURE:
+            case SPELL_EVISCERATION:
+            case SPELL_MOT_DOULEUR_1:
+            case SPELL_MOT_DOULEUR_2:
+            case SPELL_NOVA:
+            case SPELL_CORRUPTION_1:
+            case SPELL_CORRUPTION_2:
+            case SPELL_CORRUPTION_3:
+            case SPELL_PAUME_TIGRE:
             {
-                if (Player* player = doneBy->ToPlayer())
+                if (Player* player = Caster->ToPlayer())
                 {
                     player->KilledMonsterCredit(44175);
                     player->KilledMonsterCredit(44548);
-
                 }
+                break;
             }
+            default:
+                break;
         }
+    }
 
-        void EnterCombat(Unit* /*who*/) override
-        {
-            return;
-        }
-
-        void SpellHit(Unit* Caster, const SpellInfo* Spell) override
-        {
-            switch (Spell->Id)
-            {
-                case SPELL_CHARGE:
-                case SPELL_ASSURE:
-                case SPELL_EVISCERATION:
-                case SPELL_MOT_DOULEUR_1:
-                case SPELL_MOT_DOULEUR_2:
-                case SPELL_NOVA:
-                case SPELL_CORRUPTION_1:
-                case SPELL_CORRUPTION_2:
-                case SPELL_CORRUPTION_3:
-                case SPELL_PAUME_TIGRE:
-                {
-                    if (Player* player = Caster->ToPlayer())
-                    {
-                        player->KilledMonsterCredit(44175);
-                        player->KilledMonsterCredit(44548);
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-
-        void UpdateAI(uint32 diff) override
-        {
-            if (!UpdateVictim())
-                return;
-
-            if (!me->HasUnitState(UNIT_STATE_STUNNED))
-                me->SetControlled(true, UNIT_STATE_STUNNED);//disable rotate
-
-            if (resetTimer <= diff)
-            {
-                EnterEvadeMode(EVADE_REASON_OTHER);
-                resetTimer = 5000;
-            }
-            else
-                resetTimer -= diff;
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const override
+    void UpdateAI(uint32 diff) override
     {
-        return new npc_training_dummy_start_zonesAI(creature);
+        if (!UpdateVictim())
+            return;
+
+        if (!me->HasUnitState(UNIT_STATE_STUNNED))
+            me->SetControlled(true, UNIT_STATE_STUNNED);//disable rotate
+
+        if (resetTimer <= diff)
+        {
+            EnterEvadeMode(EVADE_REASON_OTHER);
+            resetTimer = 5000;
+        }
+        else
+            resetTimer -= diff;
     }
 };
 
@@ -726,31 +691,20 @@ public:
 ## spell_quest_fear_no_evil
 ######*/
 
-class spell_quest_fear_no_evil : public SpellScriptLoader
+class spell_quest_fear_no_evil : public SpellScript
 {
-public:
-    spell_quest_fear_no_evil() : SpellScriptLoader("spell_quest_fear_no_evil") { }
+    PrepareSpellScript(spell_quest_fear_no_evil);
 
-    class spell_quest_fear_no_evil_SpellScript : public SpellScript
+    void OnDummy(SpellEffIndex /*effIndex*/)
     {
-        PrepareSpellScript(spell_quest_fear_no_evil_SpellScript);
+        if (GetCaster())
+            if (GetCaster()->ToPlayer())
+                GetCaster()->ToPlayer()->KilledMonsterCredit(50047);
+    }
 
-        void OnDummy(SpellEffIndex /*effIndex*/)
-        {
-            if (GetCaster())
-                if (GetCaster()->ToPlayer())
-                    GetCaster()->ToPlayer()->KilledMonsterCredit(50047);
-        }
-
-        void Register() override
-        {
-            OnEffectHitTarget += SpellEffectFn(spell_quest_fear_no_evil_SpellScript::OnDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
-        }
-    };
-
-    SpellScript* GetSpellScript() const override
+    void Register() override
     {
-        return new spell_quest_fear_no_evil_SpellScript();
+        OnEffectHitTarget += SpellEffectFn(spell_quest_fear_no_evil::OnDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
     }
 };
 
@@ -758,41 +712,30 @@ public:
 ## spell_quest_extincteur
 ######*/
 
-class spell_quest_extincteur : public SpellScriptLoader
+class spell_quest_extincteur : public SpellScript
 {
-public:
-    spell_quest_extincteur() : SpellScriptLoader("spell_quest_extincteur") { }
+    PrepareSpellScript(spell_quest_extincteur);
 
-    class spell_quest_extincteur_SpellScript : public SpellScript
+    void OnDummy(SpellEffIndex /*effIndex*/)
     {
-        PrepareSpellScript(spell_quest_extincteur_SpellScript);
+        Unit* caster = GetCaster();
+        Creature* fire = GetHitCreature();
 
-        void OnDummy(SpellEffIndex /*effIndex*/)
-        {
-            Unit* caster = GetCaster();
-            Creature* fire = GetHitCreature();
+        if (!caster || !fire)
+            return;
 
-            if (!caster || !fire)
-                return;
+        if (fire->GetEntry() != NPC_FIRE)
+            return;
 
-            if (fire->GetEntry() != NPC_FIRE)
-                return;
+        if (Player* player = caster->ToPlayer())
+            player->KilledMonsterCredit(NPC_FIRE, fire->GetGUID());
 
-            if (Player* player = caster->ToPlayer())
-                player->KilledMonsterCredit(NPC_FIRE, fire->GetGUID());
+        fire->DespawnOrUnsummon();
+    }
 
-            fire->DespawnOrUnsummon();
-        }
-
-        void Register() override
-        {
-            OnEffectHitTarget += SpellEffectFn(spell_quest_extincteur_SpellScript::OnDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
-        }
-    };
-
-    SpellScript* GetSpellScript() const override
+    void Register() override
     {
-        return new spell_quest_extincteur_SpellScript();
+        OnEffectHitTarget += SpellEffectFn(spell_quest_extincteur::OnDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
     }
 };
 
@@ -1302,13 +1245,13 @@ struct npc_hogger_minion : public ScriptedAI
 
 void AddSC_elwyn_forest()
 {
-    new npc_stormwind_infantry();
+    RegisterCreatureAI(npc_stormwind_infantry);
     RegisterCreatureAI(npc_brother_paxton);
-    new npc_stormwind_injured_soldier();
+    RegisterCreatureAI(npc_stormwind_injured_soldier);
     RegisterCreatureAI(npc_blackrock_spy);
-    new npc_training_dummy_start_zones();
-    new spell_quest_fear_no_evil();
-    new spell_quest_extincteur();
+    RegisterCreatureAI(npc_training_dummy_start_zones);
+    RegisterSpellScript(spell_quest_fear_no_evil);
+    RegisterSpellScript(spell_quest_extincteur);
     RegisterCreatureAI(npc_hogger);
     RegisterCreatureAI(npc_hogger_minion);
 }
