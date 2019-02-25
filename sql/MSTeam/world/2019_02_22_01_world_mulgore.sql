@@ -5,6 +5,7 @@ INSERT INTO creature_sparring_template (AttackerEntry, VictimEntry, HealthLimitP
 UPDATE creature SET unit_flags = 33555200, unit_flags2 = 0, dynamicflags = 0 WHERE guid IN (260516, 260361, 260414, 260413, 260353, 260411, 260357, 260465, 260163, 260355, 260466, 260170, 260359, 260415, 260167, 260274);
 UPDATE creature SET unit_flags = 33555200, unit_flags2 = 0, dynamicflags = 0 WHERE guid IN (260469, 260281, 260356, 260166, 260412, 260515, 260280, 260468, 260273, 260464, 260410, 260419, 260418, 260471, 260467, 260463);
 UPDATE creature SET unit_flags = 33555200, unit_flags2 = 0, dynamicflags = 0 WHERE guid IN (260470, 260275, 260164, 260172, 260279, 260354, 260416, 260352, 260169, 260360, 260358, 260171, 260514, 260165, 260462, 260278);
+UPDATE creature SET unit_flags = 33555200, unit_flags2 = 0, dynamicflags = 0 WHERE guid IN (260168, 260417, 260512, 260277, 260276, 260282, 260513);
 DELETE FROM `smart_scripts` WHERE `entryorguid` IN (36942, -260180, -260183, -260473, -260519, -260626, -260654, -260420, -260421, -260673, -260364, -260475, -260572)  AND `source_type` = 0;
 DELETE FROM `smart_scripts` WHERE `entryorguid` IN (-260593, -260652, -260422, -260656, -260700, -260671, -260702, -260689, -260569, -260574, -260182, -260687, -260571) AND `source_type` = 0;
 DELETE FROM `smart_scripts` WHERE `entryorguid` IN (-260545, -260568, -260651, -260366, -260591, -260181, -260701, -260713, -260287, -260628, -260625, -260286, -260712) AND `source_type` = 0;
@@ -207,11 +208,20 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 (-260291, 0, 3, 0, 60, 0, 100, 512, 1000, 1000, 10000, 10000, 49, 0, 0, 0, 0, 0, 0, 19, 36943, 15, 0, 0, 0, 0, 0, "Fledgling Brave - On Update - Attack Start (Creature ID: 36943)");
 DELETE FROM `smart_scripts` WHERE `entryorguid` = 38345 AND `source_type` = 0;
 DELETE FROM `smart_scripts` WHERE `entryorguid` = 38345*100 AND `source_type` = 9;
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 202112 AND `source_type` = 1;
 INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
-(38345, 0, 0, 0, 38, 0, 100, 1, 1, 1, 0, 0, 80, 3834500, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Data Set 1 1 - Run Script"),
+(38345, 0, 0, 0, 38, 0, 100, 1, 1, 1, 0, 0, 80, 38345*100, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Data Set 1 1 - Run Script"),
 (38345*100, 9, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 59, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Set Run On"),
 (38345*100, 9, 1, 0, 0, 0, 100, 0, 0, 0, 0, 0, 91, 8, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Remove Field Bytes 8 (Kneel State)"),
 (38345*100, 9, 2, 0, 0, 0, 100, 0, 1500, 1500, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Say Text Line 0"),
 (38345*100, 9, 3, 0, 0, 0, 100, 0, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Set Active On"),
 (38345*100, 9, 4, 0, 0, 0, 100, 0, 3000, 3000, 0, 0, 46, 100, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Move Forward (100 Yards)"),
-(38345*100, 9, 5, 0, 0, 0, 100, 0, 4000, 4000, 0, 0, 41, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Force Despawn");
+(38345*100, 9, 5, 0, 0, 0, 100, 0, 4000, 4000, 0, 0, 41, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Captured Brave - On Script - Force Despawn"),
+(202112, 1, 0, 0, 70, 0, 100, 0, 2, 0, 0, 0, 45, 1, 1, 0, 0, 0, 0, 19, 38345, 5, 0, 0, 0, 0, 0, "Quilboar Cage - On GO State Changed - Set Data 1 1 (Creature ID: 38345, 5 Yards)");
+UPDATE creature SET spawntimesecs = 60 WHERE id = 38345;
+UPDATE creature SET spawndist = 0, MovementType = 0 WHERE guid = 260106 AND id = 106;
+UPDATE creature_text SET BroadcastTextID = 38323 WHERE CreatureID = 36712 AND GroupID = 0 AND ID = 0;
+UPDATE creature_text SET BroadcastTextID = 38303 WHERE CreatureID = 2981 AND GroupID = 0 AND ID = 0;
+UPDATE creature_text SET BroadcastTextID = 38304 WHERE CreatureID = 2981 AND GroupID = 1 AND ID = 0;
+UPDATE creature_text SET BroadcastTextID = 38305 WHERE CreatureID = 2981 AND GroupID = 2 AND ID = 0;
+UPDATE creature_text SET BroadcastTextID = 38306 WHERE CreatureID = 2981 AND GroupID = 3 AND ID = 0;
