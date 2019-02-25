@@ -85,3 +85,5 @@ INSERT INTO `gameobject_questitem` (`GameObjectEntry`, `Idx`, `ItemId`, `Verifie
 (210020, 8, 73213, 22566),
 (210020, 9, 76391, 22566),
 (210020, 10, 73210, 22566);
+
+UPDATE `gameobject_template` SET `ScriptName`='go_scroll_post' WHERE `entry`= 210986;

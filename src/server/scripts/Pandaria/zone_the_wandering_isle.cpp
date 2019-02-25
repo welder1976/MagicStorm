@@ -2572,6 +2572,28 @@ public:
     }
 };
 
+/// go_scroll_post - 210986
+enum eScrollPost
+{
+    QUEST_THE_LESSON_OF_THE_BURNING_SCROLL = 29408,
+    CREDIT_BURN_THE_EDICT_OF_TEMPERANCE = 59570
+};
+
+class go_scroll_post : public GameObjectScript
+{
+public:
+    go_scroll_post() : GameObjectScript("go_scroll_post") {}
+
+    bool OnGossipHello(Player* player, GameObject* go) override
+    {
+        if (player->GetQuestStatus(QUEST_THE_LESSON_OF_THE_BURNING_SCROLL) == QUEST_STATUS_INCOMPLETE)
+            player->KilledMonsterCredit(CREDIT_BURN_THE_EDICT_OF_TEMPERANCE);
+
+        go->DestroyForPlayer(player);
+        return true;
+    }
+};
+
 void AddSC_the_wandering_isle()
 {
     new at_cave_of_meditation();
@@ -2617,5 +2639,6 @@ void AddSC_the_wandering_isle()
     new spell_pandaren_faction_choice();
     new spell_faction_choice_trigger();
     new go_wandering_weapon_rack();
+    new go_scroll_post();
     new spell_balloon_exit_timer();
 }
