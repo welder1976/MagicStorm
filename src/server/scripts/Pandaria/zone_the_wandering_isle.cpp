@@ -2582,12 +2582,15 @@ enum eScrollPost
 class go_scroll_post : public GameObjectScript
 {
 public:
-    go_scroll_post() : GameObjectScript("go_scroll_post") {}
+    go_scroll_post() : GameObjectScript("go_scroll_post") { }
 
     bool OnGossipHello(Player* player, GameObject* go) override
     {
         if (player->GetQuestStatus(QUEST_THE_LESSON_OF_THE_BURNING_SCROLL) == QUEST_STATUS_INCOMPLETE)
             player->KilledMonsterCredit(CREDIT_BURN_THE_EDICT_OF_TEMPERANCE);
+
+        if (player->HasAura(114610))
+            player->RemoveAura(114610);
 
         go->DestroyForPlayer(player);
         return true;
