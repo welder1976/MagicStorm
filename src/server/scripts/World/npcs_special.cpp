@@ -2343,6 +2343,115 @@ struct npc_puzzle_box_of_yogg_saron : public ScriptedAI
     }
 };
 
+class npc_training_dummy_healing : public CreatureScript
+{
+public:
+    npc_training_dummy_healing() : CreatureScript("npc_training_dummy_healing") { }
+
+    struct npc_training_dummy_healingAI : Scripted_NoMovementAI
+    {
+        npc_training_dummy_healingAI(Creature* p_Creature) : Scripted_NoMovementAI(p_Creature) { }
+
+        uint32 m_ResetTimer;
+
+        void Reset() override
+        {
+            m_ResetTimer = 0;
+
+            /*if (!me->isAlive())
+                me->Respawn(true);*/
+
+            me->SetHealth(1);
+            me->DisableHealthRegen();
+            me->AddUnitState(UnitState::UNIT_STATE_STUNNED);
+        }
+
+        void HealReceived(Unit* /*p_Healer*/, uint32& /*p_HealAmount*/) override
+        {
+            m_ResetTimer = 20 * TimeConstants::IN_MILLISECONDS;
+        }
+
+        void UpdateAI(uint32 const p_Diff) override
+        {
+            if (m_ResetTimer)
+            {
+                if (m_ResetTimer <= p_Diff)
+                    Reset();
+                else
+                    m_ResetTimer -= p_Diff;
+            }
+        }
+    };
+
+    CreatureAI* GetAI(Creature* p_Creature) const override
+    {
+        return new npc_training_dummy_healingAI(p_Creature);
+    }
+};
+
+class npc_training_dummy_tanking : public CreatureScript
+{
+public:
+    npc_training_dummy_tanking() : CreatureScript("npc_training_dummy_tanking") { }
+
+    struct npc_training_dummy_tankingAI : Scripted_NoMovementAI
+    {
+        npc_training_dummy_tankingAI(Creature* p_Creature) : Scripted_NoMovementAI(p_Creature) { }
+
+        uint32 m_ResetTimer;
+
+        void Reset() override
+        {
+            m_ResetTimer = 0;
+
+            /*if (!me->isAlive())
+                me->Respawn(true);*/
+
+            me->AddUnitState(UnitState::UNIT_STATE_ROOT);
+
+            me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK, true);        ///< Immune to knock aways like blast wave
+            me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK_DEST, true);   ///< Immune to knock back effects like Whiplash
+        }
+
+        void DamageDealt(Unit* /*p_Victim*/, uint32& /*p_Damage*/, DamageEffectType /*p_DamageType*/) override
+        {
+            m_ResetTimer = 10 * TimeConstants::IN_MILLISECONDS;
+        }
+
+        /*void EnterEvadeMode() override
+        {
+            if (!_EnterEvadeMode())
+                return;
+
+            Reset();
+        }*/
+
+        void UpdateAI(uint32 const p_Diff) override
+        {
+            if (!UpdateVictim())
+                return;
+
+            if (!me->HasUnitState(UnitState::UNIT_STATE_ROOT))
+                me->AddUnitState(UnitState::UNIT_STATE_ROOT);
+
+            if (m_ResetTimer)
+            {
+                if (m_ResetTimer <= p_Diff)
+                    EnterEvadeMode();
+                else
+                    m_ResetTimer -= p_Diff;
+            }
+
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* p_Creature) const override
+    {
+        return new npc_training_dummy_tankingAI(p_Creature);
+    }
+};
+
 void AddSC_npcs_special()
 {
     new npc_air_force_bots();
@@ -2370,4 +2479,6 @@ void AddSC_npcs_special()
     new npc_allied_race_infos("npc_allied_race_infos_voidelf", 29);
     new npc_allied_race_infos("npc_allied_race_infos_draenei", 30);
     RegisterCreatureAI(npc_puzzle_box_of_yogg_saron);
+    new npc_training_dummy_healing();
+    new npc_training_dummy_tanking();
 }
