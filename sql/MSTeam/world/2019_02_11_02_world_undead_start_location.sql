@@ -311,3 +311,24 @@ INSERT INTO creature_sparring_template (AttackerEntry, VictimEntry, HealthLimitP
 (49423, 49428, 75),
 (49428, 49424, 99),
 (49424, 49428, 75);
+UPDATE creature SET position_x = 2306.052, position_y = 1370.719, position_z = 33.333, orientation = 3.9777 WHERE guid = 193587 AND id = 1934;
+UPDATE creature SET position_x = 2336.662, position_y = 1389.882, position_z = 33.333, orientation = 1.4762 WHERE guid = 193879 AND id = 1934;
+UPDATE creature SET position_x = 2307.501, position_y = 1444.389, position_z = 33.333, orientation = 5.0343 WHERE guid = 193586 AND id = 1934;
+UPDATE creature SET position_x = 2283.967, position_y = 1414.648, position_z = 33.333, orientation = 0.0863 WHERE guid = 194076 AND id = 1934;
+UPDATE creature SET position_x = 2286.474, position_y = 1392.534, position_z = 33.333, orientation = 4.5552 WHERE guid = 193874 AND id = 1934;
+UPDATE creature SET position_x = 2283.378, position_y = 1178.46, position_z = 31.442, orientation = 2.4767 WHERE guid = 194060 AND id = 1934;
+UPDATE gameobject SET position_z = 33.8887 WHERE guid = 14292 AND id = 153473;
+UPDATE creature SET position_x = 2457.60003, position_y = 1277.307, position_z = 35.001, orientation = 5.4107 WHERE guid = 193793 AND id = 1547;
+UPDATE gameobject SET position_x = 2247.0612, position_y = 741.997, position_z = 34.587 WHERE guid = 95670 AND id = 1617;
+UPDATE gameobject SET position_x = 2235.9467, position_y = 734.772, position_z = 35.088 WHERE guid = 95671 AND id = 1617;
+UPDATE creature SET position_x = 2314.4924, position_y = 1013.669, position_z = 40.146, orientation = 1.7227 WHERE guid = 193796 AND id = 1547;
+UPDATE gameobject SET position_x = 2249.2399, position_y = 1247.213, position_z = 31.443 WHERE guid = 95719 AND id = 1617;
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 1521 AND `source_type` = 0;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(1521, 0, 0, 0, 1, 0, 100, 0, 60000, 60000, 180000, 180000, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Gretchen Dedmar - OOC - Say Text Line 0");
+DELETE FROM creature_text WHERE CreatureID = 1521;
+INSERT INTO creature_text (CreatureID, GroupID, ID, Text, Type, Language, Probability, Emote, Duration, Sound, Comment, BroadcastTextID) VALUES
+(1521, 0, 0, "So cold...", 12, 0, 100, 24, 0, 0, "Gretchen Dedmar", 39007),
+(1521, 0, 1, "The cold dark beckons...", 12, 0, 100, 24, 0, 0, "Gretchen Dedmar", 39008),
+(1521, 0, 2, "Save me from the cold!", 12, 0, 100, 24, 0, 0, "Gretchen Dedmar", 39009);
+UPDATE creature SET spawndist = 1, MovementType = 1 WHERE guid = 192642 AND id = 3549;
