@@ -166,6 +166,9 @@ enum DeathKnightSpells
     SPELL_DK_PESTILENT_PUSTULES                 = 194917,
     SPELL_DK_CASTIGATOR                         = 207305,
     SPELL_DK_UNHOLY_VIGOR                       = 196263,
+	SPELL_ART_VAMPIRIC_AURA                     = 238698,
+    SPELL_DK_INEXORABLE_ASSAULT                 = 253593,
+    SPELL_DK_INEXORABLE_ASSAULT_AURA            = 253595,
 };
 
 // 70656 - Advantage (T10 4P Melee Bonus)
@@ -2631,6 +2634,98 @@ struct at_dk_decomposing_aura : AreaTriggerAI
     }
 };
 
+// Vampiric Aura 238698
+// 7.3.5
+class spell_dk_vampiric_aura : public SpellScriptLoader
+{
+public:
+    spell_dk_vampiric_aura() : SpellScriptLoader("spell_dk_vampiric_aura") { }
+
+    class spell_dk_vampiric_aura_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_dk_vampiric_aura_SpellScript);
+
+        bool Validate(SpellInfo const* /*spellInfo*/) override
+        {
+            if (!sSpellMgr->GetSpellInfo(SPELL_ART_VAMPIRIC_AURA))
+                return false;
+            return true;
+        }
+
+        void FilterTargets(std::list<WorldObject*>& targets)
+        {
+            Unit* caster = GetCaster();
+
+            if (!caster)
+                return;
+
+            ObjectGuid casterGuid = caster->GetGUID();
+
+            targets.remove_if([casterGuid, caster](WorldObject* obj)
+            {
+                Unit* target = obj->ToUnit();
+
+                if (!target)
+                    return true;
+
+
+                if (target->GetGUID() == casterGuid)
+                    return false;
+
+                if (target->IsFriendlyTo(caster))
+                    return false;
+
+                return true;
+            });
+
+            if (targets.size() > 5)
+                Trinity::Containers::RandomResize(targets, 5);
+        }
+
+        void Register() override
+        {
+            OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_dk_vampiric_aura_SpellScript::FilterTargets, EFFECT_0, TARGET_UNIT_TARGET_CAN_RAID);
+        }
+    };
+
+    SpellScript* GetSpellScript() const override
+    {
+        return new spell_dk_vampiric_aura_SpellScript();
+    }
+};
+
+// 253593 Inexorable assault
+// 7.3.5
+class PlayerScript_inexorable_assault : public PlayerScript
+{
+public:
+    PlayerScript_inexorable_assault() : PlayerScript("PlayerScript_inexorable_assault") {}
+
+    uint32 checkTimer = 1000;
+
+    void OnUpdate(Player* player, uint32 diff) override
+    {
+        if (checkTimer <= diff)
+        {
+            if (player->HasAura(SPELL_DK_INEXORABLE_ASSAULT) && player->IsInCombat())
+            {
+                ObjectGuid targetGuid = player->GetTarget();
+                if (!targetGuid)
+                    return;
+
+                if (Unit* target = ObjectAccessor::GetUnit(*player, targetGuid))
+                    if (player->IsWithinLOSInMap(target))
+                        if (player->IsValidAttackTarget(target))
+                            if (player->GetDistance2d(target) <= 8.f)
+                                player->CastSpell(player, SPELL_DK_INEXORABLE_ASSAULT_AURA, true);
+
+            }
+            checkTimer = 1000;
+        }
+        else checkTimer -= diff;
+    }
+};
+
 void AddSC_deathknight_spell_scripts()
 {
     new spell_dk_advantage_t10_4p();
@@ -2695,5 +2790,7 @@ void AddSC_deathknight_spell_scripts()
     RegisterAuraScript(aura_dk_defile);
     RegisterAreaTriggerAI(at_dk_defile);
     RegisterSpellScript(spell_dk_blighted_rune_weapon);
+	new spell_dk_vampiric_aura();
+    new PlayerScript_inexorable_assault();
     RegisterAreaTriggerAI(at_dk_decomposing_aura);
 }
