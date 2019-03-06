@@ -77,7 +77,8 @@ UPDATE creature_template SET unit_flags = 570426112 WHERE entry IN (97594, 97712
 UPDATE creature SET spawndist = 10, MovementType = 1 WHERE id = 99656;
 UPDATE creature_template SET unit_flags = 33555202 WHERE entry = 99656;
 UPDATE creature SET position_x = 945.594238, position_y = 2877.602051, position_z = -5.200341, orientation = 0.867166 WHERE guid = 20541128 AND id = 97594;
-UPDATE creature_template SET DamageModifier = 4 WHERE entry IN (98460, 98458);
+UPDATE creature_template SET DamageModifier = 4 WHERE entry = 98460;
+UPDATE creature_template SET DamageModifier = 2 WHERE entry = 98458;
 DELETE FROM waypoint_data WHERE id IN (20541053, 20541062);
 INSERT INTO waypoint_data (id, point, position_x, position_y, position_z, move_type) VALUES
 (20541053, 1, 987.824, 3065.82, -10.2226, 1),
@@ -93,7 +94,7 @@ INSERT INTO waypoint_data (id, point, position_x, position_y, position_z, move_t
 (20541062, 1, 1003.63, 2903.45, -3.1701, 1),
 (20541062, 2, 999.71, 2871.21, 4.154523, 1),
 (20541062, 3, 976.265, 2874.51, 0.765384, 1),
-(20541062, 4, 969.206, 2919.95, -10.1481, 1),
+(20541062, 4, 968.617, 2924.81, -10.5328, 1),
 (20541062, 5, 985.578, 2926.59, -9.30305, 1),
 (20541062, 6, 1000.152, 2908.08, -4.2131, 1);
 UPDATE creature SET spawndist = 0, MovementType = 2 WHERE guid = 20540952 AND id = 98484;
@@ -178,3 +179,11 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 (94410, 0, 4, 0, 10, 0, 100, 1, 1, 30, 25000, 25000, 1, 0, 5000, 0, 0, 0, 0, 18, 30, 0, 0, 0, 0, 0, 0, "Allari the Souleater - Within 1-30 Range Out of Combat LoS - Say Line 0 (No Repeat)"),
 (94410, 0, 5, 0, 19, 0, 100, 0, 39049, 0, 0, 0, 1, 1, 5000, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Allari the Souleater - On Quest 'Eye On the Prize' Taken - Say Line 1");
 UPDATE creature_text SET BroadcastTextId = 96676 WHERE CreatureID = 94410 AND GroupID = 1 AND ID = 0;
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 98497 AND `source_type` = 0;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(98497, 0, 0, 0, 26, 0, 100, 1, 1, 15, 0, 0, 87, 9849701, 9849702, 9849703, 9849704, 9849705, 9849706, 1, 0, 0, 0, 0, 0, 0, 0, "Imp Mother - In Combat LoS - Run Random Script (No Repeat)"),
+(98497, 0, 1, 0, 0, 0, 100, 0, 2000, 3000, 15000, 18000, 11, 200393, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, "Imp Mother - In Combat - Cast 'Rain of Imp'"),
+(98497, 0, 2, 0, 0, 0, 100, 1, 1000, 1000, 5000, 5000, 1, 2, 2000, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Imp Mother - In Combat - Say Line 2 (No Repeat)"),
+(98497, 0, 3, 0, 2, 0, 100, 1, 30, 40, 0, 0, 1, 4, 5000, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Imp Mother - Between 30-40% Health - Say Line 4 (No Repeat)"),
+(98497, 0, 4, 0, 1, 0, 100, 1, 1000, 1000, 1000, 1000, 11, 188485, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Imp Mother - Out of Combat - Cast 'Fel Channelling' (No Repeat)"),
+(98497, 0, 5, 0, 7, 0, 100, 1, 0, 0, 0, 0, 11, 188485, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Imp Mother - On Evade - Cast 'Fel Channelling' (No Repeat)");
