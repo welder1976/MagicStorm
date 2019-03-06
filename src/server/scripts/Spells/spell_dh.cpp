@@ -156,6 +156,15 @@ enum DHSpells
     SPELL_DH_VENGEFUL_RETREAT               = 198793,
     SPELL_DH_VENGEFUL_RETREAT_FURY          = 203650,
     SPELL_DH_VENGEFUL_RETREAT_TRIGGER       = 198813,
+	SPELL_DH_SHATTER_SOUL_1                 = 209980,
+    SPELL_DH_SHATTER_SOUL_2                 = 209981,
+    SPELL_DH_SHATTER_SOUL_3                 = 209651,
+    SPELL_DH_VENGEANCE_DEMON_HUNTER         = 212613,
+    SPELL_DH_SHATTERED_SOULS_1              = 226258,
+    SPELL_DH_SHATTERED_SOULS_2              = 226263,
+    SPELL_DH_SHATTERED_SOULS_3              = 226370,
+    SPELL_DH_SHATTERED_SOULS_4              = 226264,
+    SPELL_DH_SHATTERED_SOULS_5              = 226259,
 };
 
 enum NemesisTargets
@@ -2924,6 +2933,56 @@ struct at_dh_shattered_souls : AreaTriggerAI
     }
 };
 
+// Shatter Soul - 209980, 209981, 209651
+class spell_dh_shatter_soul : public SpellScriptLoader
+{
+    public:
+    spell_dh_shatter_soul() : SpellScriptLoader("spell_dh_shatter_soul") {}
+
+    class spell_dh_shatter_soul_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_dh_shatter_soul_SpellScript);
+
+        void HandleHitTarget(SpellEffIndex /*effIndex*/)
+        {
+            if (Unit* caster = GetCaster())
+            {
+                if (WorldLocation const* dest = GetExplTargetDest())
+                {
+                    switch (GetSpellInfo()->Id)
+                    {
+                        case SPELL_DH_SHATTER_SOUL_1:
+                        {
+                            caster->CastSpell(dest->GetPositionX(), dest->GetPositionY(), dest->GetPositionZ(), caster->HasAura(SPELL_DH_VENGEANCE_DEMON_HUNTER) ? SPELL_DH_SHATTERED_SOULS_2 : SPELL_DH_SHATTERED_SOULS_3, true);
+                            return;
+                        }
+                        case SPELL_DH_SHATTER_SOUL_2:
+                        {
+                            caster->CastSpell(dest->GetPositionX(), dest->GetPositionY(), dest->GetPositionZ(), SPELL_DH_SHATTERED_SOULS_1, true);
+                            return;
+                        }
+                        case SPELL_DH_SHATTER_SOUL_3:
+                        {
+                            caster->CastSpell(dest->GetPositionX(), dest->GetPositionY(), dest->GetPositionZ(), caster->HasAura(SPELL_DH_VENGEANCE_DEMON_HUNTER) ? SPELL_DH_SHATTERED_SOULS_4 : SPELL_DH_SHATTERED_SOULS_5, true);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        void Register() override
+        {
+            OnEffectHit += SpellEffectFn(spell_dh_shatter_soul_SpellScript::HandleHitTarget, EFFECT_1, SPELL_EFFECT_TRIGGER_MISSILE);
+        }
+    };
+
+    SpellScript* GetSpellScript() const override
+    {
+        return new spell_dh_shatter_soul_SpellScript();
+    }
+};
+
 // Sigil of Silence - 202137
 // AreaTriggerID -  10714
 struct at_dh_sigil_of_silence : AreaTriggerAI
@@ -3324,6 +3383,7 @@ void AddSC_demon_hunter_spell_scripts()
     new spell_dh_vengeful_retreat();
     new spell_dh_vengeful_retreat_fury_refiller();
     new spell_dh_vengeful_retreat_trigger();
+	new spell_dh_shatter_soul();
     RegisterSpellScript(spell_dh_felblade);
     RegisterAuraScript(aura_dh_chaos_cleave);
 
@@ -3337,8 +3397,8 @@ void AddSC_demon_hunter_spell_scripts()
 
     /// Custom NPC scripts
     new npc_dh_spell_trainer();
-
-    new spell_dh_throw_glaive();
+	
+	new spell_dh_throw_glaive();
     RegisterAuraScript(spell_dh_infernal_strike_timer);
     RegisterAuraScript(spell_dh_momentum);
     new spell_dh_chaos_nova();
