@@ -24,6 +24,7 @@
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "SmartAI.h"
 #include "SpellScript.h"
 #include "PhasingHandler.h"
 #include "Player.h"
@@ -2273,9 +2274,9 @@ class npc_healers_active_bunny : public CreatureScript
 public:
     npc_healers_active_bunny() : CreatureScript("npc_healers_active_bunny") { }
 
-    struct npc_healers_active_bunnyAI : public ScriptedAI
+    struct npc_healers_active_bunnyAI : public SmartAI
     {
-        npc_healers_active_bunnyAI(Creature* creature) : ScriptedAI(creature) { }
+        npc_healers_active_bunnyAI(Creature* creature) : SmartAI(creature) { }
 
         void Reset()
         {
