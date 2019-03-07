@@ -25,6 +25,7 @@
 #include "SpellMgr.h"
 #include "ScriptedCreature.h"
 #include "SpellScript.h"
+#include "ScriptedGossip.h"
 
 /*
  * Dalaran above Karazhan
@@ -438,6 +439,119 @@ public:
     };
 };
 
+class npc_quest_49032 : public CreatureScript
+{
+public:
+    npc_quest_49032() : CreatureScript("npc_quest_49032") { }
+
+    bool OnQuestReward(Player* player, Creature* creature, const Quest *_Quest, uint32 /*slot*/) override
+    {
+        if (_Quest->GetQuestId() == 49032)
+        {
+            if (AchievementEntry const *ForgedforBattle = sAchievementStore.LookupEntry(10853))
+            {
+                player->CompletedAchievement(ForgedforBattle);
+            }
+        }
+
+        return true;
+    }
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_quest_49032AI(creature);
+    }
+
+    struct npc_quest_49032AI : public ScriptedAI
+    {
+        npc_quest_49032AI(Creature* creature) : ScriptedAI(creature) { }
+    };
+};
+
+// quest 47223
+class npc_tele_q47223 : public CreatureScript
+{
+public:
+    npc_tele_q47223() : CreatureScript("npc_tele_q47223") { }
+     struct npc_tele_q47223AI : public ScriptedAI
+    {
+        npc_tele_q47223AI(Creature* creature) : ScriptedAI(creature) { }
+         void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(47223) == QUEST_STATUS_INCOMPLETE)
+                {    
+                    if (player->IsInDist(me, 2.0f))
+                    {
+                       player->KilledMonsterCredit(122006);
+                    }
+                }
+            }
+        }
+    };
+     CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_tele_q47223AI(creature);
+    }
+};
+
+// quest 48507
+class npc_tele_q48507 : public CreatureScript
+{
+public:
+    npc_tele_q48507() : CreatureScript("npc_tele_q48507") { }
+     struct npc_tele_q48507AI : public ScriptedAI
+    {
+        npc_tele_q48507AI(Creature* creature) : ScriptedAI(creature) { }
+         void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(48507) == QUEST_STATUS_INCOMPLETE)
+                {    
+                    if (player->IsInDist(me, 2.0f))
+                    {
+                       player->KilledMonsterCredit(124365);
+                    }
+                }
+            }
+        }
+    };
+     CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_tele_q48507AI(creature);
+    }
+};
+
+// quest 42454
+class npc_tele_q42454 : public CreatureScript
+{
+public:
+    npc_tele_q42454() : CreatureScript("npc_tele_q42454") { }
+     struct npc_tele_q42454AI : public ScriptedAI
+    {
+        npc_tele_q42454AI(Creature* creature) : ScriptedAI(creature) { }
+         void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(42454) == QUEST_STATUS_INCOMPLETE)
+                {    
+                    if (player->IsInDist(me, 2.0f))
+                    {
+                       player->KilledMonsterCredit(107587);
+                    }
+                }
+            }
+        }
+    };
+     CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_tele_q42454AI(creature);
+    }
+};
+
 void AddSC_dalaran_legion()
 {
     new OnLegionArrival();
@@ -452,4 +566,8 @@ void AddSC_dalaran_legion()
     new player_artifact_choice();
     new npc_tele_q38970();
     new npc_quest_48954();
+    new npc_tele_q42454();
+    new npc_quest_49032();
+    new npc_tele_q47223();
+    new npc_tele_q48507();
 }
