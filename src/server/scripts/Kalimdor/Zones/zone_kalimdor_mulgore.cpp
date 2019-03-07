@@ -165,4 +165,5 @@ void AddSC_mulgore()
 {
     RegisterCreatureAI(npc_agitated_earth_spirit);
     RegisterCreatureAI(npc_kyle_the_frenzied);
+    RegisterSpellScript(spell_mulgore_funeral_offering);
 }
