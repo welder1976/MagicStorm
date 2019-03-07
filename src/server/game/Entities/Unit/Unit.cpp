@@ -9429,6 +9429,9 @@ bool Unit::IsDisallowedMountForm(uint32 spellId, ShapeshiftForm form, uint32 dis
 
     if (form)
     {
+        if (form == FORM_MOONKIN_FORM || form == FORM_MOONKIN_FORM_RESTORATION)
+            return false;
+
         SpellShapeshiftFormEntry const* shapeshift = sSpellShapeshiftFormStore.LookupEntry(form);
         if (!shapeshift)
             return true;
@@ -14695,23 +14698,6 @@ bool CombatLogSender::IsInRangeHelper(WorldObject const* object) const
 
     return object->GetExactDist2dSq(i_source) <= i_distSq;
 }
-
-bool Unit::IsDisallowedMountForm(uint32 spellId, ShapeshiftForm form, uint32 displayId) const
-{
-    if (SpellInfo const* transformSpellInfo = sSpellMgr->GetSpellInfo(spellId))
-        if (transformSpellInfo->HasAttribute(SPELL_ATTR0_CASTABLE_WHILE_MOUNTED))
-            return false;
-
-    if (form)
-    {
-      // THIS IS NEW: line 9-12
-      // ------------
-        if (form == FORM_MOONKIN_FORM || form == FORM_MOONKIN_FORM_RESTORATION)
-            return false;
-      // --------------
- SpellShapeshiftFormEntry const* shapeshift = sSpellShapeshiftFormStore.LookupEntry(form);
-        if (!shapeshift)
-            return true;
 
 void CombatLogSender::Visit(PlayerMapType& m)
 {

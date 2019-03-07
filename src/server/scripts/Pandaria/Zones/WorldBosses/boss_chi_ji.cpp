@@ -20,7 +20,7 @@
 #include "ScriptedCreature.h"
 #include "ObjectMgr.h"
 #include "MapManager.h"
-#include "../../scripts/Pandaria/timeless_isle.h"
+#include "../../scripts/Pandaria/Zones/timeless_isle.h"
 
 #define BOSS_CHI_JI 0
 
