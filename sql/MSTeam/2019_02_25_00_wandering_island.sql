@@ -90,4 +90,27 @@ DELETE FROM `creature_addon` WHERE `guid` = 280000119;
 INSERT INTO `creature_addon` (`guid`, `path_id`, `mount`, `bytes1`, `bytes2`, `emote`, `aiAnimKit`, `movementAnimKit`, `meleeAnimKit`, `auras`) VALUES
 (280000119, 0, 0, 65536, 1, 0, 0, 0, 0, '108900 60921 114600 126160');
 
+UPDATE creature SET unit_flags = 570721024 WHERE guid IN (21000319, 21000321, 21000320, 21000326, 21000315, 21000328, 21000339);
+DELETE FROM creature_sparring_template WHERE AttackerEntry IN (57132, 65472, 56730, 57205);
+INSERT INTO creature_sparring_template (AttackerEntry, VictimEntry, HealthLimitPct) VALUES
+(57132, 56730, 99),
+(57132, 57205, 99),
+(65472, 56730, 99),
+(65472, 57205, 99),
+(56730, 57132, 75),
+(57205, 57132, 75),
+(56730, 65472, 75),
+(57205, 65472, 75);
+UPDATE `creature_template` SET `AIName` = "SmartAI" WHERE `entry` = 65472;
+DELETE FROM `smart_scripts` WHERE `entryorguid` IN (-21000290, -21000322, -21000372, -21000384) AND `source_type` = 0;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(-21000290, 0, 0, 1, 1, 0, 100, 0, 1000, 1000, 10000, 10000, 49, 0, 0, 0, 0, 0, 0, 11, 56730, 10, 0, 0, 0, 0, 0, "Wu-Song Villager - OOC - Start Attack"),
+(-21000290, 0, 1, 0, 61, 0, 100, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 0, 11, 57205, 10, 0, 0, 0, 0, 0, "Wu-Song Villager - OOC - Start Attack"),
+(-21000322, 0, 0, 1, 1, 0, 100, 0, 1000, 1000, 10000, 10000, 49, 0, 0, 0, 0, 0, 0, 11, 56730, 10, 0, 0, 0, 0, 0, "Wu-Song Villager - OOC - Start Attack"),
+(-21000322, 0, 1, 0, 61, 0, 100, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 0, 11, 57205, 10, 0, 0, 0, 0, 0, "Wu-Song Villager - OOC - Start Attack"),
+(-21000372, 0, 0, 1, 1, 0, 100, 0, 1000, 1000, 10000, 10000, 49, 0, 0, 0, 0, 0, 0, 11, 56730, 10, 0, 0, 0, 0, 0, "Wu-Song Villager - OOC - Start Attack"),
+(-21000372, 0, 1, 0, 61, 0, 100, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 0, 11, 57205, 10, 0, 0, 0, 0, 0, "Wu-Song Villager - OOC - Start Attack"),
+(-21000384, 0, 0, 1, 1, 0, 100, 0, 1000, 1000, 10000, 10000, 49, 0, 0, 0, 0, 0, 0, 11, 56730, 10, 0, 0, 0, 0, 0, "Wu-Song Villager - OOC - Start Attack"),
+(-21000384, 0, 1, 0, 61, 0, 100, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 0, 11, 57205, 10, 0, 0, 0, 0, 0, "Wu-Song Villager - OOC - Start Attack");
+
 UPDATE `gameobject_template` SET `ScriptName` = "go_scroll_post" WHERE `entry` = 210986;
