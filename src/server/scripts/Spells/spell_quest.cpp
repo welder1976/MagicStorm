@@ -2799,9 +2799,9 @@ class spell_gen_firmament_stone_dummy : public SpellScriptLoader
 									plr->CastSpell(plr, SPELL_FIRMAMENT_3, true);
 									plr->GetSceneMgr().PlaySceneByPackageId(1401, 17);
 								}
-									
+
 							}
-					
+
 					}
             }
 
@@ -2886,5 +2886,5 @@ void AddSC_quest_spell_scripts()
     new spell_q11306_mixing_vrykul_blood();
     new spell_q11306_failed_mix_43376();
     new spell_q11306_failed_mix_43378();
-    new spell_gen_firmament_stone_dummy();
+	new spell_gen_firmament_stone_dummy();
 }

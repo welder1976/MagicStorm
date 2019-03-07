@@ -596,6 +596,64 @@ public:
     }
 };
 
+class npc_quest_43521 : public CreatureScript
+{
+public:
+    npc_quest_43521() : CreatureScript("npc_quest_43521") { }
+
+    bool OnQuestReward(Player* player, Creature* creature, const Quest *_Quest, uint32 /*slot*/) override
+    {
+        if (_Quest->GetQuestId() == 43521)
+        {
+            if (AchievementEntry const *ForgedforBattle = sAchievementStore.LookupEntry(10746))
+            {
+                player->CompletedAchievement(ForgedforBattle);
+            }
+        }
+
+        return true;
+    }
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_quest_43521AI(creature);
+    }
+
+    struct npc_quest_43521AI : public ScriptedAI
+    {
+        npc_quest_43521AI(Creature* creature) : ScriptedAI(creature) { }
+    };
+};
+
+class npc_quest_43520 : public CreatureScript
+{
+public:
+    npc_quest_43520() : CreatureScript("npc_quest_43520") { }
+
+    bool OnQuestReward(Player* player, Creature* creature, const Quest *_Quest, uint32 /*slot*/) override
+    {
+        if (_Quest->GetQuestId() == 43520)
+        {
+            if (AchievementEntry const *ForgedforBattle = sAchievementStore.LookupEntry(11144))
+            {
+                player->CompletedAchievement(ForgedforBattle);
+            }
+        }
+
+        return true;
+    }
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_quest_43520AI(creature);
+    }
+
+    struct npc_quest_43520AI : public ScriptedAI
+    {
+        npc_quest_43520AI(Creature* creature) : ScriptedAI(creature) { }
+    };
+};
+
 void AddSC_azsuna()
 {
     new scene_azsuna_runes();
@@ -606,4 +664,6 @@ void AddSC_azsuna()
     new spell_word_of_versatility();
     new go_sabotaged_portal_stabilizer();
     new spell_gen_radiant_ley_crystal();
+    new npc_quest_43521();
+    new npc_quest_43520();
 }
