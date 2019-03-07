@@ -552,6 +552,49 @@ public:
     }
 };
 
+// Quest In the blink of an eye 44663
+// 114561
+class npc_khadgar_upgraded_servant : public CreatureScript
+{
+public:
+    npc_khadgar_upgraded_servant() : CreatureScript("npc_khadgar_upgraded_servant") { }
+
+    bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest)
+    {
+        if (quest->GetQuestId() == 44663)
+        {
+
+            player->CastSpell(player, 225203, true);
+
+            player->KilledMonsterCredit(113762, ObjectGuid::Empty);
+            player->KilledMonsterCredit(114506, ObjectGuid::Empty);
+        }
+
+        return true;
+    }
+};
+
+// 86563
+class npc_khadgar_dalaran : public CreatureScript
+{
+public:
+    npc_khadgar_dalaran() : CreatureScript("npc_khadgar_dalaran") { }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        switch (action)
+        {
+        case 1:
+            player->CastSpell(player, 205098, true);
+            player->PlayerTalkClass->ClearMenus();
+            CloseGossipMenuFor(player);
+            break;
+        }
+
+        return true;
+    }
+};
+
 void AddSC_dalaran_legion()
 {
     new OnLegionArrival();
@@ -570,4 +613,6 @@ void AddSC_dalaran_legion()
     new npc_quest_49032();
     new npc_tele_q47223();
     new npc_tele_q48507();
+    new npc_khadgar_dalaran();
+    new npc_khadgar_upgraded_servant();
 }
