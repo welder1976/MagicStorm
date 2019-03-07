@@ -86,4 +86,8 @@ INSERT INTO `gameobject_questitem` (`GameObjectEntry`, `Idx`, `ItemId`, `Verifie
 (210020, 9, 76391, 22566),
 (210020, 10, 73210, 22566);
 
+DELETE FROM `creature_addon` WHERE `guid` = 280000119;
+INSERT INTO `creature_addon` (`guid`, `path_id`, `mount`, `bytes1`, `bytes2`, `emote`, `aiAnimKit`, `movementAnimKit`, `meleeAnimKit`, `auras`) VALUES
+(280000119, 0, 0, 65536, 1, 0, 0, 0, 0, '108900 60921 114600 126160');
+
 UPDATE `gameobject_template` SET `ScriptName` = "go_scroll_post" WHERE `entry` = 210986;
