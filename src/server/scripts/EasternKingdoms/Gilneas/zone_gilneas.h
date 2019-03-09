@@ -22,7 +22,7 @@
 
 enum Events
 {
-    EVENT_ACTIVE_OBJECT_CD = 101,
+    EVENT_ACTIVE_OBJECT_CD              = 101,
     EVENT_ANIMATION_START,
     EVENT_ANIMATION_STOP,
     EVENT_ANIMATION_SUBJECT,
@@ -264,8 +264,8 @@ enum Events
     DATA_GET_EVENTID,
     DATA_GUARD_INDEX,
 
-    PLAYER_GUID = 99991,
-    PASSENGER_GUID = 99998,
+    PLAYER_GUID                         = 99991,
+    PASSENGER_GUID                      = 99998
 };
 
 #endif

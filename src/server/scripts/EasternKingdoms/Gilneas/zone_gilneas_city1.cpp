@@ -132,28 +132,6 @@ enum eZoneGilneas
     CROWS_EVENT_DESPAWN                          = 2
 };
 
-// player
-class player_zone_gilneas_city1 : public PlayerScript
-{
-public:
-    player_zone_gilneas_city1() : PlayerScript("player_zone_gilneas_city1") { }
-
-    void OnQuestStatusChange(Player* player, uint32 questId) override
-    {
-        if (player->GetQuestStatus(questId) == QUEST_STATUS_INCOMPLETE ||
-            player->GetQuestStatus(questId) == QUEST_STATUS_COMPLETE)
-            return;
-
-        switch (questId)
-        {
-            case QUEST_THE_REBEL_LORDS_ARSENAL:
-                player->RemoveAura(SPELL_WORGEN_BITE);
-                player->AddAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_01, player);
-                break;
-        }
-    }
-};
-
 struct Coord final
 {
     float x;
@@ -183,6 +161,29 @@ const CrowFlyPosition CrowFlyPos[12]=
     {{-1650.79f, 2507.28f, 109.893f}, {-1645.28f, 2506.02f, 115.819f}},
 };
 
+// player
+class player_zone_gilneas_city1 : public PlayerScript
+{
+public:
+    player_zone_gilneas_city1() : PlayerScript("player_zone_gilneas_city1") { }
+
+    void OnQuestStatusChange(Player* player, uint32 questId) override
+    {
+        if (player->GetQuestStatus(questId) == QUEST_STATUS_INCOMPLETE ||
+            player->GetQuestStatus(questId) == QUEST_STATUS_COMPLETE)
+            return;
+
+        switch (questId)
+        {
+            case QUEST_THE_REBEL_LORDS_ARSENAL:
+                player->RemoveAura(SPELL_WORGEN_BITE);
+                player->AddAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_01, player);
+                break;
+        }
+    }
+};
+
+// 50260
 struct npc_gilnean_crow : public ScriptedAI
 {
     npc_gilnean_crow(Creature* creature) : ScriptedAI(creature), flying(false) { }
@@ -287,14 +288,14 @@ public:
         npc_gilneas_city_guard_gate_34864AI(Creature* creature) : ScriptedAI(creature) { }
 
         EventMap m_events;
-        uint8    m_say;
-        uint8    m_emote;
-        ObjectGuid     m_citicenGUID;
+        uint8 m_say;
+        uint8 m_emote;
+        ObjectGuid m_citizenGUID;
 
         void Reset() override
         {
             if (me->GetDistance2d(-1430.47f, 1345.55f) < 10.0f)
-                m_events.ScheduleEvent(EVENT_START_TALK_WITH_CITIZEN, urand(10000, 30000));
+                m_events.ScheduleEvent(EVENT_START_TALK_WITH_CITIZEN, 10s, 30s);
         }
 
         void UpdateAI(uint32 diff) override
@@ -307,32 +308,32 @@ public:
                 {
                     case EVENT_START_TALK_WITH_CITIZEN:
                     {
-                        m_citicenGUID = GetRandomCitizen();
-                        m_emote = RAND(EMOTE_STATE_COWER, EMOTE_STATE_TALK, EMOTE_ONESHOT_CRY, EMOTE_STATE_SPELL_PRECAST, EMOTE_STATE_EXCLAIM);
-                        m_say = urand(0, 2);
-                        if (Creature* npc = ObjectAccessor::GetCreature(*me, m_citicenGUID))
+                        m_citizenGUID = GetRandomCitizen();
+                        m_emote = RAND(EMOTE_ONESHOT_COWER, EMOTE_STATE_TALK, EMOTE_ONESHOT_CRY, EMOTE_ONESHOT_BEG, EMOTE_ONESHOT_EXCLAMATION, EMOTE_ONESHOT_POINT);
+                        m_say = 0;
+                        if (Creature* npc = ObjectAccessor::GetCreature(*me, m_citizenGUID))
                             npc->HandleEmoteCommand(m_emote);
-                        m_events.ScheduleEvent(EVENT_TALK_WITH_CITIZEN_1, urand(1200, 2000));
+                        m_events.ScheduleEvent(EVENT_TALK_WITH_CITIZEN_1, 2s + 200ms, 3s);
                         break;
                     }
                     case EVENT_TALK_WITH_CITIZEN_1:
                     {
-                        if (Creature* npc = ObjectAccessor::GetCreature(*me, m_citicenGUID))
+                        if (Creature* npc = ObjectAccessor::GetCreature(*me, m_citizenGUID))
                             npc->AI()->Talk(m_say);
-                        m_events.ScheduleEvent(EVENT_TALK_WITH_CITIZEN_2, 5000);
+                        m_events.ScheduleEvent(EVENT_TALK_WITH_CITIZEN_2, 5s);
                         break;
                     }
                     case EVENT_TALK_WITH_CITIZEN_2:
                     {
                         Talk(m_say);
-                        m_events.ScheduleEvent(EVENT_TALK_WITH_CITIZEN_3, 5000);
+                        m_events.ScheduleEvent(EVENT_TALK_WITH_CITIZEN_3, 5s);
                         break;
                     }
                     case EVENT_TALK_WITH_CITIZEN_3:
                     {
-                        if (Creature* npc = ObjectAccessor::GetCreature(*me, m_citicenGUID))
+                        if (Creature* npc = ObjectAccessor::GetCreature(*me, m_citizenGUID))
                             npc->HandleEmoteCommand(EMOTE_STATE_NONE);
-                        m_events.ScheduleEvent(EVENT_START_TALK_WITH_CITIZEN, urand(5000, 30000));
+                        m_events.ScheduleEvent(EVENT_START_TALK_WITH_CITIZEN, 5s, 30s);
                         break;
                     }
                 }
@@ -394,7 +395,6 @@ public:
         if (quest->GetQuestId() == QUEST_LOCKDOWN)
             if (Creature* citizen = creature->FindNearestCreature(NPC_PANICKED_CITIZEN, 20.0f))
                 citizen->AI()->Talk(0);
-
         return true;
     }
 
@@ -408,7 +408,7 @@ public:
 
         void Reset() override
         {
-            m_events.RescheduleEvent(EVENT_COUNT_COOLDOWN, 1000);
+            m_events.RescheduleEvent(EVENT_COUNT_COOLDOWN, 1s);
         }
 
         void MoveInLineOfSight(Unit* who) override
@@ -442,8 +442,8 @@ public:
                                         {
                                             --(itr)->second;
                                             m_playerGUID = player->GetGUID();
-                                            m_events.ScheduleEvent(EVENT_MASTER_RESET, 120000);
-                                            m_events.ScheduleEvent(EVENT_START_TALK_TO_GUARD, 1000);
+                                            m_events.ScheduleEvent(EVENT_MASTER_RESET, 120s);
+                                            m_events.ScheduleEvent(EVENT_START_TALK_TO_GUARD, 1s);
                                         }
 
                         for (std::map<ObjectGuid, int32>::iterator itr = cdList.begin(); itr != cdList.end();)
@@ -454,33 +454,33 @@ public:
                                 ++itr;
                         }
 
-                        m_events.ScheduleEvent(EVENT_COUNT_COOLDOWN, 1000);
+                        m_events.ScheduleEvent(EVENT_COUNT_COOLDOWN, 1s);
                         break;
                     }
                     case EVENT_START_TALK_TO_GUARD:
                     {
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                             Talk(0, player);
-                        m_events.ScheduleEvent(EVENT_TALK_TO_GUARD_1, 15000);
+                        m_events.ScheduleEvent(EVENT_TALK_TO_GUARD_1, 15s);
                         break;
                     }
                     case EVENT_TALK_TO_GUARD_1:
                     {
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                             Talk(1, player);
-                        m_events.ScheduleEvent(EVENT_TALK_TO_GUARD_2, 18000);
+                        m_events.ScheduleEvent(EVENT_TALK_TO_GUARD_2, 18s);
                         break;
                     }
                     case EVENT_TALK_TO_GUARD_2:
                     {
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                             Talk(2, player);
-                        m_events.ScheduleEvent(EVENT_TALK_TO_GUARD_3, 25000);
+                        m_events.ScheduleEvent(EVENT_TALK_TO_GUARD_3, 25s);
                         break;
                     }
                     case EVENT_TALK_TO_GUARD_3:
                     {
-                        m_events.ScheduleEvent(EVENT_MASTER_RESET, 1000);
+                        m_events.ScheduleEvent(EVENT_MASTER_RESET, 1s);
                         break;
                     }
                     case EVENT_MASTER_RESET:
@@ -514,7 +514,7 @@ public:
     }
 };
 
-/* 35660 // part showfight worgen <> liam */   /* Quest 14098 */
+/* 35660 *//* part showfight worgen <> liam *//* Quest 14098 */
 class npc_rampaging_worgen_35660 : public CreatureScript
 {
 public:
@@ -522,17 +522,19 @@ public:
 
     enum eNpc
     {
-        MOVE_TO_START_POSITION = 101,
+        MOVE_TO_START_POSITION     = 101,
         MOVE_TO_PRINCE_LIAM,
         MOVE_TO_DOOR,
-        EVENT_MOVE_TO_LIAM = 101,
+
+        EVENT_MOVE_TO_LIAM         = 101,
         EVENT_ATTACK_LIAM,
         EVENT_ENRAGE_COOLDOWN,
         EVENT_MOVE_TO_DOOR,
         EVENT_FOLLOW_CITIZEN1,
         EVENT_FOLLOW_CITIZEN2,
-        ACTION_START_ANIM_MERCANT = 101,
-        ACTION_START_ANIM_LIAM = 102,
+
+        ACTION_START_ANIM_MERCANT  = 101,
+        ACTION_START_ANIM_LIAM     = 102
     };
 
     struct npc_rampaging_worgen_35660AI : public ScriptedAI
