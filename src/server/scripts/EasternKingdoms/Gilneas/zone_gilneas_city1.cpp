@@ -115,6 +115,7 @@ enum eZoneGilneas
     SPELL_FROSTBOLT_VISUAL_ONLY                  = 74277,
     SPELL_HIDEOUS_BITE_WOUND                     = 76642,
     SPELL_RIDE_BUNNY_SEAT2                       = 84275,
+    SPELL_GILNEAN_CROW                           = 93275,
     SPELL_GILNEAS_CANNON_CAMERA                  = 93555,
     SPELL_FADE_OF_BLACK                          = 94053,
     SPELL_ALTERED_FORM                           = 94293,
@@ -126,6 +127,12 @@ enum eZoneGilneas
     SPELL_GENERIC_QUEST_INVISIBILITY_DETECTION_1 = 49416,
     SPELL_PHASE_QUEST_ZONE_SPECIFIC_01           = 59073,
 
+    EVENT_APPLY_HOVER_BYTES                      = 1,
+    EVENT_FLY_AWAY_1                             = 2,
+    EVENT_FLY_AWAY_2                             = 3,
+
+    POINT_NONE                                   = 0,
+    POINT_CROW_FLIGHT                            = 1
 };
 
 // player
@@ -148,6 +155,56 @@ public:
                 break;
         }
     }
+};
+
+struct npc_gilnean_crow : public PassiveAI
+{
+    npc_gilnean_crow(Creature* creature) : PassiveAI(creature) { }
+
+    void SpellHit(Unit* /*caster*/, SpellInfo const* spell) override
+    {
+        if (spell->Id == SPELL_GILNEAN_CROW)
+            _events.ScheduleEvent(EVENT_APPLY_HOVER_BYTES, 500ms);
+    }
+
+    void MovementInform(uint32 type, uint32 pointId) override
+    {
+        if (type == POINT_MOTION_TYPE && pointId == POINT_CROW_FLIGHT)
+        {
+            Position pos = me->GetRandomNearPosition(8.0f);
+            pos.m_positionZ = me->GetPositionZ() + 10.0f;
+            me->GetMotionMaster()->MovePoint(POINT_NONE, pos);
+            me->DespawnOrUnsummon(14s);
+        }
+    }
+
+    void UpdateAI(uint32 diff) override
+    {
+        _events.Update(diff);
+
+        while (uint32 eventId = _events.ExecuteEvent())
+        {
+            switch (eventId)
+            {
+                case EVENT_APPLY_HOVER_BYTES:
+                    me->RemoveByteFlag(UNIT_FIELD_BYTES_1, UNIT_BYTES_1_OFFSET_STAND_STATE, UNIT_BYTE1_FLAG_ALWAYS_STAND);
+                    me->SetByteFlag(UNIT_FIELD_BYTES_1, UNIT_BYTES_1_OFFSET_ANIM_TIER, UNIT_BYTE1_FLAG_UNK_3);
+                    _events.ScheduleEvent(EVENT_FLY_AWAY_1, 1s);
+                    break;
+                case EVENT_FLY_AWAY_1:
+                {
+                    Position pos = me->GetRandomNearPosition(7.0f);
+                    pos.m_positionZ = me->GetPositionZ() + 8.0f;
+                    me->GetMotionMaster()->MovePoint(POINT_CROW_FLIGHT, pos);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    }
+private:
+    EventMap _events;
 };
 
 // 34864
@@ -4484,6 +4541,7 @@ public:
 void AddSC_zone_gilneas_city1()
 {
     new player_zone_gilneas_city1();
+    RegisterCreatureAI(npc_gilnean_crow);
     new npc_gilneas_city_guard_gate_34864();
     new npc_prince_liam_greymane_34850();
     new npc_rampaging_worgen_35660();
@@ -4529,4 +4587,3 @@ void AddSC_zone_gilneas_city1()
     new npc_northgate_rebel_41015();
     new npc_frenzied_stalker_35627();
 };
-
