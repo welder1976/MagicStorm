@@ -143,8 +143,27 @@ private:
     ObjectGuid _playerGUID;
 };
 
+// 71898 Funeral Offering
+class spell_mulgore_funeral_offering : public SpellScript
+{
+    PrepareSpellScript(spell_mulgore_funeral_offering);
+
+    void HandleHitTarget(SpellEffIndex /*effIndex*/)
+    {
+        if (Creature* target = GetHitCreature())
+            if (GetCaster()->IsPlayer())
+                GetCaster()->ToPlayer()->KilledMonsterCredit(target->GetEntry());
+    }
+
+    void Register() override
+    {
+        OnEffectHitTarget += SpellEffectFn(spell_mulgore_funeral_offering::HandleHitTarget, EFFECT_1, SPELL_EFFECT_DUMMY);
+    }
+};
+
 void AddSC_mulgore()
 {
     RegisterCreatureAI(npc_agitated_earth_spirit);
     RegisterCreatureAI(npc_kyle_the_frenzied);
+    RegisterSpellScript(spell_mulgore_funeral_offering);
 }

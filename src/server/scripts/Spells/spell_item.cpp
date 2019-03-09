@@ -37,6 +37,7 @@
 #include "SpellHistory.h"
 #include "SpellMgr.h"
 #include "SpellScript.h"
+#include "SpellInfo.h"
 
 // Generic script for handling item dummy effects which trigger another spell.
 class spell_item_trigger_spell : public SpellScriptLoader
@@ -4663,6 +4664,39 @@ class aura_item_burning_essence : public AuraScript
     {
         OnEffectApply += AuraEffectApplyFn(aura_item_burning_essence::OnApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
         OnEffectRemove += AuraEffectRemoveFn(aura_item_burning_essence::OnRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+    }
+};
+
+// 207472 - Xavarics Magnum Opus (legendary item 132444 - Prydaz, Xavarics Magnum Opus)
+class spell_item_prydaz_abs : public SpellScriptLoader
+{
+public:
+    spell_item_prydaz_abs() : SpellScriptLoader("spell_item_prydaz_abs") { }
+ 
+    class spell_item_prydaz_abs_AuraScript : public AuraScript
+    {
+        PrepareAuraScript(spell_item_prydaz_abs_AuraScript);
+ 
+        void CalculateAmount(AuraEffect const* /*aurEff*/, int32& amount, bool & /*canBeRecalculated*/)
+        {
+            if (auto plr = GetCaster()->ToPlayer())
+            {
+                if (plr->isInTankSpec()) // for tank specs
+                    amount = plr->CountPctFromMaxHealth(GetSpellInfo()->GetEffect(EFFECT_0)->CalcValue(plr)) * 0.6f;
+                else
+                    amount = plr->CountPctFromMaxHealth(GetSpellInfo()->GetEffect(EFFECT_0)->CalcValue(plr));
+            }
+        }
+ 
+        void Register() override
+        {
+            DoEffectCalcAmount += AuraEffectCalcAmountFn(spell_item_prydaz_abs_AuraScript::CalculateAmount, EFFECT_0, SPELL_AURA_SCHOOL_ABSORB);
+        }
+    };
+ 
+    AuraScript* GetAuraScript() const override
+    {
+        return new spell_item_prydaz_abs_AuraScript();
     }
 };
 
