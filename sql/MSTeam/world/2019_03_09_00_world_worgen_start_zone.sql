@@ -4,10 +4,11 @@ UPDATE creature_text SET BroadcastTextId = 36126 WHERE CreatureID = 34850 AND Gr
 
 UPDATE creature_template SET flags_extra = 128 WHERE entry IN (35006, 35010);
 
-UPDATE gameobject SET state = 0 WHERE guid = 51003233 AND id = 195581;
+UPDATE gameobject_template_addon SET flags = 36 WHERE entry = 195581;
+UPDATE gameobject SET state = 1 WHERE guid = 51003233 AND id = 195581;
 UPDATE creature SET spawndist = 1, MovementType = 1 WHERE guid IN (20556383, 20556395, 20556387, 20556391, 20556247, 20556388, 20556390);
 
-UPDATE creature SET spawndist = 15, MovementType = 1 WHERE guid IN (20556212);
+UPDATE creature SET spawndist = 15, MovementType = 1 WHERE guid = 20556212;
 
 UPDATE creature SET position_x = -1494.238, position_y = 1336.437, position_z = 58.767, orientation = 1.931 WHERE guid = 20556295 AND id = 34867;
 UPDATE creature SET position_x = -1486.67, position_y = 1440.716, position_z = 59.125, orientation = 4.659 WHERE guid = 20556277 AND id = 34867;
@@ -235,3 +236,15 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (34867*100+19,9,0,0,0,0,100,0,0,0,0,0,48,1,0,0,0,0,0,1,0,0,0,0,0,0,0,"Shadowy Figure - On Script - Set Active On"),
 (34867*100+19,9,1,0,0,0,100,0,0,0,0,0,97,20,15,0,0,0,0,1,0,0,0,-1559.48,1377.65,73.239,0,"Shadowy Figure - On Script - Jump To Position"),
 (34867*100+19,9,2,0,0,0,100,0,2500,2500,0,0,48,0,0,0,0,0,0,1,0,0,0,0,0,0,0,"Shadowy Figure - On Script - Set Active Off");
+
+UPDATE `creature_template_addon` SET `bytes1` = 1 WHERE `entry` = 50260;
+UPDATE `creature_addon` SET `bytes1` = 1 WHERE `guid` IN (20556260, 20556290, 20556256, 20556272, 20556280, 20556252, 20556267, 20556250);
+UPDATE `creature_template` SET `ScriptName` = "npc_gilnean_crow", `InhabitType` = 4 WHERE `entry` = 50260;
+
+UPDATE creature_template SET AIName = "SmartAI" WHERE entry IN (35873, 35869, 44459, 44469);
+DELETE FROM `smart_scripts` WHERE `entryorguid` IN (35873, 35869, 44459, 44469) AND `source_type` = 0;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(35873, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 13236, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Celestine of the Harvest - On Reset - Cast Cosmetic Spell"),
+(35869, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 45104, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Vitus Darkwalker - On Reset - Cast Cosmetic Spell"),
+(44459, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 13236, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Celestine of the Harvest - On Reset - Cast Cosmetic Spell"),
+(44469, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 45104, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Vitus Darkwalker - On Reset - Cast Cosmetic Spell");

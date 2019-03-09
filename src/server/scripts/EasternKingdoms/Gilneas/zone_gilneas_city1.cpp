@@ -28,6 +28,8 @@
 #include "GridNotifiers.h"
 #include "ObjectAccessor.h"
 #include "MotionMaster.h"
+#include "MoveSplineInit.h"
+#include "MoveSpline.h"
 #include "PassiveAI.h"
 #include "Pet.h"
 #include "Player.h"
@@ -115,7 +117,6 @@ enum eZoneGilneas
     SPELL_FROSTBOLT_VISUAL_ONLY                  = 74277,
     SPELL_HIDEOUS_BITE_WOUND                     = 76642,
     SPELL_RIDE_BUNNY_SEAT2                       = 84275,
-    SPELL_GILNEAN_CROW                           = 93275,
     SPELL_GILNEAS_CANNON_CAMERA                  = 93555,
     SPELL_FADE_OF_BLACK                          = 94053,
     SPELL_ALTERED_FORM                           = 94293,
@@ -127,12 +128,8 @@ enum eZoneGilneas
     SPELL_GENERIC_QUEST_INVISIBILITY_DETECTION_1 = 49416,
     SPELL_PHASE_QUEST_ZONE_SPECIFIC_01           = 59073,
 
-    EVENT_APPLY_HOVER_BYTES                      = 1,
-    EVENT_FLY_AWAY_1                             = 2,
-    EVENT_FLY_AWAY_2                             = 3,
-
-    POINT_NONE                                   = 0,
-    POINT_CROW_FLIGHT                            = 1
+    CROWS_EVENT_SET_INVISIBLY                    = 1,
+    CROWS_EVENT_DESPAWN                          = 2
 };
 
 // player
@@ -157,25 +154,96 @@ public:
     }
 };
 
-struct npc_gilnean_crow : public PassiveAI
+struct Coord final
 {
-    npc_gilnean_crow(Creature* creature) : PassiveAI(creature) { }
+    float x;
+    float y;
+    float z;
+};
 
-    void SpellHit(Unit* /*caster*/, SpellInfo const* spell) override
+struct CrowFlyPosition final
+{
+    Coord FirstCoord;
+    Coord SecondCoord;
+};
+
+const CrowFlyPosition CrowFlyPos[12]=
+{
+    {{-1398.24f, 1455.26f, 39.6586f}, {-1403.93f, 1464.87f, 47.7066f}},
+    {{-1628.58f, 1320.29f, 27.7544f}, {-1626.90f, 1306.58f, 34.9702f}},
+    {{-1799.76f, 1564.33f, 34.9408f}, {-1788.64f, 1561.74f, 38.4683f}},
+    {{-1840.45f, 2299.17f, 50.2894f}, {-1850.23f, 2302.62f, 52.4776f}},
+    {{-1978.48f, 2319.58f, 36.5107f}, {-1979.80f, 2329.24f, 38.8598f}},
+    {{-1914.39f, 2406.48f, 37.4498f}, {-1916.48f, 2416.10f, 39.2891f}},
+    {{-1844.85f, 2328.28f, 47.8401f}, {-1836.64f, 2327.05f, 50.0315f}},
+    {{-1845.20f, 2502.86f, 6.67603f}, {-1839.71f, 2508.70f, 9.67311f}},
+    {{-2031.81f, 2280.29f, 28.7353f}, {-2043.98f, 2286.43f, 32.0705f}},
+    {{-2164.61f, 2213.12f, 27.4170f}, {-2169.48f, 2224.64f, 29.1592f}},
+    {{-1775.46f, 2380.44f, 51.9086f}, {-1767.75f, 2385.99f, 55.8622f}},
+    {{-1650.79f, 2507.28f, 109.893f}, {-1645.28f, 2506.02f, 115.819f}},
+};
+
+struct npc_gilnean_crow : public ScriptedAI
+{
+    npc_gilnean_crow(Creature* creature) : ScriptedAI(creature), flying(false) { }
+
+    EventMap _events;
+    uint8 pointId;
+    bool flying;
+
+    void InitializeAI() override
     {
-        if (spell->Id == SPELL_GILNEAN_CROW)
-            _events.ScheduleEvent(EVENT_APPLY_HOVER_BYTES, 500ms);
+        FindFlyId();
     }
 
-    void MovementInform(uint32 type, uint32 pointId) override
+    void FindFlyId()
     {
-        if (type == POINT_MOTION_TYPE && pointId == POINT_CROW_FLIGHT)
+        float dist = std::numeric_limits<float>::max();
+        int i = 0;
+
+        for (int j = 0; j < 12; ++j)
         {
-            Position pos = me->GetRandomNearPosition(8.0f);
-            pos.m_positionZ = me->GetPositionZ() + 10.0f;
-            me->GetMotionMaster()->MovePoint(POINT_NONE, pos);
-            me->DespawnOrUnsummon(14s);
+            float _dist = me->GetDistance2d(CrowFlyPos[j].FirstCoord.x, CrowFlyPos[j].FirstCoord.y);
+
+            if (dist > _dist)
+            {
+                dist = _dist;
+                i = j;
+            }
         }
+
+        pointId = i;
+    }
+
+    void FlyAway()
+    {
+        flying = true;
+
+        Movement::MoveSplineInit init(me);
+
+        G3D::Vector3 vertice0(CrowFlyPos[pointId].FirstCoord.x + irand(-4, 4), CrowFlyPos[pointId].FirstCoord.y + irand(-4, 4), CrowFlyPos[pointId].FirstCoord.z + irand(-4, 4));
+        init.Path().push_back(vertice0);
+
+        G3D::Vector3 vertice1(CrowFlyPos[pointId].SecondCoord.x + irand(-4, 4), CrowFlyPos[pointId].SecondCoord.y + irand(-4, 4), CrowFlyPos[pointId].SecondCoord.z + irand(-4, 4));
+        init.Path().push_back(vertice1);
+
+        init.SetFly();
+        init.SetSmooth();
+        init.SetVelocity(7.5f);
+        init.SetUncompressed();
+        init.Launch();
+        _events.ScheduleEvent(CROWS_EVENT_SET_INVISIBLY, 1s);
+    }
+
+    void Reset() override
+    {
+        flying = false;
+    }
+
+    void MoveInLineOfSight(Unit* who) override
+    {
+        if (!flying && who->GetTypeId() == TYPEID_PLAYER && me->IsWithinDistInMap(who, 15.0f))
+            FlyAway();
     }
 
     void UpdateAI(uint32 diff) override
@@ -186,25 +254,18 @@ struct npc_gilnean_crow : public PassiveAI
         {
             switch (eventId)
             {
-                case EVENT_APPLY_HOVER_BYTES:
-                    me->RemoveByteFlag(UNIT_FIELD_BYTES_1, UNIT_BYTES_1_OFFSET_STAND_STATE, UNIT_BYTE1_FLAG_ALWAYS_STAND);
-                    me->SetByteFlag(UNIT_FIELD_BYTES_1, UNIT_BYTES_1_OFFSET_ANIM_TIER, UNIT_BYTE1_FLAG_UNK_3);
-                    _events.ScheduleEvent(EVENT_FLY_AWAY_1, 1s);
+                case CROWS_EVENT_SET_INVISIBLY:
+                    me->SetVisible(false);
+                    _events.ScheduleEvent(CROWS_EVENT_DESPAWN, 3s);
                     break;
-                case EVENT_FLY_AWAY_1:
-                {
-                    Position pos = me->GetRandomNearPosition(7.0f);
-                    pos.m_positionZ = me->GetPositionZ() + 8.0f;
-                    me->GetMotionMaster()->MovePoint(POINT_CROW_FLIGHT, pos);
+                case CROWS_EVENT_DESPAWN:
+                    me->DisappearAndDie();
                     break;
-                }
                 default:
                     break;
             }
         }
     }
-private:
-    EventMap _events;
 };
 
 // 34864
