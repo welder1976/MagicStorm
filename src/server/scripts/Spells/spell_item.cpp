@@ -4700,6 +4700,41 @@ public:
     }
 };
 
+/// Sunreaver Beacon(For Horde) - 95568, Called by: 140300
+class spell_item_sunreaver_beacon : public SpellScriptLoader
+{
+    public:
+        spell_item_sunreaver_beacon() : SpellScriptLoader("spell_item_sunreaver_beacon") { }
+
+        class spell_item_sunreaver_beacon_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_item_sunreaver_beacon_SpellScript);
+
+            void HandleDummy()
+            {
+                Unit* Caster = GetCaster();
+                if (Caster == nullptr)
+                    return;
+
+                Player* Player = Caster->ToPlayer();
+                if (Player == nullptr)
+                    return;
+
+                Player->TeleportTo(1064, 7250.192871f, 6277.653320f, 19.352745f, 5.504922f);
+            }
+
+            void Register()
+            {
+                OnHit += SpellHitFn(spell_item_sunreaver_beacon_SpellScript::HandleDummy);
+            }
+        };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_item_sunreaver_beacon_SpellScript();
+        }
+};
+
 void AddSC_item_spell_scripts()
 {
     // 23074 Arcanite Dragonling
@@ -4713,6 +4748,7 @@ void AddSC_item_spell_scripts()
 
     new spell_item_aegis_of_preservation();
     new spell_item_arcane_shroud();
+    new spell_item_sunreaver_beacon();
     new spell_item_alchemist_stone();
     new spell_item_anger_capacitor<8>("spell_item_tiny_abomination_in_a_jar");
     new spell_item_anger_capacitor<7>("spell_item_tiny_abomination_in_a_jar_hero");

@@ -1,4 +1,4 @@
-DELETE FROM `gameobject_template` WHERE `entry` IN (248832 /*248832*/, 244940 /*244940*/, 251430 /*251430*/, 247501 /*247501*/, 245290 /*245290*/, 245188 /*245188*/, 244751 /*244751*/, 245215 /*245215*/, 251429 /*251429*/);
+﻿DELETE FROM `gameobject_template` WHERE `entry` IN (248832 /*248832*/, 244940 /*244940*/, 251430 /*251430*/, 247501 /*247501*/, 245290 /*245290*/, 245188 /*245188*/, 244751 /*244751*/, 245215 /*245215*/, 251429 /*251429*/);
 INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `size`, `Data0`, `Data1`, `Data2`, `Data3`, `Data4`, `Data5`, `Data6`, `Data7`, `Data8`, `Data9`, `Data10`, `Data11`, `Data12`, `Data13`, `Data14`, `Data15`, `Data16`, `Data17`, `Data18`, `Data19`, `Data20`, `Data21`, `Data22`, `Data23`, `Data24`, `Data25`, `Data26`, `Data27`, `Data28`, `Data29`, `Data30`, `Data31`, `Data32`, `RequiredLevel`, `VerifiedBuild`) VALUES
 (248832, 3, 9806, 'Warswords of Valor', 'questinteract', 'Wielding', '', 2, 1691, 62339, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 107711, 0, 0, 36386, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23420), -- 248832
 (244940, 10, 28714, 'Prison Runestone', 'questinteract', 'Destroying', '', 0.6, 99, 0, 46970, 500000, 0, 0, 60000, 0, 0, 0, 194802, 0, 0, 1, 24585, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23420), -- 244940
@@ -28,3 +28,7 @@ INSERT INTO `gameobject_template_addon` (`entry`, `faction`, `flags`) VALUES
 (250878, 0, 262144), -- 250878
 (252016, 0, 262144), -- 252016
 (250880, 0, 262144); -- 250880
+
+
+DELETE FROM spell_script_names WHERE `ScriptName` = ('spell_item_sunreaver_beacon');
+INSERT INTO spell_script_names VALUE (140300, 'spell_item_sunreaver_beacon'); 
