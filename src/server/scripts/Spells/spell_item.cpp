@@ -4822,6 +4822,44 @@ class spell_item_the_perfect_blossom : public SpellScriptLoader
         }
 };
 
+/// Super Simian Sphere - 37254
+/// Called by Going Ape - 48333
+class spell_item_super_simian_sphere : public SpellScriptLoader
+{
+    public:
+        spell_item_super_simian_sphere() : SpellScriptLoader("spell_item_super_simian_sphere") { }
+
+        class  spell_item_super_simian_sphere_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_item_super_simian_sphere_AuraScript);
+
+            enum eSpells
+            {
+                GoingApe = 48332
+            };
+
+            void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+            {
+                Player* l_Player = GetTarget()->ToPlayer();
+                if (l_Player == nullptr)
+                    return;
+
+                if (l_Player->HasAura(eSpells::GoingApe))
+                    l_Player->RemoveAura(eSpells::GoingApe);
+            }
+
+            void Register()
+            {
+                AfterEffectRemove += AuraEffectRemoveFn(spell_item_super_simian_sphere_AuraScript::OnRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+            }
+        };
+
+        AuraScript* GetAuraScript() const
+        {
+            return new spell_item_super_simian_sphere_AuraScript();
+        }
+};
+
 void AddSC_item_spell_scripts()
 {
     // 23074 Arcanite Dragonling
@@ -4839,6 +4877,7 @@ void AddSC_item_spell_scripts()
     new spell_item_arcane_shroud();
     new spell_item_sunreaver_beacon();
     new spell_item_alchemist_stone();
+    new spell_item_super_simian_sphere();
     new spell_item_anger_capacitor<8>("spell_item_tiny_abomination_in_a_jar");
     new spell_item_anger_capacitor<7>("spell_item_tiny_abomination_in_a_jar_hero");
     new spell_item_aura_of_madness();

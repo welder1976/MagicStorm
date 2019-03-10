@@ -38,3 +38,6 @@ INSERT INTO spell_script_names VALUE (187676, 'spell_item_the_perfect_blossom');
 
 DELETE FROM spell_script_names WHERE spell_id = 161399 AND ScriptName = "spell_item_Swapblaster";
 INSERT INTO `spell_script_names`(`spell_id`,`ScriptName`) VALUES ( 161399,'spell_item_Swapblaster');
+
+DELETE FROM spell_script_names WHERE `ScriptName` = ('spell_item_super_simian_sphere');
+INSERT INTO spell_script_names VALUE (48333, 'spell_item_super_simian_sphere'); 
