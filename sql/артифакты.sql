@@ -32,3 +32,9 @@ INSERT INTO `gameobject_template_addon` (`entry`, `faction`, `flags`) VALUES
 
 DELETE FROM spell_script_names WHERE `ScriptName` = ('spell_item_sunreaver_beacon');
 INSERT INTO spell_script_names VALUE (140300, 'spell_item_sunreaver_beacon'); 
+
+DELETE FROM spell_script_names WHERE `ScriptName` = ('spell_item_the_perfect_blossom');
+INSERT INTO spell_script_names VALUE (187676, 'spell_item_the_perfect_blossom');
+
+DELETE FROM spell_script_names WHERE spell_id = 161399 AND ScriptName = "spell_item_Swapblaster";
+INSERT INTO `spell_script_names`(`spell_id`,`ScriptName`) VALUES ( 161399,'spell_item_Swapblaster');
