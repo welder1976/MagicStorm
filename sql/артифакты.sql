@@ -52,3 +52,5 @@ INSERT INTO spell_script_names(spell_id, ScriptName) VALUES(161789, "spell_draen
 INSERT INTO spell_script_names(spell_id, ScriptName) VALUES(169926, "spell_draenor_profession");
 INSERT INTO spell_script_names(spell_id, ScriptName) VALUES(169925, "spell_draenor_profession");
 INSERT INTO spell_script_names(spell_id, ScriptName) VALUES(169924, "spell_draenor_profession");
+
+DELETE FROM creature_template WHERE entry IN(144173, 143208, 132601, 132604, 132603, 132600, 141997, 112673, 102671, 102281, 102279, 102267, 140146, 117473, 132602, 132599);
