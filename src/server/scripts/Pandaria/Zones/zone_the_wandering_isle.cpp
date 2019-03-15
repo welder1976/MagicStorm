@@ -2529,11 +2529,11 @@ public:
     }
 };
 
-/// go_scroll_post - 210986
-enum eScrollPost
+enum ScrollPost
 {
     QUEST_THE_LESSON_OF_THE_BURNING_SCROLL = 29408,
-    CREDIT_BURN_THE_EDICT_OF_TEMPERANCE = 59570
+
+    CREDIT_BURN_THE_EDICT_OF_TEMPERANCE    = 59570
 };
 
 class go_scroll_post : public GameObjectScript
@@ -2549,6 +2549,7 @@ public:
         if (player->HasAura(114610))
             player->RemoveAura(114610);
 
+        go->SendCustomAnim(go->GetGoAnimProgress());
         go->DestroyForPlayer(player);
         return true;
     }

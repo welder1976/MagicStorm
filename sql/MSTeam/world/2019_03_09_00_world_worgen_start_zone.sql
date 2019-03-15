@@ -472,6 +472,12 @@ INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `positio
 (205563250, 41, -1572.96, 1393.06, 36.4174, 0, 0, 1),
 (205563250, 42, -1567.68, 1390.9, 36.1181, 0, 0, 1);
 
+DELETE FROM gameobject WHERE guid IN (210120905, 210120906) AND id = 195453;
+INSERT INTO gameobject (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`) VALUES
+(210120905, 195453, 654, 0, 0, 0, 0, -1575.81, 1320.37, 35.6616, 3.19194, 0, 0, 0.999683, -0.0251718, 300, 0, 1),
+(210120906, 195453, 654, 0, 0, 0, 0, -1575.41, 1314.4, 35.6634, 3.24692, 0, 0, 0.998614, -0.052639, 300, 0, 1);
+UPDATE gameobject_template_addon SET flags = 4 WHERE entry = 195453;
+
 UPDATE creature_template SET AIName = "SmartAI" WHERE entry IN (35873, 35869, 44459, 44469);
 DELETE FROM `smart_scripts` WHERE `entryorguid` IN (35873, 35869, 44459, 44469) AND `source_type` = 0;
 INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
