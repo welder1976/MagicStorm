@@ -1208,6 +1208,53 @@ class spell_draenor_profession : public SpellScriptLoader
 
 };
 
+/// Challenger's Strongbox - 127831
+class item_script_challengers_strongbox : public ItemScript
+{
+    public:
+        item_script_challengers_strongbox() : ItemScript("item_script_challengers_strongbox") { }
+
+        bool OnOpen(Player* p_Player, Item* p_Item) override
+        {
+            ItemTemplate const* l_Proto = p_Item->GetTemplate();
+            LootTemplate const* l_LootTemplate = LootTemplates_Item.GetLootFor(l_Proto->ItemId);
+            if (!l_LootTemplate)
+                return false;
+
+            uint32 l_ItemID = 0;
+            std::list<ItemTemplate const*> l_LootTable;
+            std::vector<uint32> l_Items;
+            l_LootTemplate->FillAutoAssignationLoot(l_LootTable);
+            uint32 l_SpecID = p_Player->GetLootSpecId() ? p_Player->GetLootSpecId() : p_Player->GetSpecializationId(p_Player->GetActiveSpec());
+
+            for (ItemTemplate const* l_Template : l_LootTable)
+            {
+                if ((l_Template->AllowableClass && !(l_Template->AllowableClass & p_Player->getClassMask())) ||
+                    (l_Template->AllowableRace && !(l_Template->AllowableRace & p_Player->getRaceMask())))
+                    continue;
+
+                if (l_Template->HasSpec((SpecIndex)l_SpecID, p_Player->getLevel()))
+                    l_Items.push_back(l_Template->ItemId);
+            }
+
+            if (l_Items.empty())
+                return false;
+
+            l_ItemID = l_Items[urand(0, l_Items.size() - 1)];
+
+            if (!l_ItemID)
+                return false;
+
+            if (!p_Player->GetBagsFreeSlots())
+                return false;
+
+            p_Player->AddItem(l_ItemID, 1);
+            p_Player->SendDisplayToast(l_ItemID, 1, DISPLAY_TOAST_METHOD_LOOT, TOAST_TYPE_NEW_ITEM, false, false);
+            p_Player->DestroyItem(p_Item->GetBagSlot(), p_Item->GetSlot(), true);
+            return true;
+        }
+};
+
 void AddSC_item_scripts()
 {
     new item_only_for_flight();
@@ -1221,14 +1268,15 @@ void AddSC_item_scripts()
     new item_dehta_trap_smasher();
     new item_trident_of_nazjan();
     new item_captured_frog();
-	new item_satchel_of_battlefield_spoils();
+    new item_satchel_of_battlefield_spoils();
     new item_primal_egg();
     new item_pulsating_sac();
-	new loot_item_leggings_of_the_foregone();
+    new loot_item_leggings_of_the_foregone();
     new loot_item_gloves_of_the_foregone();
-	new loot_item_cloak_of_the_foreseen();
+    new loot_item_cloak_of_the_foreseen();
     new loot_item_shoulders_of_the_foreseen();
-	new loot_item_chest_of_the_foregone();
-	new loot_item_unsullied_plate_helmet();
+    new loot_item_chest_of_the_foregone();
+    new loot_item_unsullied_plate_helmet();
     new spell_draenor_profession();
+    new item_script_challengers_strongbox();
 }

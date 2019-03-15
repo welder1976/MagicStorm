@@ -1047,14 +1047,11 @@ class spell_mardum_back_to_black_temple : public SpellScript
     {
         if (Player* player = GetCaster()->ToPlayer())
         {
-            // Should be spell 192141 but we can't cast after a movie right now
-            //player->AddMovieDelayedTeleport(471, 1468, 4325.94, -620.21, -281.41, 1.658936);
-
             if (player->GetTeam() == ALLIANCE)
 
-                player->TeleportTo(471, 1468, 4325.94f, -620.21f, -281.41f, 1.658936f);
+                player->TeleportTo(1468, 4325.94f, -620.21f, -281.41f, 1.658936f);
             else
-                player->TeleportTo(471, 1468, 4325.94f, -620.21f, -281.41f, 1.658936f);
+                player->TeleportTo(1468, 4325.94f, -620.21f, -281.41f, 1.658936f);
 
             player->GetScheduler().Schedule(Seconds(2), [](TaskContext context)
             {

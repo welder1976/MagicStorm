@@ -54,3 +54,9 @@ INSERT INTO spell_script_names(spell_id, ScriptName) VALUES(169925, "spell_draen
 INSERT INTO spell_script_names(spell_id, ScriptName) VALUES(169924, "spell_draenor_profession");
 
 DELETE FROM creature_template WHERE entry IN(144173, 143208, 132601, 132604, 132603, 132600, 141997, 112673, 102671, 102281, 102279, 102267, 140146, 117473, 132602, 132599);
+
+
+UPDATE gameobject_template SET data1 = 272270 WHERE entry = 272270 AND type IN (3, 50);
+DELETE FROM `gameobject_loot_template` WHERE `entry` = '272270';
+INSERT INTO `gameobject_loot_template` (`entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`, `Comment`) VALUES
+('272270', '151623', '0', '0', '0', '1', '0', '1', '1', '');
