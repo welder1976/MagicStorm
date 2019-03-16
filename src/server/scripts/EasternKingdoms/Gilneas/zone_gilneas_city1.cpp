@@ -553,7 +553,7 @@ public:
             m_doorGUID = ObjectGuid::Empty;
             m_liamGUID = ObjectGuid::Empty;
             m_citizenGUID = ObjectGuid::Empty;
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
         }
 
         void JustDied(Unit* /*killer*/) override
@@ -568,17 +568,17 @@ public:
                 {
                     case MOVE_TO_START_POSITION:
                     {
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_LIAM, 500);
+                        m_events.ScheduleEvent(EVENT_MOVE_TO_LIAM, 500ms);
                         break;
                     }
                     case MOVE_TO_PRINCE_LIAM:
                     {
-                        m_events.ScheduleEvent(EVENT_ATTACK_LIAM, 100);
+                        m_events.ScheduleEvent(EVENT_ATTACK_LIAM, 100ms);
                         break;
                     }
                     case MOVE_TO_DOOR:
                     {
-                        m_events.ScheduleEvent(EVENT_FOLLOW_CITIZEN1, 3000);
+                        m_events.ScheduleEvent(EVENT_FOLLOW_CITIZEN1, 3s);
                         break;
                     }
                 }
@@ -589,8 +589,9 @@ public:
             if (!m_enrage && me->GetHealthPct() < 90.0f)
             {
                 me->CastSpell(me, SPELL_ENRAGE_56646);
+                Talk(0);
                 m_enrage = true;
-                m_events.ScheduleEvent(EVENT_ENRAGE_COOLDOWN, urand(121000, 150000));
+                m_events.ScheduleEvent(EVENT_ENRAGE_COOLDOWN, 121s, 150s);
             }
         }
 
@@ -629,7 +630,7 @@ public:
             {
                 case ACTION_START_ANIM_MERCANT:
                 {
-                    m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 1000);
+                    m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 1s);
                     break;
                 }
                 case ACTION_START_ANIM_LIAM:
@@ -685,7 +686,7 @@ public:
                     {
                         if (Creature* citizen = ObjectAccessor::GetCreature(*me, m_citizenGUID))
                             me->GetMotionMaster()->MoveFollow(citizen, 1.0f, 0.0f);
-                        m_events.ScheduleEvent(EVENT_FOLLOW_CITIZEN2, 5000);
+                        m_events.ScheduleEvent(EVENT_FOLLOW_CITIZEN2, 5s);
                         break;
                     }
                     case EVENT_FOLLOW_CITIZEN2:
@@ -718,6 +719,7 @@ public:
     enum eNpc
     {
         EVENT_START_NEXT_SHOWFIGHT  = 101,
+
         ACTION_START_ATTACK_LIAM    = 102,
     };
 
@@ -730,7 +732,7 @@ public:
 
         void Reset() override
         {
-            m_events.ScheduleEvent(EVENT_START_NEXT_SHOWFIGHT, 60000);
+            m_events.ScheduleEvent(EVENT_START_NEXT_SHOWFIGHT, 45s, 60s);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
         }
 
@@ -753,7 +755,7 @@ public:
         {
             m_worgenGUID = ObjectGuid::Empty;
             if (summon->GetEntry() == NPC_RAMPAGING_WORGEN_35660)
-                m_events.ScheduleEvent(EVENT_START_NEXT_SHOWFIGHT, 20000);
+                m_events.ScheduleEvent(EVENT_START_NEXT_SHOWFIGHT, 15s, 20s);
         }
 
         void UpdateAI(uint32 diff) override
