@@ -669,7 +669,7 @@ UPDATE creature SET position_z = 36.680 WHERE guid = 20556298;
 UPDATE creature SET position_z = 36.723 WHERE guid = 20556244;
 UPDATE creature SET position_z = 36.779 WHERE guid = 20556274;
 
-UPDATE creature_template SET unit_flags = 256, AIName = "" WHERE entry = 35660;
+UPDATE creature_template SET unit_flags = 256, dynamicflags = 0, AIName = "" WHERE entry = 35660;
 DELETE FROM `smart_scripts` WHERE `entryorguid` = 35660 AND `source_type` = 0;
 
 UPDATE creature_template SET AIName = "SmartAI" WHERE entry IN (35873, 35869, 44459, 44469);
