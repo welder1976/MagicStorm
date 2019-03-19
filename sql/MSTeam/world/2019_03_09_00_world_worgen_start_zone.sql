@@ -669,8 +669,46 @@ UPDATE creature SET position_z = 36.680 WHERE guid = 20556298;
 UPDATE creature SET position_z = 36.723 WHERE guid = 20556244;
 UPDATE creature SET position_z = 36.779 WHERE guid = 20556274;
 
-UPDATE creature_template SET unit_flags = 256, dynamicflags = 0, AIName = "" WHERE entry = 35660;
+UPDATE creature_template SET unit_flags = 768, dynamicflags = 12, AIName = "" WHERE entry = 35660;
 DELETE FROM `smart_scripts` WHERE `entryorguid` = 35660 AND `source_type` = 0;
+
+UPDATE creature_template SET AIName = "" WHERE entry = 34884;
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 34884 AND `source_type` = 0;
+
+UPDATE creature SET spawndist = 0, MovementType = 0 WHERE guid IN (20556349, 20556355, 20556568, 20556344, 20556337, 20556567, 20556571, 20556367, 20556371, 20556420);
+UPDATE creature SET position_x = -1465.02, position_y = 1428.99, position_z = 35.5567, orientation = 0.2218 WHERE guid = 20556344;
+UPDATE creature SET position_x = -1409.55, position_y = 1377.07, position_z = 35.5563, orientation = 2.307 WHERE guid = 20556571;
+UPDATE creature SET position_x = -1553.504, position_y = 1408.68, position_z = 35.5564, orientation = 4.141 WHERE guid = 20556399;
+UPDATE creature SET position_x = -1460.914, position_y = 1427.86, position_z = 35.5564, orientation = 3.092 WHERE guid = 20556337;
+UPDATE creature SET position_x = -1503.36, position_y = 1416.01, position_z = 35.5564, orientation = 1.912 WHERE guid = 20556414;
+UPDATE creature SET position_x = -1485.85, position_y = 1407.155, position_z = 35.5564, orientation = 3.15 WHERE guid = 20556393;
+UPDATE creature SET position_x = -1486.34, position_y = 1401.189, position_z = 35.5564, orientation = 0.48 WHERE guid = 20556394;
+UPDATE creature SET position_x = -1489.18, position_y = 1401.526, position_z = 35.5564, orientation = 2.058 WHERE guid = 20556396;
+UPDATE creature SET position_x = -1436.51, position_y = 1390.791, position_z = 35.5564, orientation = 2.311 WHERE guid = 20556392;
+UPDATE creature SET position_x = -1473.064, position_y = 1383.91, position_z = 35.5564, orientation = 5.909 WHERE guid = 20556374;
+UPDATE creature SET position_x = -1527.188, position_y = 1400.42, position_z = 35.5564, orientation = 0.187 WHERE guid = 20556342;
+UPDATE creature SET position_x = -1505.157, position_y = 1380.96, position_z = 35.5564, orientation = 6.109 WHERE guid = 20556560;
+UPDATE creature SET position_x = -1521.376, position_y = 1398.722, position_z = 35.5564, orientation = 2.885 WHERE guid = 20556359;
+UPDATE creature SET position_x = -1499.055, position_y = 1398.675, position_z = 35.5564, orientation = 0.529 WHERE guid = 20556368;
+UPDATE creature SET position_x = -1500.445, position_y = 1375.901, position_z = 35.5564, orientation = 1.682 WHERE guid = 20556398;
+UPDATE creature SET position_x = -1486.881, position_y = 1353.513, position_z = 35.5564, orientation = 1.056 WHERE guid = 20556338;
+UPDATE creature SET position_x = -1559.365, position_y = 1315.599, position_z = 35.881, orientation = 6.035 WHERE guid = 20556410;
+UPDATE creature SET position_x = -1556.967, position_y = 1314.526, position_z = 35.881, orientation = 2.699 WHERE guid = 20556376;
+UPDATE creature SET position_x = -1574.896, position_y = 1366.589, position_z = 35.8705, orientation = 6.147 WHERE guid = 20556554;
+UPDATE creature SET position_x = -1551.317, position_y = 1381.294, position_z = 35.556, orientation = 5.134 WHERE guid = 20556411;
+UPDATE creature SET position_x = -1552.971, position_y = 1381.404, position_z = 35.567, orientation = 3.787 WHERE guid = 20556409;
+UPDATE creature SET position_x = -1554.758, position_y = 1380.371, position_z = 35.611, orientation = 0.563 WHERE guid = 20556371;
+UPDATE creature SET position_x = -1550.376, position_y = 1379.521, position_z = 35.557, orientation = 2.067 WHERE guid = 20556420;
+UPDATE creature SET position_x = -1506.465, position_y = 1430.481, position_z = 35.557, orientation = 1.462 WHERE guid = 20556346;
+UPDATE creature SET position_x = -1466.934, position_y = 1427.992, position_z = 35.555, orientation = 0.488 WHERE guid = 20556341;
+UPDATE creature SET position_x = -1482.96, position_y = 1420.697, position_z = 35.556, orientation = 3.9 WHERE guid = 20556422;
+UPDATE creature SET position_x = -1458.179, position_y = 1357.743, position_z = 35.556, orientation = 0.496 WHERE guid = 20556419;
+UPDATE creature SET position_x = -1404.633, position_y = 1393.371, position_z = 35.556, orientation = 3.88 WHERE guid = 20556421;
+UPDATE creature SET position_x = -1497.817, position_y = 1426.773, position_z = 35.557, orientation = 3.32 WHERE guid = 20556417;
+
+UPDATE creature SET spawndist = 3, MovementType = 1 WHERE guid IN (20556569, 20556570, 20556416, 20556414, 20556377, 20556350, 20556368, 20556357, 20556356, 20556339, 20556353);
+UPDATE creature SET spawndist = 3, MovementType = 1 WHERE guid IN (20556380, 20556343, 20556605, 20556556, 20556379, 20556566, 20556346, 20556558, 20556381, 20556336, 20556557);
+UPDATE creature SET spawndist = 3, MovementType = 1 WHERE guid IN (20556422, 20556419, 20556421, 20556417);
 
 UPDATE creature_template SET AIName = "SmartAI" WHERE entry IN (35873, 35869, 44459, 44469);
 DELETE FROM `smart_scripts` WHERE `entryorguid` IN (35873, 35869, 44459, 44469) AND `source_type` = 0;

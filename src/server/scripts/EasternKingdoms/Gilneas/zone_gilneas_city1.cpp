@@ -2879,7 +2879,6 @@ public:
 
         /*void SpellHitTarget(Unit* mastiff, SpellInfo const* cSpell) override
         {
-
         }*/
 
         void JustDied(Unit* /*killer*/) override // Otherwise, player is stuck with pet corpse they cannot remove from world
