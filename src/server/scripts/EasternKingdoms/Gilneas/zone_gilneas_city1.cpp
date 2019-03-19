@@ -801,7 +801,10 @@ public:
 
     struct npc_gilneas_city_guard_34916AI : public ScriptedAI
     {
-        npc_gilneas_city_guard_34916AI(Creature* creature) : ScriptedAI(creature) { Initialize(); }
+        npc_gilneas_city_guard_34916AI(Creature* creature) : ScriptedAI(creature)
+        {
+            Initialize();
+        }
 
         EventMap m_events;
         float    m_minHealthPct;
@@ -819,7 +822,7 @@ public:
         void Reset() override
         {
             m_events.Reset();
-            m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, urand(900, 1200));
+            m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 900ms, 1s + 200ms);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
         }
 
@@ -848,7 +851,7 @@ public:
         void MovementInform(uint32 type, uint32 pointId) override
         {
             if (type == POINT_MOTION_TYPE && pointId == MOVE_TO_HOMEPOSITION)
-                m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 25);
+                m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 25ms);
         }
 
         void UpdateAI(uint32 diff) override
@@ -859,32 +862,32 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_CHECK_SHOWFIGHT:
-                {
-                    if (!me->IsAlive() || me->IsInCombat())
+                    case EVENT_CHECK_SHOWFIGHT:
                     {
-                        m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2500);
-                        return;
-                    }
-
-                    if (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 10.0f)
-                    {
-                        me->GetMotionMaster()->MovePoint(MOVE_TO_HOMEPOSITION, me->GetHomePosition());
-                        return;
-                    }
-
-                    if (Creature* worgen = me->FindNearestCreature(m_worgenList, 5.0f))
-                        if (!worgen->IsInCombat())
+                        if (!me->IsAlive() || me->IsInCombat())
                         {
-                            me->Attack(worgen, true);
-                            worgen->Attack(me, true);
-                            m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2500);
+                            m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2s + 500ms);
                             return;
                         }
 
-                    m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2500);
-                    break;
-                }
+                        if (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 10.0f)
+                        {
+                            me->GetMotionMaster()->MovePoint(MOVE_TO_HOMEPOSITION, me->GetHomePosition());
+                            return;
+                        }
+
+                        if (Creature* worgen = me->FindNearestCreature(m_worgenList, 5.0f))
+                            if (!worgen->IsInCombat())
+                            {
+                                me->Attack(worgen, true);
+                                worgen->Attack(me, true);
+                                m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2s + 500ms);
+                                return;
+                            }
+
+                        m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2s + 500ms);
+                        break;
+                    }
                 }
             }
 
@@ -905,7 +908,7 @@ public:
 class npc_rampaging_worgen_34884 : public CreatureScript
 {
 public:
-    npc_rampaging_worgen_34884() : CreatureScript("npc_rampaging_worgen_34884") {}
+    npc_rampaging_worgen_34884() : CreatureScript("npc_rampaging_worgen_34884") { }
 
     enum eNpc
     {
@@ -914,7 +917,7 @@ public:
 
     struct npc_rampaging_worgen_34884AI : public ScriptedAI
     {
-        npc_rampaging_worgen_34884AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_rampaging_worgen_34884AI(Creature* creature) : ScriptedAI(creature) { }
 
         EventMap m_events;
         bool m_enrage;
@@ -927,11 +930,12 @@ public:
 
         void DamageTaken(Unit* /*who*/, uint32& /*damage*/) override
         {
-            if (!m_enrage && me->GetHealthPct() < 90.0f)
+            if (!m_enrage && me->GetHealthPct() < 35.0f)
             {
                 me->CastSpell(me, SPELL_ENRAGE_8599);
+                Talk(0);
                 m_enrage = true;
-                m_events.ScheduleEvent(EVENT_ENRAGE_COOLDOWN, urand(121000, 150000));
+                m_events.ScheduleEvent(EVENT_ENRAGE_COOLDOWN, 121s, 150s);
             }
         }
 
@@ -943,11 +947,11 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_ENRAGE_COOLDOWN:
-                {
-                    m_enrage = false;
-                    break;
-                }
+                    case EVENT_ENRAGE_COOLDOWN:
+                    {
+                        m_enrage = false;
+                        break;
+                    }
                 }
             }
 
