@@ -1209,7 +1209,7 @@ class spell_draenor_profession : public SpellScriptLoader
 };
 
 /// Challenger's Strongbox - 127831
-class item_script_challengers_strongbox : public ItemScript
+/*class item_script_challengers_strongbox : public ItemScript
 {
     public:
         item_script_challengers_strongbox() : ItemScript("item_script_challengers_strongbox") { }
@@ -1253,7 +1253,7 @@ class item_script_challengers_strongbox : public ItemScript
             p_Player->DestroyItem(p_Item->GetBagSlot(), p_Item->GetSlot(), true);
             return true;
         }
-};
+};*/
 
 void AddSC_item_scripts()
 {
@@ -1278,5 +1278,5 @@ void AddSC_item_scripts()
     new loot_item_chest_of_the_foregone();
     new loot_item_unsullied_plate_helmet();
     new spell_draenor_profession();
-    new item_script_challengers_strongbox();
+    //new item_script_challengers_strongbox();
 }

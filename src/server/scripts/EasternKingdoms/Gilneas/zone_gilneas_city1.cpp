@@ -161,7 +161,6 @@ const CrowFlyPosition CrowFlyPos[12]=
     {{-1650.79f, 2507.28f, 109.893f}, {-1645.28f, 2506.02f, 115.819f}},
 };
 
-// player
 class player_zone_gilneas_city1 : public PlayerScript
 {
 public:
@@ -183,7 +182,6 @@ public:
     }
 };
 
-// 50260
 struct npc_gilnean_crow : public ScriptedAI
 {
     npc_gilnean_crow(Creature* creature) : ScriptedAI(creature), flying(false) { }
@@ -269,7 +267,6 @@ struct npc_gilnean_crow : public ScriptedAI
     }
 };
 
-// 34864
 class npc_gilneas_city_guard_gate_34864 : public CreatureScript
 {
 public:
@@ -374,7 +371,6 @@ public:
     }
 };
 
-// 34850
 class npc_prince_liam_greymane_34850 : public CreatureScript
 {
 public:
@@ -514,7 +510,6 @@ public:
     }
 };
 
-/* 35660 *//* part showfight worgen <> liam *//* Quest 14098 */
 class npc_rampaging_worgen_35660 : public CreatureScript
 {
 public:
@@ -522,19 +517,19 @@ public:
 
     enum eNpc
     {
-        MOVE_TO_START_POSITION     = 101,
+        MOVE_TO_START_POSITION    = 101,
         MOVE_TO_PRINCE_LIAM,
         MOVE_TO_DOOR,
 
-        EVENT_MOVE_TO_LIAM         = 101,
+        EVENT_MOVE_TO_LIAM        = 101,
         EVENT_ATTACK_LIAM,
         EVENT_ENRAGE_COOLDOWN,
         EVENT_MOVE_TO_DOOR,
         EVENT_FOLLOW_CITIZEN1,
         EVENT_FOLLOW_CITIZEN2,
 
-        ACTION_START_ANIM_MERCANT  = 101,
-        ACTION_START_ANIM_LIAM     = 102
+        ACTION_START_ANIM_MERCANT = 101,
+        ACTION_START_ANIM_LIAM    = 102
     };
 
     struct npc_rampaging_worgen_35660AI : public ScriptedAI
@@ -553,7 +548,7 @@ public:
             m_doorGUID = ObjectGuid::Empty;
             m_liamGUID = ObjectGuid::Empty;
             m_citizenGUID = ObjectGuid::Empty;
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
         }
 
         void JustDied(Unit* /*killer*/) override
@@ -568,17 +563,17 @@ public:
                 {
                     case MOVE_TO_START_POSITION:
                     {
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_LIAM, 500);
+                        m_events.ScheduleEvent(EVENT_MOVE_TO_LIAM, 500ms);
                         break;
                     }
                     case MOVE_TO_PRINCE_LIAM:
                     {
-                        m_events.ScheduleEvent(EVENT_ATTACK_LIAM, 100);
+                        m_events.ScheduleEvent(EVENT_ATTACK_LIAM, 100ms);
                         break;
                     }
                     case MOVE_TO_DOOR:
                     {
-                        m_events.ScheduleEvent(EVENT_FOLLOW_CITIZEN1, 3000);
+                        m_events.ScheduleEvent(EVENT_FOLLOW_CITIZEN1, 3s);
                         break;
                     }
                 }
@@ -589,8 +584,9 @@ public:
             if (!m_enrage && me->GetHealthPct() < 90.0f)
             {
                 me->CastSpell(me, SPELL_ENRAGE_56646);
+                Talk(0);
                 m_enrage = true;
-                m_events.ScheduleEvent(EVENT_ENRAGE_COOLDOWN, urand(121000, 150000));
+                m_events.ScheduleEvent(EVENT_ENRAGE_COOLDOWN, 121s, 150s);
             }
         }
 
@@ -629,7 +625,7 @@ public:
             {
                 case ACTION_START_ANIM_MERCANT:
                 {
-                    m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 1000);
+                    m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 1s);
                     break;
                 }
                 case ACTION_START_ANIM_LIAM:
@@ -672,6 +668,7 @@ public:
                             me->SetReactState(REACT_AGGRESSIVE);
                             me->Attack(liam, true);
                             liam->Attack(me, true);
+                            liam->AI()->Talk(0);
                         }
                         break;
                     }
@@ -685,7 +682,7 @@ public:
                     {
                         if (Creature* citizen = ObjectAccessor::GetCreature(*me, m_citizenGUID))
                             me->GetMotionMaster()->MoveFollow(citizen, 1.0f, 0.0f);
-                        m_events.ScheduleEvent(EVENT_FOLLOW_CITIZEN2, 5000);
+                        m_events.ScheduleEvent(EVENT_FOLLOW_CITIZEN2, 5s);
                         break;
                     }
                     case EVENT_FOLLOW_CITIZEN2:
@@ -709,7 +706,6 @@ public:
     }
 };
 
-// 34913 // part showfight liam <> worgen
 class npc_prince_liam_greymane_34913 : public CreatureScript
 {
 public:
@@ -717,8 +713,9 @@ public:
 
     enum eNpc
     {
-        EVENT_START_NEXT_SHOWFIGHT  = 101,
-        ACTION_START_ATTACK_LIAM    = 102,
+        EVENT_START_NEXT_SHOWFIGHT = 101,
+
+        ACTION_START_ATTACK_LIAM   = 102,
     };
 
     struct npc_prince_liam_greymane_34913AI : public ScriptedAI
@@ -730,7 +727,7 @@ public:
 
         void Reset() override
         {
-            m_events.ScheduleEvent(EVENT_START_NEXT_SHOWFIGHT, 60000);
+            m_events.ScheduleEvent(EVENT_START_NEXT_SHOWFIGHT, 60s);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
         }
 
@@ -753,7 +750,7 @@ public:
         {
             m_worgenGUID = ObjectGuid::Empty;
             if (summon->GetEntry() == NPC_RAMPAGING_WORGEN_35660)
-                m_events.ScheduleEvent(EVENT_START_NEXT_SHOWFIGHT, 20000);
+                m_events.ScheduleEvent(EVENT_START_NEXT_SHOWFIGHT, 20s);
         }
 
         void UpdateAI(uint32 diff) override
@@ -766,7 +763,8 @@ public:
                 {
                     case EVENT_START_NEXT_SHOWFIGHT:
                     {
-                        me->SummonCreature(NPC_RAMPAGING_WORGEN_35660, -1491.9f, 1413.1f, 35.56f, 5.5f, TEMPSUMMON_TIMED_DESPAWN, 120000);
+                        if (Creature* summoned_worgen = me->SummonCreature(NPC_RAMPAGING_WORGEN_35660, -1491.9f, 1413.1f, 35.56f, 5.5f, TEMPSUMMON_TIMED_DESPAWN, 120000))
+                            summoned_worgen->SetWalk(false);
                         break;
                     }
                 }
@@ -785,7 +783,6 @@ public:
     }
 };
 
-// 34916 // part showfight guard <> worgen..
 class npc_gilneas_city_guard_34916 : public CreatureScript
 {
 public:
@@ -793,13 +790,17 @@ public:
 
     enum eNpc
     {
-        EVENT_CHECK_SHOWFIGHT   = 101,
-        MOVE_TO_HOMEPOSITION    = 101,
+        EVENT_CHECK_SHOWFIGHT = 101,
+
+        MOVE_TO_HOMEPOSITION  = 101,
     };
 
     struct npc_gilneas_city_guard_34916AI : public ScriptedAI
     {
-        npc_gilneas_city_guard_34916AI(Creature* creature) : ScriptedAI(creature) { Initialize(); }
+        npc_gilneas_city_guard_34916AI(Creature* creature) : ScriptedAI(creature)
+        {
+            Initialize();
+        }
 
         EventMap m_events;
         float    m_minHealthPct;
@@ -817,7 +818,7 @@ public:
         void Reset() override
         {
             m_events.Reset();
-            m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, urand(900, 1200));
+            m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 900ms, 1s + 200ms);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
         }
 
@@ -846,7 +847,7 @@ public:
         void MovementInform(uint32 type, uint32 pointId) override
         {
             if (type == POINT_MOTION_TYPE && pointId == MOVE_TO_HOMEPOSITION)
-                m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 25);
+                m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 25ms);
         }
 
         void UpdateAI(uint32 diff) override
@@ -857,32 +858,32 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_CHECK_SHOWFIGHT:
-                {
-                    if (!me->IsAlive() || me->IsInCombat())
+                    case EVENT_CHECK_SHOWFIGHT:
                     {
-                        m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2500);
-                        return;
-                    }
-
-                    if (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 10.0f)
-                    {
-                        me->GetMotionMaster()->MovePoint(MOVE_TO_HOMEPOSITION, me->GetHomePosition());
-                        return;
-                    }
-
-                    if (Creature* worgen = me->FindNearestCreature(m_worgenList, 5.0f))
-                        if (!worgen->IsInCombat())
+                        if (!me->IsAlive() || me->IsInCombat())
                         {
-                            me->Attack(worgen, true);
-                            worgen->Attack(me, true);
-                            m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2500);
+                            m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2s + 500ms);
                             return;
                         }
 
-                    m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2500);
-                    break;
-                }
+                        if (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 10.0f)
+                        {
+                            me->GetMotionMaster()->MovePoint(MOVE_TO_HOMEPOSITION, me->GetHomePosition());
+                            return;
+                        }
+
+                        if (Creature* worgen = me->FindNearestCreature(m_worgenList, 5.0f))
+                            if (!worgen->IsInCombat())
+                            {
+                                me->Attack(worgen, true);
+                                worgen->Attack(me, true);
+                                m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2s + 500ms);
+                                return;
+                            }
+
+                        m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2s + 500ms);
+                        break;
+                    }
                 }
             }
 
@@ -899,11 +900,10 @@ public:
     }
 };
 
-// 34884 // part showfight worgen <> guard..
 class npc_rampaging_worgen_34884 : public CreatureScript
 {
 public:
-    npc_rampaging_worgen_34884() : CreatureScript("npc_rampaging_worgen_34884") {}
+    npc_rampaging_worgen_34884() : CreatureScript("npc_rampaging_worgen_34884") { }
 
     enum eNpc
     {
@@ -912,7 +912,7 @@ public:
 
     struct npc_rampaging_worgen_34884AI : public ScriptedAI
     {
-        npc_rampaging_worgen_34884AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_rampaging_worgen_34884AI(Creature* creature) : ScriptedAI(creature) { }
 
         EventMap m_events;
         bool m_enrage;
@@ -925,11 +925,12 @@ public:
 
         void DamageTaken(Unit* /*who*/, uint32& /*damage*/) override
         {
-            if (!m_enrage && me->GetHealthPct() < 90.0f)
+            if (!m_enrage && me->GetHealthPct() < 35.0f)
             {
                 me->CastSpell(me, SPELL_ENRAGE_8599);
+                Talk(0);
                 m_enrage = true;
-                m_events.ScheduleEvent(EVENT_ENRAGE_COOLDOWN, urand(121000, 150000));
+                m_events.ScheduleEvent(EVENT_ENRAGE_COOLDOWN, 121s, 150s);
             }
         }
 
@@ -941,11 +942,11 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_ENRAGE_COOLDOWN:
-                {
-                    m_enrage = false;
-                    break;
-                }
+                    case EVENT_ENRAGE_COOLDOWN:
+                    {
+                        m_enrage = false;
+                        break;
+                    }
                 }
             }
 
@@ -962,20 +963,21 @@ public:
     }
 };
 
-// 34981 // alone
 class npc_frightened_citizen_34981 : public CreatureScript
 {
 public:
-    npc_frightened_citizen_34981() : CreatureScript("npc_frightened_citizen_34981") {}
+    npc_frightened_citizen_34981() : CreatureScript("npc_frightened_citizen_34981") { }
 
     enum eNpc
     {
         ACTION_START_ANIM_CITIZEN = 103,
-        EVENT_MOVE_TO_DOOR = 101,
+
+        EVENT_MOVE_TO_DOOR        = 101,
         EVENT_MOVE_TO_PLAYER,
         EVENT_MOVE_TO_MARKER,
         EVENT_MOVE_TO_END,
-        MOVE_TO_DOOR = 101,
+
+        MOVE_TO_DOOR              = 101,
         MOVE_TO_PLAYER,
         MOVE_TO_MARKER,
         MOVE_TO_END,
@@ -983,7 +985,7 @@ public:
 
     struct npc_frightened_citizen_34981AI : public ScriptedAI
     {
-        npc_frightened_citizen_34981AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_frightened_citizen_34981AI(Creature* creature) : ScriptedAI(creature) { }
 
         EventMap m_events;
         ObjectGuid m_playerGUID;
@@ -1003,18 +1005,18 @@ public:
                 {
                     case MOVE_TO_DOOR:
                     {
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_PLAYER, 25);
+                        m_events.ScheduleEvent(EVENT_MOVE_TO_PLAYER, 25ms);
                         break;
                     }
                     case MOVE_TO_PLAYER:
                     {
                         Talk(1);
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_MARKER, 4000);
+                        m_events.ScheduleEvent(EVENT_MOVE_TO_MARKER, 4s);
                         break;
                     }
                     case MOVE_TO_MARKER:
                     {
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_END, 25);
+                        m_events.ScheduleEvent(EVENT_MOVE_TO_END, 25ms);
                         break;
                     }
                     case MOVE_TO_END:
@@ -1048,7 +1050,7 @@ public:
             {
                 case ACTION_START_ANIM_CITIZEN:
                 {
-                    m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 2000);
+                    m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 2s);
                     break;
                 }
             }
@@ -1062,29 +1064,29 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_MOVE_TO_DOOR:
-                {
-                    if (GameObject* go = ObjectAccessor::GetGameObject(*me, m_doorGUID))
-                        me->GetMotionMaster()->MovePoint(MOVE_TO_DOOR, go->GetPosition());
-                    break;
-                }
-                case EVENT_MOVE_TO_PLAYER:
-                {
-                    if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
-                        me->GetMotionMaster()->MovePoint(MOVE_TO_PLAYER, player->GetNearPosition(2.0, player->GetOrientation()));
-                    break;
-                }
-                case EVENT_MOVE_TO_MARKER:
-                {
-                    if (Creature* marker = me->FindNearestCreature(NPC_GILNEAS_EVACUATION_FACING_MARKER_35830, 100.0f))
-                        me->GetMotionMaster()->MovePoint(MOVE_TO_MARKER, marker->GetPosition());
-                    break;
-                }
-                case EVENT_MOVE_TO_END:
-                {
-                    me->GetMotionMaster()->MovePoint(MOVE_TO_END, me->GetNearPosition(25.0f, 0.0f));
-                    break;
-                }
+                    case EVENT_MOVE_TO_DOOR:
+                    {
+                        if (GameObject* go = ObjectAccessor::GetGameObject(*me, m_doorGUID))
+                            me->GetMotionMaster()->MovePoint(MOVE_TO_DOOR, go->GetPosition());
+                        break;
+                    }
+                    case EVENT_MOVE_TO_PLAYER:
+                    {
+                        if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
+                            me->GetMotionMaster()->MovePoint(MOVE_TO_PLAYER, player->GetNearPosition(2.0, player->GetOrientation()));
+                        break;
+                    }
+                    case EVENT_MOVE_TO_MARKER:
+                    {
+                        if (Creature* marker = me->FindNearestCreature(NPC_GILNEAS_EVACUATION_FACING_MARKER_35830, 100.0f))
+                            me->GetMotionMaster()->MovePoint(MOVE_TO_MARKER, marker->GetPosition());
+                        break;
+                    }
+                    case EVENT_MOVE_TO_END:
+                    {
+                        me->GetMotionMaster()->MovePoint(MOVE_TO_END, me->GetNearPosition(25.0f, 0.0f));
+                        break;
+                    }
                 }
             }
         }
@@ -1096,20 +1098,21 @@ public:
     }
 };
 
-// 35836 // with worgen
 class npc_frightened_citizen_35836 : public CreatureScript
 {
 public:
-    npc_frightened_citizen_35836() : CreatureScript("npc_frightened_citizen_35836") {}
+    npc_frightened_citizen_35836() : CreatureScript("npc_frightened_citizen_35836") { }
 
     enum eNpc
     {
         ACTION_START_ANIM_CITIZEN = 103,
-        EVENT_MOVE_TO_DOOR = 101,
+
+        EVENT_MOVE_TO_DOOR        = 101,
         EVENT_MOVE_TO_PLAYER,
         EVENT_MOVE_TO_MARKER,
         EVENT_MOVE_TO_END,
-        MOVE_TO_DOOR = 101,
+
+        MOVE_TO_DOOR              = 101,
         MOVE_TO_PLAYER,
         MOVE_TO_MARKER,
         MOVE_TO_END,
@@ -1117,7 +1120,7 @@ public:
 
     struct npc_frightened_citizen_35836AI : public ScriptedAI
     {
-        npc_frightened_citizen_35836AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_frightened_citizen_35836AI(Creature* creature) : ScriptedAI(creature) { }
 
         EventMap m_events;
         ObjectGuid m_playerGUID;
@@ -1137,18 +1140,18 @@ public:
                 {
                     case MOVE_TO_DOOR:
                     {
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_PLAYER, 25);
+                        m_events.ScheduleEvent(EVENT_MOVE_TO_PLAYER, 25ms);
                         break;
                     }
                     case MOVE_TO_PLAYER:
                     {
                         Talk(0);
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_MARKER, 2000);
+                        m_events.ScheduleEvent(EVENT_MOVE_TO_MARKER, 2s);
                         break;
                     }
                     case MOVE_TO_MARKER:
                     {
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_END, 25);
+                        m_events.ScheduleEvent(EVENT_MOVE_TO_END, 25ms);
                         break;
                     }
                     case MOVE_TO_END:
@@ -1180,11 +1183,11 @@ public:
         {
             switch (param)
             {
-            case ACTION_START_ANIM_CITIZEN:
-            {
-                m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 1000);
-                break;
-            }
+                case ACTION_START_ANIM_CITIZEN:
+                {
+                    m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 1s);
+                    break;
+                }
             }
         }
 
@@ -1232,7 +1235,6 @@ public:
     }
 };
 
-// 195327
 class go_merchant_square_door_195327 : public GameObjectScript
 {
 public:
@@ -2877,7 +2879,6 @@ public:
 
         /*void SpellHitTarget(Unit* mastiff, SpellInfo const* cSpell) override
         {
-
         }*/
 
         void JustDied(Unit* /*killer*/) override // Otherwise, player is stuck with pet corpse they cannot remove from world
