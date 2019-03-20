@@ -236,8 +236,9 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (34867*100+19,9,2,0,0,0,100,0,2500,2500,0,0,48,0,0,0,0,0,0,1,0,0,0,0,0,0,0,"Shadowy Figure - On Script - Set Active Off");
 
 UPDATE `creature_template_addon` SET `bytes1` = 1 WHERE `entry` = 50260;
-UPDATE `creature_addon` SET `bytes1` = 1 WHERE `guid` IN (20556260, 20556290, 20556256, 20556272, 20556280, 20556252, 20556267, 20556250);
+UPDATE `creature_addon` SET `bytes1` = 1 WHERE `guid` IN (20556260, 20556290, 20556256, 20556272, 20556280, 20556252, 20556267, 20556250, 20556373);
 UPDATE `creature_template` SET `ScriptName` = "npc_gilnean_crow", `InhabitType` = 4 WHERE `entry` = 50260;
+UPDATE creature SET PhaseId = 169 WHERE guid = 20556373;
 
 DELETE FROM `creature_text` WHERE `CreatureID` IN (44086, 34864, 34851);
 INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `comment`, `BroadcastTextID`) VALUES
@@ -662,8 +663,8 @@ INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `positio
 (205564370, 21, -1701.65, 1310.31, 19.7829, 0, 0, 0),
 (205564370, 22, -1661.01, 1306.53, 19.7825, 0, 0, 0);
 
-UPDATE creature SET spawndist = 3, MovementType = 1 WHERE guid = 20556304;
--- UPDATE creature SET spawndist = 15, MovementType = 1 WHERE guid = ();
+UPDATE creature SET spawndist = 3, MovementType = 1 WHERE guid IN (20556304, 20556378);
+UPDATE creature SET spawndist = 15, MovementType = 1 WHERE guid = 20556386;
 
 UPDATE creature SET position_z = 36.680 WHERE guid = 20556298;
 UPDATE creature SET position_z = 36.723 WHERE guid = 20556244;
@@ -725,6 +726,14 @@ UPDATE creature SET spawndist = 3, MovementType = 1 WHERE guid IN (20556422, 205
 UPDATE creature_text SET BroadcastTextId = 7798 WHERE CreatureID = 34884 AND GroupID = 0 AND ID = 0;
 UPDATE creature_text SET BroadcastTextId = 7798 WHERE CreatureID = 35118 AND GroupID = 0 AND ID = 0;
 UPDATE creature_text SET BroadcastTextId = 7798 WHERE CreatureID = 35660 AND GroupID = 0 AND ID = 0;
+
+DELETE FROM creature_text WHERE CreatureID = 34913;
+INSERT INTO creature_text (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `comment`, `BroadcastTextID`) VALUES
+(34913, 0, 0, "Stand your ground, men!", 14, 0, 20, 0, 0, 19617, "Prince Liam Greymane", 35166),
+(34913, 0, 1, "Defeat these foul beasts!", 14, 0, 20, 0, 0, 19618, "Prince Liam Greymane", 35167),
+(34913, 0, 2, "Protect the civilians!", 14, 0, 20, 0, 0, 19619, "Prince Liam Greymane", 35168),
+(34913, 0, 3, "Push them back!", 14, 0, 20, 0, 0, 19620, "Prince Liam Greymane", 35169),
+(34913, 0, 4, "Take heart, men! We must protect our city!", 14, 0, 20, 0, 0, 19621, "Prince Liam Greymane", 35170);
 
 UPDATE creature_template SET AIName = "SmartAI" WHERE entry IN (35873, 35869, 44459, 44469);
 DELETE FROM `smart_scripts` WHERE `entryorguid` IN (35873, 35869, 44459, 44469) AND `source_type` = 0;
