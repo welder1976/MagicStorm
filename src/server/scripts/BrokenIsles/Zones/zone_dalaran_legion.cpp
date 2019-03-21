@@ -595,6 +595,34 @@ public:
     }
 };
 
+// quest 38564
+class npc_tele_q38564 : public CreatureScript
+{
+public:
+    npc_tele_q38564() : CreatureScript("npc_tele_q38564") { }
+     struct npc_tele_q38564AI : public ScriptedAI
+    {
+        npc_tele_q38564AI(Creature* creature) : ScriptedAI(creature) { }
+         void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(38564) == QUEST_STATUS_INCOMPLETE)
+                {    
+                    if (player->IsInDist(me, 2.0f))
+                    {
+                       player->KilledMonsterCredit(92925);
+                    }
+                }
+            }
+        }
+    };
+     CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_tele_q38564AI(creature);
+    }
+};
+
 void AddSC_dalaran_legion()
 {
     new OnLegionArrival();
@@ -615,4 +643,5 @@ void AddSC_dalaran_legion()
     new npc_tele_q48507();
     new npc_khadgar_dalaran();
     new npc_khadgar_upgraded_servant();
+    new npc_tele_q38564();
 }

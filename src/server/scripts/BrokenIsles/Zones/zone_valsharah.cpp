@@ -268,6 +268,34 @@ public:
     }
 };
 
+// quest 39702
+class npc_tele_q39702 : public CreatureScript
+{
+public:
+    npc_tele_q39702() : CreatureScript("npc_tele_q39702") { }
+     struct npc_tele_q39702AI : public ScriptedAI
+    {
+        npc_tele_q39702AI(Creature* creature) : ScriptedAI(creature) { }
+         void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(39702) == QUEST_STATUS_INCOMPLETE)
+                {    
+                    if (player->IsInDist(me, 2.0f))
+                    {
+                       player->KilledMonsterCredit(96736);
+                    }
+                }
+            }
+        }
+    };
+     CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_tele_q39702AI(creature);
+    }
+};
+
 void AddSC_valsharah()
 {
     new npc_malfurion_valshara();
@@ -276,4 +304,5 @@ void AddSC_valsharah()
     new npc_tyrande_scene();
     new spell_return_valshara();
     new npc_subdued_nightwing();
+    new npc_tele_q39702();
 }
