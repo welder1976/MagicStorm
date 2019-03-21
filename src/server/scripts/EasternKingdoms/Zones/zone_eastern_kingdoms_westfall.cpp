@@ -48,7 +48,11 @@ enum eThug
 {
     QUEST_LOUS_PARTING_THOUGHTS = 26232,
     NPC_THUG = 42387,
-    NPC_TRIGGER = 42562
+    NPC_TRIGGER = 42562,
+    NPC_WESTFALL_STEW = 42617,
+    NPC_HOMELESS_STORMWIND_CITIZEN = 42384,
+    NPC_TRANSIENT = 42383,
+    NPC_WEST_PLAINS_DRIFTERS = 42400
 };
 
 class npc_thug: public CreatureScript
@@ -2089,7 +2093,7 @@ public:
                                 homeless->DespawnOrUnsummon(5000);
 
                         }
-	    if (Creature* homeless = player->FindNearestCreature(NPC_HOMELESS_STORMWIND_CITIZEN_42384, 10.0f, true))
+	    if (Creature* homeless = player->FindNearestCreature(NPC_HOMELESS_STORMWIND_CITIZEN, 10.0f, true))
                         {
                                 player->KilledMonsterCredit(NPC_WESTFALL_STEW);
                                 homeless->RemoveAllAuras();
@@ -2099,7 +2103,7 @@ public:
                                 homeless->DespawnOrUnsummon(5000);
 
                         }
-		if (Creature* homeless = player->FindNearestCreature(NPC_HOMELESS_STORMWIND_CITIZEN_42386, 10.0f, true))
+		if (Creature* homeless = player->FindNearestCreature(NPC_HOMELESS_STORMWIND_CITIZEN, 10.0f, true))
                         {
                                 player->KilledMonsterCredit(NPC_WESTFALL_STEW);
                                 homeless->RemoveAllAuras();
