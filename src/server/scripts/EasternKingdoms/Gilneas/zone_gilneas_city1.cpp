@@ -581,7 +581,7 @@ public:
 
         void DamageTaken(Unit* /*who*/, uint32& /*damage*/) override
         {
-            if (!m_enrage && me->GetHealthPct() < 90.0f)
+            if (!m_enrage && me->GetHealthPct() < 35.0f)
             {
                 me->CastSpell(me, SPELL_ENRAGE_56646);
                 Talk(0);
@@ -1320,11 +1320,10 @@ private:
     }
 };
 
-// 35840
 class npc_gwen_armstead_35840 : public CreatureScript
 {
 public:
-    npc_gwen_armstead_35840() : CreatureScript("npc_gwen_armstead_35840") {}
+    npc_gwen_armstead_35840() : CreatureScript("npc_gwen_armstead_35840") { }
 
     enum eNpc
     {
@@ -1335,7 +1334,7 @@ public:
 
     struct npc_gwen_armstead_35840AI : public ScriptedAI
     {
-        npc_gwen_armstead_35840AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_gwen_armstead_35840AI(Creature* creature) : ScriptedAI(creature) { }
 
         EventMap m_events;
         uint8 m_say;
@@ -1343,7 +1342,7 @@ public:
         void Reset() override
         {
             m_events.Reset();
-            m_events.ScheduleEvent(EVENT_CHECK_TALK, 2500);
+            m_events.ScheduleEvent(EVENT_CHECK_TALK, 2s + 500ms);
             m_say = 0;
         }
 
@@ -1355,35 +1354,36 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_CHECK_TALK:
-                {
-                    if (me->SelectNearestPlayer(15.0f))
+                    case EVENT_CHECK_TALK:
+                    {
+                        if (me->SelectNearestPlayer(15.0f))
+                        {
+                            Talk(m_say);
+                            m_say += 1;
+                            m_events.ScheduleEvent(EVENT_DO_NEXT_TALK, 6s);
+                            break;
+                        }
+                        m_events.ScheduleEvent(EVENT_CHECK_TALK, 2500);
+                        break;
+                    }
+                    case EVENT_DO_NEXT_TALK:
                     {
                         Talk(m_say);
                         m_say += 1;
-                        m_events.ScheduleEvent(EVENT_DO_NEXT_TALK, 6000);
+
+                        if (m_say < 2)
+                            m_events.ScheduleEvent(EVENT_DO_NEXT_TALK, 6s);
+                        else
+                            m_events.ScheduleEvent(EVENT_DO_LAST_TALK, 6s);
                         break;
                     }
-                    m_events.ScheduleEvent(EVENT_CHECK_TALK, 2500);
-                    break;
-                }
-                case EVENT_DO_NEXT_TALK:
-                {
-                    Talk(m_say);
-                    m_say += 1;
-                    if (m_say < 2)
-                        m_events.ScheduleEvent(EVENT_DO_NEXT_TALK, 6000);
-                    else
-                        m_events.ScheduleEvent(EVENT_DO_LAST_TALK, 6000);
-                    break;
-                }
-                case EVENT_DO_LAST_TALK:
-                {
-                    Talk(m_say);
-                    m_say = 0;
-                    m_events.ScheduleEvent(EVENT_CHECK_TALK, 30000);
-                    break;
-                }
+                    case EVENT_DO_LAST_TALK:
+                    {
+                        Talk(m_say);
+                        m_say = 0;
+                        m_events.ScheduleEvent(EVENT_CHECK_TALK, 40s);
+                        break;
+                    }
                 }
             }
 
@@ -1400,15 +1400,14 @@ public:
     }
 };
 
-// 47091
 class npc_wounded_guard_47091 : public CreatureScript
 {
 public:
-    npc_wounded_guard_47091() : CreatureScript("npc_wounded_guard_47091") {}
+    npc_wounded_guard_47091() : CreatureScript("npc_wounded_guard_47091") { }
 
     struct npc_wounded_guard_47091AI : public ScriptedAI
     {
-        npc_wounded_guard_47091AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_wounded_guard_47091AI(Creature* creature) : ScriptedAI(creature) { }
 
         void SpellHit(Unit* caster, SpellInfo const* /*spell*/) override
         {
@@ -1428,27 +1427,27 @@ public:
     }
 };
 
-// 35872
 class npc_mariam_spellwalker_35872 : public CreatureScript
 {
 public:
-    npc_mariam_spellwalker_35872() : CreatureScript("npc_mariam_spellwalker_35872") {}
+    npc_mariam_spellwalker_35872() : CreatureScript("npc_mariam_spellwalker_35872") { }
 
     enum eNpc
     {
         EVENT_CHECK_SPELL = 101,
-        AI_MIN_HP = 85,
+
+        AI_MIN_HP         = 85,
     };
 
     struct npc_mariam_spellwalker_35872AI : public ScriptedAI
     {
-        npc_mariam_spellwalker_35872AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_mariam_spellwalker_35872AI(Creature* creature) : ScriptedAI(creature) { }
 
         EventMap m_events;
 
         void Reset() override
         {
-            m_events.ScheduleEvent(EVENT_CHECK_SPELL, urand(1000, 2000));
+            m_events.ScheduleEvent(EVENT_CHECK_SPELL, 1s, 2s);
         }
 
         void DamageTaken(Unit* who, uint32& damage) override
@@ -1465,15 +1464,15 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_CHECK_SPELL:
-                {
-                    if ((me->IsAlive()) && (!me->IsInCombat() && (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) <= 1.0f)))
-                        if (Creature* enemy = me->FindNearestCreature(NPC_BLOODFANG_WORGEN_35118, 5.0f, true))
-                            me->AI()->AttackStart(enemy); // She should really only grab agro when npc Cleese is not there, so we will keep this range small
+                    case EVENT_CHECK_SPELL:
+                    {
+                        if ((me->IsAlive()) && (!me->IsInCombat() && (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) <= 1.0f)))
+                            if (Creature* enemy = me->FindNearestCreature(NPC_BLOODFANG_WORGEN_35118, 5.0f, true))
+                                me->AI()->AttackStart(enemy); // She should really only grab agro when npc Cleese is not there, so we will keep this range small
 
-                    m_events.ScheduleEvent(EVENT_CHECK_SPELL, urand(1000, 2000));
-                    break;
-                }
+                        m_events.ScheduleEvent(EVENT_CHECK_SPELL, 1s, 2s);
+                        break;
+                    }
                 }
             }
 
@@ -1493,22 +1492,25 @@ public:
     }
 };
 
-// 35232
 class npc_gilnean_royal_guard_35232 : public CreatureScript
 {
 public:
-    npc_gilnean_royal_guard_35232() : CreatureScript("npc_gilnean_royal_guard_35232") {}
+    npc_gilnean_royal_guard_35232() : CreatureScript("npc_gilnean_royal_guard_35232") { }
 
     enum eNpc
     {
         EVENT_CHECK_SHOWFIGHT = 101,
         EVENT_CHECK_KING_NEAR,
-        MOVE_TO_HOMEPOSITION = 101,
+
+        MOVE_TO_HOMEPOSITION  = 101,
     };
 
     struct npc_gilnean_royal_guard_35232AI : public ScriptedAI
     {
-        npc_gilnean_royal_guard_35232AI(Creature* creature) : ScriptedAI(creature) { Initialize(); }
+        npc_gilnean_royal_guard_35232AI(Creature* creature) : ScriptedAI(creature)
+        {
+            Initialize();
+        }
 
         EventMap m_events;
         float    m_minHealthPct;
@@ -1531,8 +1533,8 @@ public:
         void Reset() override
         {
             m_events.Reset();
-            m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 1000);
-            m_events.ScheduleEvent(EVENT_CHECK_KING_NEAR, 1000);
+            m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 1s);
+            m_events.ScheduleEvent(EVENT_CHECK_KING_NEAR, 1s);
         }
 
         void DamageTaken(Unit* who, uint32 &Damage) override
@@ -1562,7 +1564,7 @@ public:
         void MovementInform(uint32 type, uint32 pointId) override
         {
             if (type == POINT_MOTION_TYPE && pointId == MOVE_TO_HOMEPOSITION)
-                m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 25);
+                m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 25ms);
         }
 
         void UpdateAI(uint32 diff) override
@@ -1573,41 +1575,41 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_CHECK_SHOWFIGHT:
-                {
-                    if (!me->IsAlive() || me->IsInCombat())
+                    case EVENT_CHECK_SHOWFIGHT:
                     {
-                        m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2500);
-                        return;
-                    }
+                        if (!me->IsAlive() || me->IsInCombat())
+                        {
+                            m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2s + 500ms);
+                            return;
+                        }
 
-                    if (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 10.0f)
-                    {
-                        me->GetMotionMaster()->MovePoint(MOVE_TO_HOMEPOSITION, me->GetHomePosition());
-                        return;
-                    }
+                        if (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 10.0f)
+                        {
+                            me->GetMotionMaster()->MovePoint(MOVE_TO_HOMEPOSITION, me->GetHomePosition());
+                            return;
+                        }
 
-                    if (Creature* worgen = me->FindNearestCreature(m_worgenList, 5.0f))
-                    {
-                        me->Attack(worgen, true);
-                        worgen->Attack(me, true);
-                        m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2500);
-                        return;
-                    }
+                        if (Creature* worgen = me->FindNearestCreature(m_worgenList, 5.0f))
+                        {
+                            me->Attack(worgen, true);
+                            worgen->Attack(me, true);
+                            m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2s + 500ms);
+                            return;
+                        }
 
-                    m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2500);
-                    break;
-                }
-                case EVENT_CHECK_KING_NEAR:
-                {
-                    if (Creature* king = me->FindNearestCreature(NPC_KING_GREYMANE_35112, 15.0f))
-                    {
-                        m_kingGUID = king->GetGUID();
-                        m_theKingIsNear = true;
-                        m_isShowFight = false;
+                        m_events.ScheduleEvent(EVENT_CHECK_SHOWFIGHT, 2s + 500ms);
+                        break;
                     }
-                    break;
-                }
+                    case EVENT_CHECK_KING_NEAR:
+                    {
+                        if (Creature* king = me->FindNearestCreature(NPC_KING_GREYMANE_35112, 15.0f))
+                        {
+                            m_kingGUID = king->GetGUID();
+                            m_theKingIsNear = true;
+                            m_isShowFight = false;
+                        }
+                        break;
+                    }
                 }
             }
 
@@ -1626,11 +1628,10 @@ public:
     }
 };
 
-// 35839
 class npc_sergeant_cleese_35839 : public CreatureScript
 {
 public:
-    npc_sergeant_cleese_35839() : CreatureScript("npc_sergeant_cleese_35839") {}
+    npc_sergeant_cleese_35839() : CreatureScript("npc_sergeant_cleese_35839") { }
 
     enum eNpc
     {
@@ -1639,7 +1640,7 @@ public:
 
     struct npc_sergeant_cleese_35839AI : public ScriptedAI
     {
-        npc_sergeant_cleese_35839AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_sergeant_cleese_35839AI(Creature* creature) : ScriptedAI(creature) { }
 
         uint32 tSeek;
 
@@ -2424,21 +2425,65 @@ public:
     }
 };
 
-// 35112
 class npc_king_genn_greymane_35112 : public CreatureScript
 {
 public:
     npc_king_genn_greymane_35112() : CreatureScript("npc_king_genn_greymane_35112") { }
 
+    enum eNpc
+    {
+        EVENT_SAY_GENN_GREYMANE = 101,
+
+        NPC_LORD_GODFREY        = 35115,
+        NPC_KING_GENN_GREYMANE  = 35112,
+
+        LORD_GODFREY_TEXT       = 0,
+        KING_GENN_GREYMANE_TEXT = 0,
+
+        QUEST_OLD_DIVISIONS     = 14157
+    };
+    /// alexkulya: ToDo text event. Maybe port to SAI later.
+    /*bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest) override
+    {
+        if (quest->GetQuestId() == QUEST_OLD_DIVISIONS)
+        {
+            if (Creature* godfrey = creature->FindNearestCreature(NPC_LORD_GODFREY, 20.0f))
+                godfrey->AI()->Talk(LORD_GODFREY_TEXT);
+
+            _events.ScheduleEvent(EVENT_SAY_GENN_GREYMANE, 5s);
+        }
+
+        return true;
+    }*/
+
     struct npc_king_genn_greymane_35112AI : public ScriptedAI
     {
-        npc_king_genn_greymane_35112AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_king_genn_greymane_35112AI(Creature* creature) : ScriptedAI(creature) { }
 
         void Reset() override
         {
+            //_events.Reset();
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_NPC);
         }
+
+        /*void UpdateAI(uint32 diff) override
+        {
+            _events.Update(diff);
+
+            while (uint32 eventId = _events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                    case EVENT_SAY_GENN_GREYMANE:
+                        me->AI()->Talk(KING_GENN_GREYMANE_TEXT);
+                    break;
+                }
+            }
+        }*/
+
+    /*private:
+        EventMap _events;*/
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -2447,7 +2492,6 @@ public:
     }
 };
 
-// 35115
 class npc_lord_godfrey_35115 : public CreatureScript
 {
 public:
@@ -2455,12 +2499,12 @@ public:
 
     struct npc_lord_godfrey_35115AI : public ScriptedAI
     {
-        npc_lord_godfrey_35115AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_lord_godfrey_35115AI(Creature* creature) : ScriptedAI(creature) { }
 
         void Reset() override
         {
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_NPC);
         }
     };
 
@@ -2470,11 +2514,10 @@ public:
     }
 };
 
-// 35118 showfight <> guard 34916
 class npc_bloodfang_worgen_35118 : public CreatureScript
 {
 public:
-    npc_bloodfang_worgen_35118() : CreatureScript("npc_bloodfang_worgen_35118") {}
+    npc_bloodfang_worgen_35118() : CreatureScript("npc_bloodfang_worgen_35118") { }
 
     enum eNpc
     {
@@ -2483,7 +2526,7 @@ public:
 
     struct npc_bloodfang_worgen_35118AI : public ScriptedAI
     {
-        npc_bloodfang_worgen_35118AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_bloodfang_worgen_35118AI(Creature* creature) : ScriptedAI(creature) { }
 
         EventMap m_events;
         bool m_enrage;
@@ -2498,8 +2541,9 @@ public:
             if (!m_enrage && me->GetHealthPct() < 50.0f)
             {
                 me->CastSpell(me, SPELL_ENRAGE_8599);
+                Talk(0);
                 m_enrage = true;
-                m_events.ScheduleEvent(EVENT_ENRAGE_COOLDOWN, 20000);
+                m_events.ScheduleEvent(EVENT_ENRAGE_COOLDOWN, 20s);
             }
         }
 
@@ -2525,11 +2569,11 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_ENRAGE_COOLDOWN:
-                {
-                    m_enrage = false;
-                    break;
-                }
+                    case EVENT_ENRAGE_COOLDOWN:
+                    {
+                        m_enrage = false;
+                        break;
+                    }
                 }
             }
 
@@ -2545,6 +2589,7 @@ public:
         return new npc_bloodfang_worgen_35118AI(creature);
     }
 };
+
 /* QUEST - 14154 - By The Skin of His Teeth - END */
 
 /* Phase 4 - QUEST - 14159 - The Rebel Lord's Arsenal - START */

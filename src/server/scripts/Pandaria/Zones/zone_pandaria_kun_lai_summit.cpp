@@ -20,7 +20,7 @@
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
 #include "ScriptedEscortAI.h"
-#include "kun_lai_summit.h"
+#include "zone_pandaria_kun_lai_summit.h"
 
 #define GOSSIP_CHOICE_1 "I challenge you."
 

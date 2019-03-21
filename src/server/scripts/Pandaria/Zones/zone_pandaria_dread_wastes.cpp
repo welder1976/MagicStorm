@@ -20,7 +20,7 @@
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
 #include "ScriptedEscortAI.h"
-#include "dread_wastes.h"
+#include "zone_pandaria_dread_wastes.h"
 #include "Player.h"
 #include "GameObject.h"
 

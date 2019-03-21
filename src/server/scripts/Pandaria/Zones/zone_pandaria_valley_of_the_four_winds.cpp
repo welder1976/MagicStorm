@@ -20,7 +20,7 @@
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
 #include "ScriptedEscortAI.h"
-#include "valley_of_the_four_winds.h"
+#include "zone_pandaria_valley_of_the_four_winds.h"
 
 // Bonobos - 50828
 class mob_bonobos : public CreatureScript

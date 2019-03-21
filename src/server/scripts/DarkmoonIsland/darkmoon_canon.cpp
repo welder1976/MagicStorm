@@ -18,7 +18,7 @@
 #include "AchievementMgr.h"
 #include "ScriptMgr.h"
 #include "ScriptedGossip.h"
-#include "DarkmoonIsland.h"
+#include "darkmoon_island.h"
 
 enum eSpells
 {

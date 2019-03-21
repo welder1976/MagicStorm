@@ -22,7 +22,7 @@
 #include "ScriptedEscortAI.h"
 #include "DB2Stores.h"
 #include "AchievementMgr.h"
-#include "the_veiled_stair.h"
+#include "zone_pandaria_the_veiled_stair.h"
 
 
 // 64616 - Wrathion

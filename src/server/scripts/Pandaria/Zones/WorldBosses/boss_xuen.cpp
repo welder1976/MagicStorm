@@ -22,7 +22,7 @@
 #include "Spell.h"
 #include "SpellScript.h"
 #include "SpellAuraEffects.h"
-#include "../../scripts/Pandaria/Zones/timeless_isle.h"
+#include "../../scripts/Pandaria/Zones/zone_pandaria_timeless_isle.h"
 
 #define BOSS_XUEN 0
 

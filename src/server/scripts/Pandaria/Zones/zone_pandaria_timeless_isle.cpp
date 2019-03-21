@@ -20,7 +20,7 @@
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
 #include "ScriptedEscortAI.h"
-#include "timeless_isle.h"
+#include "zone_pandaria_timeless_isle.h"
 
 // Anduin Wrynn - 73061
 class npc_prince_anduin : public CreatureScript

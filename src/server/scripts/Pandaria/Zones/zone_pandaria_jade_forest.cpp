@@ -23,7 +23,7 @@
 #include "GameObject.h"
 #include "Player.h"
 #include "ObjectMgr.h"
-#include "jade_forest.h"
+#include "zone_pandaria_jade_forest.h"
 
 #define REPUTATION_ORDER_OF_THE_CLOUD_SERPENT 1271
 #define GOSSIP_TEXT_I 12585

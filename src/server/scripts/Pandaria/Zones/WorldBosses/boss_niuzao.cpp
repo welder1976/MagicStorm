@@ -19,7 +19,7 @@
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ObjectMgr.h"
-#include "../../scripts/Pandaria/Zones/timeless_isle.h"
+#include "../../scripts/Pandaria/Zones/zone_pandaria_timeless_isle.h"
 
 #define BOSS_NIUZAO 0
 

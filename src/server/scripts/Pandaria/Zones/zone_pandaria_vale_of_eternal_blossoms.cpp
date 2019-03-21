@@ -21,7 +21,7 @@
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
 #include "ScriptedEscortAI.h"
-#include "vale_of_eternal_blossoms.h"
+#include "zone_pandaria_vale_of_eternal_blossoms.h"
 
 // Zhao-Jin the Bloodletter - 60273
 class mob_zhao_jin : public CreatureScript

@@ -20,7 +20,7 @@
 #include "SpellAuras.h"
 #include "GameObject.h"
 #include "Transport.h"
-#include "DarkmoonIsland.h"
+#include "darkmoon_island.h"
 
 class playerscript_darkmoon_carousel : public PlayerScript
 {

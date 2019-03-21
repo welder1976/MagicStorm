@@ -753,3 +753,9 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 (35869, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 45104, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Vitus Darkwalker - On Reset - Cast Cosmetic Spell"),
 (44459, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 13236, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Celestine of the Harvest - On Reset - Cast Cosmetic Spell"),
 (44469, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 45104, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Vitus Darkwalker - On Reset - Cast Cosmetic Spell");
+
+UPDATE creature_addon SET emote = 214 WHERE guid = 20556450;
+UPDATE creature_template SET unit_flags = 33538 WHERE entry = 35912;
+UPDATE creature_template SET AIName = "" WHERE entry = 35118;
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 35118 AND `source_type` = 0;
+UPDATE creature SET spawndist = 25, MovementType = 1 WHERE id = 35118;
