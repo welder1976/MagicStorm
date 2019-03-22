@@ -24,6 +24,8 @@
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "SpellScript.h"
+#include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
 #include "TemporarySummon.h"
 
 enum eQuests
@@ -818,29 +820,6 @@ public:
     }
 };
 
-// 96655, 93127, 99045, 96420, 96652
-class npc_mardum_dh_learn_spec : public CreatureScript
-{
-public:
-    npc_mardum_dh_learn_spec() : CreatureScript("npc_mardum_dh_learn_spec") { }
-
-    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 /*action*/) override
-    {
-        player->KilledMonsterCredit(creature->GetEntry());
-
-        if (creature->GetEntry() == 96652)
-        {
-            // TODO Animation power overwhel & kill creature
-        }
-        else
-        {
-            // TODO Animation
-        }
-
-        return true;
-    }
-};
-
 // 96653
 class npc_mardum_izal_whitemoon : public CreatureScript
 {
@@ -1038,6 +1017,226 @@ public:
     }
 };
 
+enum KaynSunfury
+{
+    QUEST_CRY_HAVOC = 39516,
+    SAY_1 = 0,
+    SAY_2 = 1,
+    SAY_3 = 2,
+};
+
+// 93127 Kayn Sunfury
+class npc_kayn_sunfury : public CreatureScript
+{
+public:
+    npc_kayn_sunfury() : CreatureScript("npc_kayn_sunfury") { }
+
+    bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest)
+    {
+        if (quest->GetQuestId() == QUEST_CRY_HAVOC)
+            creature->AI()->Talk(0);
+
+        if (quest->GetQuestId() == QUEST_ON_FELBAT_WINGS)
+            creature->AI()->Talk(1);
+
+        if (quest->GetQuestId() == 40077)
+            creature->AI()->Talk(2);
+
+        return true;
+    }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (creature->IsQuestGiver())
+            player->PrepareQuestMenu(creature->GetGUID());
+
+        if (player->GetQuestStatus(QUEST_CRY_HAVOC) == QUEST_STATUS_INCOMPLETE)
+        {
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Kayn, I'll show you what I've learned about demonic mysteries.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+            SendGossipMenuFor(player, 17260, creature->GetGUID());
+
+            return true;
+        }
+        else
+            SendGossipMenuFor(player, player->GetGossipTextId(creature), creature->GetGUID());
+
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        player->PlayerTalkClass->ClearMenus();
+
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF:
+            player->CastSpell(creature, 195020, true);
+            creature->AI()->Talk(0);
+            CloseGossipMenuFor(player);
+            break;
+        }
+
+        return true;
+    }
+};
+
+// 96655
+class npc_allari : public CreatureScript
+{
+public:
+    npc_allari() : CreatureScript("npc_allari") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (creature->IsQuestGiver())
+            player->PrepareQuestMenu(creature->GetGUID());
+
+        if (player->GetQuestStatus(QUEST_CRY_HAVOC) == QUEST_STATUS_INCOMPLETE)
+        {
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Allari, estos son los secretos que he descubierto.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+            SendGossipMenuFor(player, 17260, creature->GetGUID());
+        }
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        player->PlayerTalkClass->ClearMenus();
+
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF:
+            player->CastSpell(creature, 194996, true);
+            creature->AI()->Talk(0);
+            CloseGossipMenuFor(player);
+            break;
+        }
+
+        return true;
+    }
+};
+
+// 96420
+class npc_cyana : public CreatureScript
+{
+public:
+    npc_cyana() : CreatureScript("npc_cyana") { }
+
+    bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest)
+    {
+        if (quest->GetQuestId() == 38819)
+            player->CompleteQuest(38819);
+
+        return true;
+    }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (creature->IsQuestGiver())
+            player->PrepareQuestMenu(creature->GetGUID());
+
+        if (player->GetQuestStatus(QUEST_CRY_HAVOC) == QUEST_STATUS_INCOMPLETE)
+        {
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Escucha atentamente, Cyana. Esto es lo que he aprendido del Escrito de secretos viles.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+            SendGossipMenuFor(player, 17260, creature->GetGUID());
+        }
+
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        player->PlayerTalkClass->ClearMenus();
+
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF:
+            player->CastSpell(creature, 195019, true);
+            creature->AI()->Talk(0);
+            CloseGossipMenuFor(player);
+            break;
+        }
+
+        return true;
+    }
+};
+
+// 99045
+class npc_korvas : public CreatureScript
+{
+public:
+    npc_korvas() : CreatureScript("npc_korvas") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (creature->IsQuestGiver())
+            player->PrepareQuestMenu(creature->GetGUID());
+
+        if (player->GetQuestStatus(QUEST_CRY_HAVOC) == QUEST_STATUS_INCOMPLETE)
+        {
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Ready to know The Secrets Of The Legion, Korvas?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+            SendGossipMenuFor(player, 17260, creature->GetGUID());
+        }
+
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        player->PlayerTalkClass->ClearMenus();
+
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF:
+            player->CastSpell(creature, 195021, true);
+            creature->AI()->Talk(0);
+            CloseGossipMenuFor(player);
+            break;
+        }
+
+        return true;
+    }
+};
+
+// 96652
+class npc_mannethrel : public CreatureScript
+{
+public:
+    npc_mannethrel() : CreatureScript("npc_mannethrel") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (creature->IsQuestGiver())
+            player->PrepareQuestMenu(creature->GetGUID());
+
+        if (player->GetQuestStatus(QUEST_CRY_HAVOC) == QUEST_STATUS_INCOMPLETE)
+        {
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Get Ready, Mannethrel. I'm going to fill you with the power of the Legion's secrets.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+            SendGossipMenuFor(player, 17260, creature->GetGUID());
+        }
+
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        player->PlayerTalkClass->ClearMenus();
+
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF:
+            player->CastSpell(creature, 195022, true);
+            creature->AI()->Talk(0);
+            creature->AI()->Talk(1);
+            creature->KillSelf();
+            CloseGossipMenuFor(player);
+            break;
+        }
+
+        return true;
+    }
+};
+
 // 192140 back to black temple
 class spell_mardum_back_to_black_temple : public SpellScript
 {
@@ -1113,11 +1312,15 @@ void AddSC_zone_mardum()
     new go_mardum_illidari_banner();
     new go_mardum_tome_of_fel_secrets();
     new PlayerScript_mardum_spec_choice();
-    new npc_mardum_dh_learn_spec();
     new npc_mardum_izal_whitemoon();
     RegisterCreatureAI(npc_mardum_tyranna);
     new npc_mardum_kayn_sunfury_end();
     new go_mardum_the_keystone();
     new go_q38727();
+    new npc_kayn_sunfury();
+    new npc_allari();
+    new npc_cyana();
+    new npc_korvas();
+    new npc_mannethrel();
     RegisterSpellScript(spell_mardum_back_to_black_temple);
 }

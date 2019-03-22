@@ -187,3 +187,9 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 (98497, 0, 3, 0, 2, 0, 100, 1, 30, 40, 0, 0, 1, 4, 5000, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Imp Mother - Between 30-40% Health - Say Line 4 (No Repeat)"),
 (98497, 0, 4, 0, 1, 0, 100, 1, 1000, 1000, 1000, 1000, 11, 188485, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Imp Mother - Out of Combat - Cast 'Fel Channelling' (No Repeat)"),
 (98497, 0, 5, 0, 7, 0, 100, 1, 0, 0, 0, 0, 11, 188485, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Imp Mother - On Evade - Cast 'Fel Channelling' (No Repeat)");
+
+update `creature_template` set `ScriptName` = "npc_mannethrel" where `entry` = 96652;
+update `creature_template` set `ScriptName` = "npc_allari" where `entry` = 96655;
+update `creature_template` set `ScriptName` = "npc_cyana" where `entry` = 96420;
+update `creature_template` set `ScriptName` = "npc_kayn_sunfury" where `entry` = 93127;
+update `creature_template` set `ScriptName` = "npc_korvas" where `entry` = 99045;
