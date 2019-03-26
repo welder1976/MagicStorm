@@ -2826,7 +2826,7 @@ class spell_item_crystal_prison_dummy_dnd : public SpellScriptLoader
                 if (Creature* target = GetHitCreature())
                     if (target->isDead() && !target->IsPet())
                     {
-                        GetCaster()->SummonGameObject(OBJECT_IMPRISONED_DOOMGUARD, *target, QuaternionData(), uint32(target->GetRespawnTime()-time(NULL)));
+                        GetCaster()->SummonGameObject(OBJECT_IMPRISONED_DOOMGUARD, *target, QuaternionData::fromEulerAnglesZYX(target->GetOrientation(), 0.0f, 0.0f), uint32(target->GetRespawnTime()-time(NULL)));
                         target->DespawnOrUnsummon();
                     }
             }
@@ -4860,6 +4860,45 @@ class spell_item_super_simian_sphere : public SpellScriptLoader
         }
 };
 
+enum AuraOfXavaricsMagnumOpus
+{
+    SPELL_XAVARICS_MAGNUM_OPUS = 207472
+};
+
+//207472 xavarics_magnum_opus
+// @Version : 7.3.5.26365
+class spell_item_xavarics_magnum_opus : public AuraScript
+{
+    PrepareAuraScript(spell_item_xavarics_magnum_opus);
+
+
+    void CalculateAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& /*canBeRecalculated*/)
+    {
+        amount = ((int32)GetCaster()->GetMaxHealth() * 25) / 100;
+    }
+
+    void OnApply(const AuraEffect*  aurEff, AuraEffectHandleModes /*mode*/)
+    {
+        Unit* caster = GetCaster();
+        if (!caster)
+            return;
+
+        if (!caster->IsAlive())
+            return;
+        int32 basepoint = GetSpellInfo()->GetEffect(0)->BasePoints;
+        int64 amount = (caster->GetMaxHealth() * basepoint) / 100;
+
+        caster->CastCustomSpell(SPELL_XAVARICS_MAGNUM_OPUS, SPELLVALUE_BASE_POINT0, amount, caster, true, nullptr, aurEff);
+
+    }
+
+    void Register() override
+    {
+        DoEffectCalcAmount += AuraEffectCalcAmountFn(spell_item_xavarics_magnum_opus::CalculateAmount, EFFECT_0, SPELL_AURA_SCHOOL_ABSORB);
+        OnEffectApply += AuraEffectApplyFn(spell_item_xavarics_magnum_opus::OnApply, EFFECT_0, SPELL_AURA_SCHOOL_ABSORB, AuraEffectHandleModes::AURA_EFFECT_HANDLE_REAL);
+    }
+};
+
 void AddSC_item_spell_scripts()
 {
     // 23074 Arcanite Dragonling
@@ -4980,5 +5019,6 @@ void AddSC_item_spell_scripts()
     new spell_item_world_queller_focus();
     new spell_item_water_strider();
     new spell_item_brutal_kinship();
+    RegisterAuraScript(spell_item_xavarics_magnum_opus);
     RegisterAuraScript(aura_item_burning_essence);
 }
