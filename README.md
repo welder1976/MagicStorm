@@ -37,8 +37,6 @@ with Ashamane Database (ADB) :
 - All Draenor zones spawns
 - All Legion zones spawns (including Class Halls)
 
-It is completely open source; community involvement is highly encouraged.
-
 ## Requirements
 
 Software requirements are available in the [wiki](https://www.trinitycore.info/display/tc/Requirements) for
@@ -48,17 +46,6 @@ Windows, Linux and macOS.
 
 Detailed installation guides are available in the [wiki](https://www.trinitycore.info/display/tc/Installation+Guide) for
 Windows, Linux and macOS.
-
-## Contribute
-
-You can help Ashamane using our [Patreon Page](https://www.patreon.com/ashamane). All the collected money will be used to pay developers for their work using bountysource
-
-## Reporting issues
-
-Issues can be reported via our [Mantis issue tracker](https://bt.ashamane.com).
-
-Please take the time to review existing issues before submitting your own to
-prevent duplicates.
 
 ## Submitting fixes
 
@@ -77,7 +64,5 @@ Read file [THANKS](THANKS).
 
 ## Links
 
-* [Website](https://www.ashamane.com)
 * [Wiki](https://www.trinitycore.info)
-* [Forums](http://forum.ashamane.com/)
 * [TrinityCore](https://www.trinitycore.org/)
