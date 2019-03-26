@@ -19,6 +19,8 @@
 #ifndef DEF_VAULT_OF_THE_WARDENS_H
 #define DEF_VAULT_OF_THE_WARDENS_H
 
+#define DataHeader "VOTW"
+uint32 const EncounterCount = 5;
 enum DataTypes
 {
     DATA_TIRATHON           = 0,

@@ -20,28 +20,28 @@
 #include "InstanceScript.h"
 #include "vault_of_the_wardens.h"
 
-class instance_vault_of_the_wardens : public InstanceMapScript
+struct instance_vault_of_the_wardens : public InstanceScript
 {
-    public:
-        instance_vault_of_the_wardens() : InstanceMapScript("instance_vault_of_the_wardens", 1493) { }
+    instance_vault_of_the_wardens(InstanceMap* map) : InstanceScript(map)
+    {
+        SetHeaders(DataHeader);
+        SetBossNumber(EncounterCount);
+        ///SetChallengeDoorPos({ -3895.260742f, 4523.655273f, 84.528175f, 5.613298f });
+    }
 
-        struct instance_vault_of_the_wardens_InstanceMapScript : public InstanceScript
-        {
-            instance_vault_of_the_wardens_InstanceMapScript(InstanceMap* map) : InstanceScript(map) { }
+    void OnCreatureCreate(Creature* creature) override
+    {
+        InstanceScript::OnCreatureCreate(creature);
 
-            void Initialize() override
-            {
-                SetBossNumber(DATA_MAX_ENCOUNTERS);
-            }
-        };
-
-        InstanceScript* GetInstanceScript(InstanceMap* map) const override
-        {
-            return new instance_vault_of_the_wardens_InstanceMapScript(map);
-        }
+        if (instance->IsHeroic())
+            creature->SetBaseHealth(creature->GetMaxHealth() * 2.f);
+        if (instance->IsMythic())
+            creature->SetBaseHealth(creature->GetMaxHealth() * 1.33f);
+    }
 };
+
 
 void AddSC_instance_vault_of_the_wardens()
 {
-    new instance_vault_of_the_wardens();
+    RegisterInstanceScript(instance_vault_of_the_wardens, 1493);
 }
