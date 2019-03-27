@@ -31,8 +31,6 @@ Legion Dungeons:
 
 -- Return to Karazhan
 
--- Violet Hold
-
 Legion Raids:
 
 -- Antorus, the Burning Throne	
