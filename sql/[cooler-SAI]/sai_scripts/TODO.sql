@@ -29,8 +29,6 @@ Legion Zones:
 
 Legion Dungeons:
 
--- Return to Karazhan
-
 Legion Raids:
 
 -- Antorus, the Burning Throne	
