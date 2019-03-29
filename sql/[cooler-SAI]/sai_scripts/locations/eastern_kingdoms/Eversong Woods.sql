@@ -65,7 +65,7 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,0,0,0,0,100,0,9000,11000,17000,23000,11,16568,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Mind Flay'),
 (@ENTRY,0,1,0,4,0,100,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,'Say Text on Agro');
 -- NPC talk text insert
-DELETE FROM `creature_text` WHERE `entry` IN (15367);
+DELETE FROM `creature_text` WHERE `CreatureID` IN (15367);
 INSERT INTO `creature_text` (`CreatureID`,`GroupID`,`ID`,`Text`,`Type`,`Language`,`Probability`,`Emote`,`Duration`,`Sound`,`comment`) VALUES 
 (15367,0,0, 'Take heart! Your friends will not long mourn your passing!',12,0,100,0,0,8506, 'text say');
 
