@@ -38,8 +38,8 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,10,0,6,0,100,3,0,0,0,0,1,5,0,0,0,0,0,1,0,0,0,0,0,0,0,'Say Text on Death');
 -- NPC talk text insert
 SET @ENTRY := 17808;
-DELETE FROM `creature_text` WHERE `entry`=@ENTRY;
-INSERT INTO `creature_text` (`entry`,`groupid`,`id`,`text`,`type`,`language`,`probability`,`emote`,`duration`,`sound`,`comment`) VALUES
+DELETE FROM `creature_text` WHERE `CreatureID`=@entry;
+INSERT INTO `creature_text` (`CreatureID`,`GroupID`,`ID`,`Text`,`Type`,`Language`,`Probability`,`Emote`,`Duration`,`Sound`,`comment`) VALUES 
 (@ENTRY,0,0, 'You are defenders of a doomed world! Flee here, and perhaps you will prolong your pathetic lives!',14,0,100,0,0,10977, 'on Aggro Text'),
 (@ENTRY,1,0, 'The swarm is eager to feed!',14,0,50,0,0,10979, 'on Spell Cast Text'),
 (@ENTRY,1,1, 'Pestilence upon you!',14,0,50,0,0,11037, 'on Spell Cast Text'),
@@ -69,8 +69,8 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,9,0,61,0,100,3,0,0,0,0,12,13083,1,35000,0,0,0,1,0,0,0,0,0,0,0,'Spawn Echo of Archimonde on Death');
 -- NPC talk text insert
 SET @ENTRY := 17842;
-DELETE FROM `creature_text` WHERE `entry`=@ENTRY;
-INSERT INTO `creature_text` (`entry`,`groupid`,`id`,`text`,`type`,`language`,`probability`,`emote`,`duration`,`sound`,`comment`) VALUES
+DELETE FROM `creature_text` WHERE `CreatureID`=@entry;
+INSERT INTO `creature_text` (`CreatureID`,`GroupID`,`ID`,`Text`,`Type`,`Language`,`Probability`,`Emote`,`Duration`,`Sound`,`comment`) VALUES 
 (@ENTRY,0,0, 'Abandon all hope! The Legion has returned to finish what was begun so many years ago. This time, there will be no escape!!',14,0,100,0,0,10999, 'on Aggro Text'),
 (@ENTRY,1,0, 'Just a taste... of what awaits you.',14,0,50,0,0,11046, 'on Spell Cast Text'),
 (@ENTRY,1,1, 'Suffer you despicable insect!',14,0,50,0,0,11000, 'on Spell Cast Text'),
@@ -100,8 +100,8 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,13,0,6,0,100,3,0,0,0,0,1,3,0,0,0,0,0,1,0,0,0,0,0,0,0,'Say Text on Death');
 -- NPC talk text insert
 SET @ENTRY := 17888;
-DELETE FROM `creature_text` WHERE `entry`=@ENTRY;
-INSERT INTO `creature_text` (`entry`,`groupid`,`id`,`text`,`type`,`language`,`probability`,`emote`,`duration`,`sound`,`comment`) VALUES
+DELETE FROM `creature_text` WHERE `CreatureID`=@entry;
+INSERT INTO `creature_text` (`CreatureID`,`GroupID`,`ID`,`Text`,`Type`,`Language`,`Probability`,`Emote`,`Duration`,`Sound`,`comment`) VALUES 
 (@ENTRY,0,0, 'Cry for mercy! Your meaningless lives will soon be forfeit!',14,0,100,0,0,11015, 'on Aggro Text'),
 (@ENTRY,1,0, 'Your death will be a painful one.',14,0,50,0,0,11016, 'on Spell Cast Text'),
 (@ENTRY,1,1, 'You... are marked.',14,0,50,0,0,11052, 'on Spell Cast Text'),
@@ -126,8 +126,8 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,9,0,6,0,100,3,0,0,0,0,1,4,0,0,0,0,0,1,0,0,0,0,0,0,0,'Say Text on Death');
 -- NPC talk text insert
 SET @ENTRY := 17767;
-DELETE FROM `creature_text` WHERE `entry`=@ENTRY;
-INSERT INTO `creature_text` (`entry`,`groupid`,`id`,`text`,`type`,`language`,`probability`,`emote`,`duration`,`sound`,`comment`) VALUES
+DELETE FROM `creature_text` WHERE `CreatureID`=@entry;
+INSERT INTO `creature_text` (`CreatureID`,`GroupID`,`ID`,`Text`,`Type`,`Language`,`Probability`,`Emote`,`Duration`,`Sound`,`comment`) VALUES 
 (@ENTRY,0,0, 'The Legion\'s final conquest has begun! Once again the subjugation of this world is within our grasp. Let none survive!',14,0,100,0,0,11022, 'on Spawn Text'),
 (@ENTRY,1,0, 'Succumb to the icy chill... of death!',14,0,50,0,0,11024, 'on Spell Cast Text'),
 (@ENTRY,1,1, 'It will be much colder in your grave.',14,0,50,0,0,11058, 'on Spell Cast Text'),
@@ -249,8 +249,8 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,2,0,2,0,100,3,0,10,0,0,11,31537,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Cannibalize at 10% HP');
 -- NPC talk text insert
 SET @ENTRY := 17895;
-DELETE FROM `creature_text` WHERE `entry`=@ENTRY;
-INSERT INTO `creature_text` (`entry`,`groupid`,`id`,`text`,`type`,`language`,`probability`,`emote`,`duration`,`sound`,`comment`) VALUES
+DELETE FROM `creature_text` WHERE `CreatureID`=@entry;
+INSERT INTO `creature_text` (`CreatureID`,`GroupID`,`ID`,`Text`,`Type`,`Language`,`Probability`,`Emote`,`Duration`,`Sound`,`comment`) VALUES 
 (@ENTRY,0,0, '%s goes into a frenzy!',16,0,100,0,0,0, 'combat Frenzy');
 
 -- Giant Infernal

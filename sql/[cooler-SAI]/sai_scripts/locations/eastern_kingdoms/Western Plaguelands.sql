@@ -388,8 +388,8 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,1,0,0,0,100,0,5000,8000,17000,22000,11,9080,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Hamstring');
 -- NPC talk text insert
 SET @ENTRY := 44478;
-DELETE FROM `creature_text` WHERE `entry`=@ENTRY;
-INSERT INTO `creature_text` (`entry`,`groupid`,`id`,`text`,`type`,`language`,`probability`,`emote`,`duration`,`sound`,`comment`) VALUES
+DELETE FROM `creature_text` WHERE `CreatureID`=@entry;
+INSERT INTO `creature_text` (`CreatureID`,`GroupID`,`ID`,`Text`,`Type`,`Language`,`Probability`,`Emote`,`Duration`,`Sound`,`comment`) VALUES 
 (@ENTRY,0,0, 'Grrrr... fresh meat!',12,0,50,0,0,0, 'combat Say'),
 (@ENTRY,0,1, 'More bones to gnaw on...',12,0,50,0,0,0, 'combat Say');
 
@@ -402,8 +402,8 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,1,0,0,0,100,0,5000,9000,13000,16000,11,14873,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Sinister Strike');
 -- NPC talk text insert
 SET @ENTRY := 45153;
-DELETE FROM `creature_text` WHERE `entry`=@ENTRY;
-INSERT INTO `creature_text` (`entry`,`groupid`,`id`,`text`,`type`,`language`,`probability`,`emote`,`duration`,`sound`,`comment`) VALUES
+DELETE FROM `creature_text` WHERE `CreatureID`=@entry;
+INSERT INTO `creature_text` (`CreatureID`,`GroupID`,`ID`,`Text`,`Type`,`Language`,`Probability`,`Emote`,`Duration`,`Sound`,`comment`) VALUES 
 (@ENTRY,0,0, 'Grrrr... fresh meat!',12,0,50,0,0,0, 'combat Say'),
 (@ENTRY,0,1, 'More bones to gnaw on...',12,0,50,0,0,0, 'combat Say');
 
@@ -416,8 +416,8 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,1,0,0,0,100,0,6000,8000,14000,18000,11,86064,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Wandering Shadows');
 -- NPC talk text insert
 SET @ENTRY := 45154;
-DELETE FROM `creature_text` WHERE `entry`=@ENTRY;
-INSERT INTO `creature_text` (`entry`,`groupid`,`id`,`text`,`type`,`language`,`probability`,`emote`,`duration`,`sound`,`comment`) VALUES
+DELETE FROM `creature_text` WHERE `CreatureID`=@entry;
+INSERT INTO `creature_text` (`CreatureID`,`GroupID`,`ID`,`Text`,`Type`,`Language`,`Probability`,`Emote`,`Duration`,`Sound`,`comment`) VALUES 
 (@ENTRY,0,0, 'Grrrr... fresh meat!',12,0,50,0,0,0, 'combat Say'),
 (@ENTRY,0,1, 'More bones to gnaw on...',12,0,50,0,0,0, 'combat Say');
 
@@ -432,8 +432,8 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,3,0,0,0,100,0,8000,8000,14000,16000,11,86042,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Unleash Earth');
 -- NPC talk text insert
 SET @ENTRY := 44479;
-DELETE FROM `creature_text` WHERE `entry`=@ENTRY;
-INSERT INTO `creature_text` (`entry`,`groupid`,`id`,`text`,`type`,`language`,`probability`,`emote`,`duration`,`sound`,`comment`) VALUES
+DELETE FROM `creature_text` WHERE `CreatureID`=@entry;
+INSERT INTO `creature_text` (`CreatureID`,`GroupID`,`ID`,`Text`,`Type`,`Language`,`Probability`,`Emote`,`Duration`,`Sound`,`comment`) VALUES 
 (@ENTRY,0,0, 'Grrrr... fresh meat!',12,0,50,0,0,0, 'combat Say'),
 (@ENTRY,0,1, 'More bones to gnaw on...',12,0,50,0,0,0, 'combat Say');
 
