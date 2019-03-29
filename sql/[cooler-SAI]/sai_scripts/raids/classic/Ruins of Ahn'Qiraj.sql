@@ -59,8 +59,8 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,3,0,0,0,100,2,10000,10000,20000,25000,11,25471,0,0,0,0,0,4,0,0,0,0,0,0,0,'Cast Attack Order');
 -- NPC talk text insert
 SET @ENTRY := 15392;
-DELETE FROM `creature_text` WHERE `entry`=@ENTRY;
-INSERT INTO `creature_text` (`entry`,`groupid`,`id`,`text`,`type`,`language`,`probability`,`emote`,`duration`,`sound`,`comment`) VALUES
+DELETE FROM `creature_text` WHERE `CreatureID`=@entry;
+INSERT INTO `creature_text` (`CreatureID`,`GroupID`,`ID`,`Text`,`Type`,`Language`,`Probability`,`Emote`,`Duration`,`Sound`,`comment`) VALUES 
 (@ENTRY,0,0, 'Kill $N!',14,0,100,25,0,0, 'on Aggro Text');
 
 -- Captain Xurrem

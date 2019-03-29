@@ -190,8 +190,8 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,5,0,61,0,100,2,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,'Say Text on Cast Dominate Mind');
 -- NPC talk text insert
 SET @ENTRY := 12557;
-DELETE FROM `creature_text` WHERE `entry`=@ENTRY;
-INSERT INTO `creature_text` (`entry`,`groupid`,`id`,`text`,`type`,`language`,`probability`,`emote`,`duration`,`sound`,`comment`) VALUES
+DELETE FROM `creature_text` WHERE `CreatureID`=@entry;
+INSERT INTO `creature_text` (`CreatureID`,`GroupID`,`ID`,`Text`,`Type`,`Language`,`Probability`,`Emote`,`Duration`,`Sound`,`comment`) VALUES 
 (@ENTRY,0,0, 'Intruders have breached the hatchery! Sound the alarm! Protect the eggs at all costs!',14,0,100,0,0,8272, 'on Aggro Text'),
 (@ENTRY,1,0, 'Foolish mortal, you serve me now!',12,0,100,0,0,8273, 'on Aggro Text');
 

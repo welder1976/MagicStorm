@@ -2,8 +2,6 @@ SmartAI Scripts TODO:
 
 WoD Zones:
 	
--- Talador	
-
 -- Tanaan Jungle	
 
 WoD Dungeons:
@@ -28,10 +26,6 @@ Legion Zones:
 -- Suramar
 
 Legion Dungeons:
-
--- Return to Karazhan
-
--- Violet Hold
 
 Legion Raids:
 
