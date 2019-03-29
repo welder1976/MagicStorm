@@ -2,8 +2,6 @@ SmartAI Scripts TODO:
 
 WoD Zones:
 	
--- Talador	
-
 -- Tanaan Jungle	
 
 WoD Dungeons:
