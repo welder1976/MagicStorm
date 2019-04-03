@@ -86,9 +86,9 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
        
         if (player->HasQuest(QUEST_FINDING_BONCHILL) && (player->GetQuestObjectiveData(QUEST_FINDING_BONCHILL, 0) ) && !player->GetQuestObjectiveData(QUEST_FINDING_BONCHILL, 6))
         {
-            //menu (19321, 0, 0, '<把你发现的信息告诉梅瑞尔。>', 0),
+            //menu (19321, 0, 0, 'Tell Merrill about the information you found.', 0),
             ClearGossipMenuFor(player);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, string_To_UTF8("<把你发现的信息告诉梅瑞尔。>"), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF );
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, string_To_UTF8("Tell Merrill about the information you found."), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF );
             SendGossipMenuFor(player, player->GetGossipTextId(me), me->GetGUID());
         }
         else
