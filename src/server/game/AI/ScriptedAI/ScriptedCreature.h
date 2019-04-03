@@ -190,6 +190,11 @@ struct TC_GAME_API ScriptedAI : public CreatureAI
     DamageEventMap damageEvents;
     InstanceScript* const instance;
 
+    //For lock
+    bool IsLock;
+    //Delay to unlock
+    void SetUnlock(uint32 time);
+
     // *************
     //Pure virtual functions
     // *************
@@ -283,6 +288,7 @@ struct TC_GAME_API ScriptedAI : public CreatureAI
     bool Is25ManRaid() const { return _difficulty == DIFFICULTY_25_N || _difficulty == DIFFICULTY_25_HC; }
     bool IsLFR() const { return _difficulty == DIFFICULTY_LFR || _difficulty == DIFFICULTY_LFR_NEW; }
     bool IsMythic() const { return me->GetMap()->IsMythic(); }
+    bool IsChallengeMode() const { return _difficulty == DIFFICULTY_MYTHIC_KEYSTONE; }
 
     template<class T> inline
     const T& DUNGEON_MODE(const T& normal5, const T& heroic10) const

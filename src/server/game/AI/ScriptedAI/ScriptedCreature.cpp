@@ -162,6 +162,14 @@ void ScriptedAI::UpdateAI(uint32 diff)
     DoMeleeAttackIfReady();
 }
 
+void ScriptedAI::SetUnlock(uint32 time)
+{
+    me->GetScheduler().Schedule(Milliseconds(time), [this](TaskContext context)
+    {
+        IsLock = false;
+    });
+}
+
 void ScriptedAI::DoStartMovement(Unit* victim, float distance, float angle)
 {
     if (victim)

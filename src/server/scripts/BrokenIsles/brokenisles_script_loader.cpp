@@ -202,6 +202,15 @@ void AddSC_boss_new_opera();
 void AddSC_boss_new_vizaduum();
 void AddSC_boss_new_nightbane();
 
+//scenario
+void AddSC_scenario_the_violet_hold();
+void AddSC_scenario_artifact_ursocslair();
+void AddSC_scenario_artifact_restoacqusition();
+void AddSC_scenario_artifact_ruins_of_falanaar();
+void AddSC_scenario_artifact_karazhan_catacombs();
+void AddSC_scenario_artifact_brokenshore();
+void AddSC_scenario_artifact_tirisfal_glades();
+
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
 void AddBrokenIslesScripts()
@@ -382,4 +391,13 @@ void AddBrokenIslesScripts()
     AddSC_boss_new_opera();
     AddSC_boss_new_vizaduum();
     AddSC_boss_new_nightbane();
+
+    //scenario
+    AddSC_scenario_the_violet_hold();
+    AddSC_scenario_artifact_ursocslair();
+    AddSC_scenario_artifact_restoacqusition();
+    AddSC_scenario_artifact_ruins_of_falanaar();
+    AddSC_scenario_artifact_karazhan_catacombs();
+    AddSC_scenario_artifact_brokenshore();
+    AddSC_scenario_artifact_tirisfal_glades();
 }

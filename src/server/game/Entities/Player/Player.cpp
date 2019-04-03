@@ -15647,6 +15647,7 @@ void Player::AddQuest(Quest const* quest, Object* questGiver)
 
     sScriptMgr->OnQuestStatusChange(this, quest_id);
     sScriptMgr->OnQuestStatusChange(this, quest, oldStatus, questStatusData.Status);
+    sScriptMgr->OnQuestAccept(this, quest);  
 }
 
 void Player::ForceCompleteQuest(uint32 quest_id)
@@ -24608,6 +24609,16 @@ void Player::SendInitialPacketsBeforeAddToMap()
     SendDirectMessage(initialSetup.Write());
 
     SetMover(this);
+}
+
+void Player::SendNewDiff(Difficulty difficulty)
+{
+    WorldPackets::Misc::WorldServerInfo worldServerInfo;
+    worldServerInfo.InstanceGroupSize = GetMap()->GetMapDifficulty() ? GetMap()->GetMapDifficulty()->MaxPlayers : 0;
+    worldServerInfo.IsTournamentRealm = 0;
+    worldServerInfo.DifficultyID = difficulty;
+
+    SendDirectMessage(worldServerInfo.Write());
 }
 
 void Player::SendInitialPacketsAfterAddToMap()
