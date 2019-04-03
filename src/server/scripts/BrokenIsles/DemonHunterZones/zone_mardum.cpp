@@ -20,13 +20,18 @@
 #include "MotionMaster.h"
 #include "ObjectAccessor.h"
 #include "Player.h"
+#include "QuestPackets.h"
+#include "ScenePackets.h"
 #include "SceneMgr.h"
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "SpellAuras.h"
 #include "SpellScript.h"
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
 #include "TemporarySummon.h"
+#include "WorldSession.h"
+#include "PhasingHandler.h"
 
 enum eQuests
 {
@@ -151,7 +156,11 @@ public:
     bool OnGossipHello(Player* player, GameObject* /*go*/) override
     {
         if (!player->GetQuestObjectiveData(QUEST_INVASION_BEGIN, 1))
+      {
             player->CastSpell(player, SPELL_SCENE_MARDUM_LEGION_BANNER, true);
+
+      }
+            player->CastSpell(player, SPELL_PHASE_171, true);
 
         if (!player->GetQuestObjectiveData(QUEST_INVASION_BEGIN, 1))
             player->CastSpell(player, SPELL_PHASE_171, true);
@@ -203,6 +212,7 @@ public:
 
         void HandleMountOnHit(SpellEffIndex /*effIndex*/)
         {
+            GetCaster()->RemoveAurasDueToSpell(SPELL_PHASE_171);
             GetCaster()->RemoveAurasDueToSpell(SPELL_PHASE_MARDUM_FELSABBER);
 
             // We schedule this to let hover animation pass
@@ -703,38 +713,84 @@ class spell_mardum_spectral_sight : public SpellScript
     }
 };
 
-// 197180
-struct npc_mardum_fel_lord_caza : public ScriptedAI
+enum FelLordCaza
 {
-    npc_mardum_fel_lord_caza(Creature* creature) : ScriptedAI(creature) { }
+    EVENT_SWEEPING_SLASH = 0,
+    EVENT_FEL_INFUSION = 1,
+    SPELL_SWEEPING_SLASH = 197002,
+    SPELL_FEL_INFUSION = 197180,
+    NPC_FEL_LORD_CAZA_CREDIT = 106014,
+    SAY_ONCOMBAT_CAZA = 0,
+};
 
-    enum Spells
+class npc_fel_lord_caza : public CreatureScript
+{
+public:
+    npc_fel_lord_caza() : CreatureScript("npc_fel_lord_caza") { }
+
+    struct npc_fel_lord_cazaAI : public ScriptedAI
     {
-        SPELL_FEL_INFUSION          = 197180,
-        SPELL_LEARN_CONSUME_MAGIC   = 195441
+        npc_fel_lord_cazaAI(Creature* creature) : ScriptedAI(creature)
+        {
+            Initialize();
+        }
+
+        void Initialize()
+        {
+            events.ScheduleEvent(EVENT_SWEEPING_SLASH, 10000);
+            events.ScheduleEvent(EVENT_FEL_INFUSION, 8000);
+        }
+
+        void Reset() override
+        {
+            Initialize();
+            events.Reset();
+        }
+
+        void JustDied(Unit* killer) override
+        {
+            if (killer->GetTypeId() == TYPEID_PLAYER)
+                killer->ToPlayer()->KilledMonsterCredit(NPC_FEL_LORD_CAZA_CREDIT, ObjectGuid::Empty);
+        }
+
+        void EnterCombat(Unit* who) override
+        {
+            Talk(SAY_ONCOMBAT_CAZA);
+        }
+
+        void UpdateAI(uint32 diff) override
+        {
+            events.Update(diff);
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                case EVENT_SWEEPING_SLASH:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(target, SPELL_SWEEPING_SLASH, true);
+
+                    events.ScheduleEvent(EVENT_SWEEPING_SLASH, 10000);
+                    break;
+                case EVENT_FEL_INFUSION:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(target, SPELL_FEL_INFUSION, true);
+
+                    events.ScheduleEvent(EVENT_FEL_INFUSION, 8000);
+                    break;
+                }
+            }
+
+            if (UpdateVictim())
+                DoMeleeAttackIfReady();
+        }
+    private:
+        EventMap events;
     };
 
-    void EnterCombat(Unit*) override
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        me->GetScheduler().Schedule(Seconds(10), [this](TaskContext context)
-        {
-            me->CastSpell(me->GetVictim(), SPELL_FEL_INFUSION, true);
-            context.Repeat(Seconds(10));
-        });
-    }
-
-    void JustDied(Unit* /*killer*/) override
-    {
-        std::list<Player*> players;
-        me->GetPlayerListInGrid(players, 50.0f);
-
-        for (Player* player : players)
-        {
-            player->ForceCompleteQuest(QUEST_HIDDEN_NO_MORE);
-
-            if (!player->HasSpell(SPELL_LEARN_CONSUME_MAGIC))
-                player->CastSpell(player, SPELL_LEARN_CONSUME_MAGIC);
-        }
+        return new npc_fel_lord_cazaAI(creature);
     }
 };
 
@@ -835,47 +891,153 @@ public:
     }
 };
 
-// 93802
-struct npc_mardum_tyranna : public ScriptedAI
+
+enum BroodQueenTyranna
 {
-    npc_mardum_tyranna(Creature* creature) : ScriptedAI(creature) { }
+    EVENT_BROOD_SWARM = 0,
+    EVENT_INTO_THE_SHADOWS = 1,
+    EVENT_QUEENS_BITE = 2,
+    EVENT_CHECK_GROUND = 3,
 
-    void JustDied(Unit* /*killer*/) override
+    SPELL_BROOD_SWARM = 197627,
+    SPELL_INTO_THE_SHADOWS = 197414,
+    SPELL_QUEENS_BITE = 197486,
+
+    NPC_CREDIT1 = 93802,
+    NPC_CREDIT2 = 101760,
+    SAY_ONCOMBAT_TYRANNA = 0,
+};
+
+class npc_brood_queen_tyranna : public CreatureScript
+{
+public:
+    npc_brood_queen_tyranna() : CreatureScript("npc_brood_queen_tyranna") { }
+
+    struct npc_brood_queen_tyrannaAI : public ScriptedAI
     {
-        std::list<Player*> players;
-        me->GetPlayerListInGrid(players, 50.0f);
+        npc_brood_queen_tyrannaAI(Creature* creature) : ScriptedAI(creature)
+        {
+            Initialize();
+        }
 
-        for (Player* player : players)
+        float GroundPos;
+
+        void Initialize()
+        {
+            events.ScheduleEvent(EVENT_BROOD_SWARM, 10000);
+            events.ScheduleEvent(EVENT_INTO_THE_SHADOWS, 8000);
+            events.ScheduleEvent(EVENT_QUEENS_BITE, 18000);
+            events.ScheduleEvent(EVENT_CHECK_GROUND, 100);
+        }
+
+        void Reset() override
+        {
+            Initialize();
+            events.Reset();
+            GroundPos = me->GetPositionZ() + 0.1f;
+        }
+
+        void JustDied(Unit* killer) override
+        {
+           std::list<Player*> players;
+           me->GetPlayerListInGrid(players, 50.0f);
+
+           for (Player* player : players)
             player->KilledMonsterCredit(101760);
+        }
+
+        void EnterCombat(Unit* who) override
+        {
+            Talk(SAY_ONCOMBAT_TYRANNA);
+
+            if (who->GetTypeId() == TYPEID_PLAYER)
+            {
+                who->ToPlayer()->KilledMonsterCredit(NPC_CREDIT1, ObjectGuid::Empty);
+                who->ToPlayer()->KilledMonsterCredit(NPC_CREDIT2, ObjectGuid::Empty);
+                who->ToPlayer()->AddItem(124672, 1);
+                me->GetMotionMaster()->MovePoint(0, 0.0f, 0.0f, GroundPos + 1.0f);
+            }
+        }
+
+        void UpdateAI(uint32 diff) override
+        {
+            events.Update(diff);
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                case EVENT_BROOD_SWARM:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(target, SPELL_BROOD_SWARM, true);
+
+                    events.ScheduleEvent(EVENT_BROOD_SWARM, 14000);
+                    break;
+                case EVENT_INTO_THE_SHADOWS:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(target, SPELL_INTO_THE_SHADOWS, true);
+
+                    events.ScheduleEvent(EVENT_INTO_THE_SHADOWS, 18000);
+                    break;
+                case EVENT_QUEENS_BITE:
+                    if (Unit* target = me->GetVictim())
+                        me->CastSpell(target, SPELL_QUEENS_BITE, true);
+
+                    events.ScheduleEvent(EVENT_QUEENS_BITE, 8000);
+                    break;
+                case EVENT_CHECK_GROUND:
+                    if (me->GetPositionZ() < GroundPos - 0.2f)
+                    {
+                        me->GetMotionMaster()->MovePoint(0, 0.0f, 0.0f, GroundPos + 2.0f);
+                        me->SetDisableGravity(true);
+                        me->SetCanFly(true);
+                    }
+                    events.ScheduleEvent(EVENT_CHECK_GROUND, 600);
+                    break;
+                }
+            }
+
+            if (UpdateVictim())
+                DoMeleeAttackIfReady();
+        }
+    private:
+        EventMap events;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_brood_queen_tyrannaAI(creature);
     }
 };
 
-// 97303
-class npc_mardum_kayn_sunfury_end : public CreatureScript
+// 97303 Kayn Sunfury
+class npc_kayn_sunfury2 : public CreatureScript
 {
 public:
-    npc_mardum_kayn_sunfury_end() : CreatureScript("npc_mardum_kayn_sunfury_end") { }
+    npc_kayn_sunfury2() : CreatureScript("npc_kayn_sunfury2") { }
 
-    bool OnQuestReward(Player* /*player*/, Creature* /*creature*/, Quest const* /*quest*/, uint32 /*opt*/) override
+    bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest) override
     {
-        // This Scene make the mobs disappear ATM
-        //if (quest->GetQuestId() == QUEST_THE_KEYSTONE)
-        //    player->CastSpell(player, 193387, true); // Scene
+        if (quest->GetQuestId() == 38729)
+        {
+            player->KilledMonsterCredit(100651, ObjectGuid::Empty);
+            creature->AI()->Talk(0);
+        }
 
         return true;
     }
-};
 
-// 245728
-class go_mardum_the_keystone : public GameObjectScript
-{
-public:
-    go_mardum_the_keystone() : GameObjectScript("go_mardum_the_keystone") { }
-
-    bool OnGossipHello(Player* player, GameObject* /*go*/) override
+    bool OnQuestReward(Player* player, Creature* creature, Quest const* quest, uint32 /*opt*/) override
     {
-        player->KilledMonsterCredit(100651);
-        return false;
+        if (quest->GetQuestId() == 38729)
+        {
+            player->SendMovieStart(497);
+            player->CastSpell(player, 192141, true);
+
+            player->TeleportTo(1468, 4325.94f, -620.21f, -281.41f, 0);
+        }
+
+        return true;
     }
 };
 
@@ -1237,47 +1399,32 @@ public:
     }
 };
 
-// 192140 back to black temple
-class spell_mardum_back_to_black_temple : public SpellScript
+// 192140 - Return to the Black Temple: Complete Quest
+class spell_return_to_the_black_temple_complete_quest : public SpellScriptLoader
 {
-    PrepareSpellScript(spell_mardum_back_to_black_temple);
+public:
+    spell_return_to_the_black_temple_complete_quest() : SpellScriptLoader("spell_return_to_the_black_temple_complete_quest") { }
 
-    void HandleOnCast()
+    class spell_return_to_the_black_temple_complete_quest_AuraScript : public AuraScript
     {
-        if (Player* player = GetCaster()->ToPlayer())
+        PrepareAuraScript(spell_return_to_the_black_temple_complete_quest_AuraScript);
+
+        void HandleEffectApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
         {
-            if (player->GetTeam() == ALLIANCE)
+            if (Aura* aura = GetAura())
+                aura->SetDuration(1000);
 
-                player->TeleportTo(1468, 4325.94f, -620.21f, -281.41f, 1.658936f);
-            else
-                player->TeleportTo(1468, 4325.94f, -620.21f, -281.41f, 1.658936f);
-
-            player->GetScheduler().Schedule(Seconds(2), [](TaskContext context)
-            {
-                GetContextUnit()->RemoveAurasDueToSpell(192140); // Remove black screen
-            });
-
-            // TEMPFIX - Spells learned in next zone
-            if (player->GetSpecializationId() == TALENT_SPEC_DEMON_HUNTER_HAVOC)
-            {
-                player->LearnSpell(188499, false);
-                player->LearnSpell(198793, false);
-                player->LearnSpell(198589, false);
-                player->LearnSpell(179057, false);
-            }
-            else
-            {
-                player->LearnSpell(204596, false);
-                player->LearnSpell(203720, false);
-                player->LearnSpell(204021, false);
-                player->LearnSpell(185245, false);
-            }
         }
-    }
 
-    void Register() override
+        void Register() override
+        {
+            AfterEffectApply += AuraEffectApplyFn(spell_return_to_the_black_temple_complete_quest_AuraScript::HandleEffectApply, EFFECT_0, SPELL_AURA_SCREEN_EFFECT, AURA_EFFECT_HANDLE_REAL);
+        }
+    };
+
+    AuraScript* GetAuraScript() const override
     {
-        OnCast += SpellCastFn(spell_mardum_back_to_black_temple::HandleOnCast);
+        return new spell_return_to_the_black_temple_complete_quest_AuraScript();
     }
 };
 
@@ -1308,19 +1455,18 @@ void AddSC_zone_mardum()
     new npc_mardum_captain();
     new npc_mardum_jace_darkweaver();
     RegisterSpellScript(spell_mardum_spectral_sight);
-    RegisterCreatureAI(npc_mardum_fel_lord_caza);
     new go_mardum_illidari_banner();
     new go_mardum_tome_of_fel_secrets();
     new PlayerScript_mardum_spec_choice();
     new npc_mardum_izal_whitemoon();
-    RegisterCreatureAI(npc_mardum_tyranna);
-    new npc_mardum_kayn_sunfury_end();
-    new go_mardum_the_keystone();
     new go_q38727();
     new npc_kayn_sunfury();
     new npc_allari();
     new npc_cyana();
     new npc_korvas();
     new npc_mannethrel();
-    RegisterSpellScript(spell_mardum_back_to_black_temple);
+    new spell_return_to_the_black_temple_complete_quest();
+    new npc_brood_queen_tyranna();
+    new npc_kayn_sunfury2();
+    new npc_fel_lord_caza();
 }
