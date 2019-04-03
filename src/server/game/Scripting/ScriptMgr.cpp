@@ -2483,6 +2483,21 @@ void ScriptMgr::OnPlayerUnsummonPetTemporary(Player* player)
     FOREACH_SCRIPT(PlayerScript)->OnResummonPetTemporary(player);
 }
 
+void ScriptMgr::OnPlayerMovementUpdate(Player* player)
+{
+    FOREACH_SCRIPT(PlayerScript)->OnMovementUpdate(player);
+}
+
+void ScriptMgr::OnPlayerChangeShapeshift(Player* player, ShapeshiftForm form)
+{
+    FOREACH_SCRIPT(PlayerScript)->OnChangeShapeshift(player, form);
+}
+
+void ScriptMgr::OnPlayerStartChallengeMode(Player* player, uint8 level)
+{
+    FOREACH_SCRIPT(PlayerScript)->OnStartChallengeMode(player, level);
+}
+
 // Account
 void ScriptMgr::OnAccountLogin(uint32 accountId)
 {

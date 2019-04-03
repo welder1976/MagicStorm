@@ -23,6 +23,7 @@
 #include "ObjectGuid.h"
 #include <vector>
 #include <boost/property_tree/ptree.hpp>
+#include "Unit.h"
 
 class AccountMgr;
 class Area;
@@ -816,6 +817,9 @@ class TC_GAME_API PlayerScript : public UnitScript
         // Called when a player completes a movie
         virtual void OnMovieComplete(Player* /*player*/, uint32 /*movieId*/) { }
 
+        // Called when a player move
+        virtual void OnMovementUpdate(Player* /*player*/) { }
+
         // Called when a player choose a response from a PlayerChoice
         virtual void OnPlayerChoiceResponse(Player* /*player*/, uint32 /*choiceId*/, uint32 /*responseId*/) { }
 
@@ -824,6 +828,9 @@ class TC_GAME_API PlayerScript : public UnitScript
 
         // Called when a charge recovery cooldown start for that player
         virtual void OnChargeRecoveryTimeStart(Player* /*player*/, uint32 /*chargeCategoryId*/, int32& /*chargeRecoveryTime*/) { }
+
+	//Called when a player Start ChallengeMode
+        virtual void OnStartChallengeMode(Player* /*player*/, uint8 /*level*/) { }
 
         virtual void OnCompleteQuestChoice(Player* /*player*/, uint32 /*choiceId*/, uint32 /*responseId*/) { }
 
@@ -1268,6 +1275,9 @@ class TC_GAME_API ScriptMgr
         void OnSceneCancel(Player* player, uint32 sceneInstanceId);
         void OnSceneComplete(Player* player, uint32 sceneInstanceId);
         void OnMovieComplete(Player* player, uint32 movieId);
+        void OnPlayerMovementUpdate(Player* player);
+        void OnPlayerChangeShapeshift(Player* player, ShapeshiftForm form);
+        void OnPlayerStartChallengeMode(Player* player, uint8 level);
         void OnPlayerChoiceResponse(Player* player, uint32 choiceId, uint32 responseId);
         void OnCooldownStart(Player* player, SpellInfo const* spellInfo, uint32 itemId, int32& cooldown, uint32& categoryId, int32& categoryCooldown);
         void OnChargeRecoveryTimeStart(Player* player, uint32 chargeCategoryId, int32& chargeRecoveryTime);
