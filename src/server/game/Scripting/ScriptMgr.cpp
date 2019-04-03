@@ -2383,7 +2383,7 @@ void ScriptMgr::OnPlayerUpdateZone(Player* player, Area* newArea, Area* oldArea)
     FOREACH_SCRIPT(PlayerScript)->OnUpdateZone(player, newArea, oldArea);
 }
 
-void ScriptMgr::OnPlayerUpdateArea(Player* player, Area* newArea, Area* oldArea)
+void ScriptMgr::OnPlayerUpdateArea(Player* player, uint32 newArea, uint32 oldArea)
 {
     FOREACH_SCRIPT(PlayerScript)->OnUpdateArea(player, newArea, oldArea);
 }
@@ -2486,11 +2486,6 @@ void ScriptMgr::OnPlayerUnsummonPetTemporary(Player* player)
 void ScriptMgr::OnPlayerMovementUpdate(Player* player)
 {
     FOREACH_SCRIPT(PlayerScript)->OnMovementUpdate(player);
-}
-
-void ScriptMgr::OnPlayerChangeShapeshift(Player* player, ShapeshiftForm form)
-{
-    FOREACH_SCRIPT(PlayerScript)->OnChangeShapeshift(player, form);
 }
 
 void ScriptMgr::OnPlayerStartChallengeMode(Player* player, uint8 level)

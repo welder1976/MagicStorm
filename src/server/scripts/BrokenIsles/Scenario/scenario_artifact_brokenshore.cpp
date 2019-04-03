@@ -1,4 +1,4 @@
-﻿/*
+/*
 scenario_artifact_brokenshore
 lyosky
 */
@@ -136,14 +136,14 @@ struct scenario_artifact_brokenshore : public InstanceScript
     ObjectiveType: 0
 
     */
-    void OnPlayerAreaUpdate(Player* player, uint32 newAreaId, uint32 /*oldAreaId*/)
+    void OnPlayerAreaUpdate(Player* player, Area* newArea, Area* /*oldArea*/)
     {
         /*
         spell 197879
         Map: 1500
         Position: X: -1873.97 Y: -1207.44 Z: 0.14 O: 3.45
         */
-        if (newAreaId == 7796 && player->HasQuest(QUEST__RETURN_TO_THE_BROKEN_SHORE) && player->getClass() == CLASS_WARRIOR)
+        if (newArea == 7796 && player->HasQuest(QUEST__RETURN_TO_THE_BROKEN_SHORE) && player->getClass() == CLASS_WARRIOR)
         {
             PhasingHandler::AddPhase(player, PHASE_WARRIOR);
             ClassMode = DATA_STAGE_5;
@@ -152,7 +152,7 @@ struct scenario_artifact_brokenshore : public InstanceScript
             ///SMSG_SET_DUNGEON_DIFFICULTY 12
         }
         ///.go -2421.58 144.59 7.7694 1500
-        if (newAreaId == 7797 && player->getClass() == CLASS_PALADIN)
+        if (newArea == 7797 && player->getClass() == CLASS_PALADIN)
         {
             PhasingHandler::AddPhase(player, PHASE_PALADIN);
             ClassMode = DATA_STAGE_7;

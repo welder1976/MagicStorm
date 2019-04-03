@@ -773,7 +773,7 @@ class TC_GAME_API PlayerScript : public UnitScript
         virtual void OnUpdateZone(Player* /*player*/, Area* /*newArea*/, Area* /*oldArea*/) { }
 
         // Called when a player switches to a new area
-        virtual void OnUpdateArea(Player* /*player*/, Area* /*newArea*/, Area* /*oldArea*/) { }
+        virtual void OnUpdateArea(Player* /*player*/, uint32 /*newArea*/, uint32 /*oldArea*/) { }
 
         // Called when a player changes to a new map (after moving to new map)
         virtual void OnMapChanged(Player* /*player*/) { }
@@ -1276,7 +1276,6 @@ class TC_GAME_API ScriptMgr
         void OnSceneComplete(Player* player, uint32 sceneInstanceId);
         void OnMovieComplete(Player* player, uint32 movieId);
         void OnPlayerMovementUpdate(Player* player);
-        void OnPlayerChangeShapeshift(Player* player, ShapeshiftForm form);
         void OnPlayerStartChallengeMode(Player* player, uint8 level);
         void OnPlayerChoiceResponse(Player* player, uint32 choiceId, uint32 responseId);
         void OnCooldownStart(Player* player, SpellInfo const* spellInfo, uint32 itemId, int32& cooldown, uint32& categoryId, int32& categoryCooldown);
