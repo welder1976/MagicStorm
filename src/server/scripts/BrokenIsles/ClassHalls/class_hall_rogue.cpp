@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2017-2018 AshamaneProject <https://github.com/AshamaneProject>
  * Copyright (C) 2008-2017 TrinityCore <http://www.trinitycore.org/>
  *
@@ -213,7 +213,7 @@ struct npc_lord_jorach_ravenholdt_101513 : public ScriptedAI
     {
         if (quest->GetQuestId() == QUEST_THE_FINAL_SHADOW)
         {
-            ///SPELL_CONVERSATION_ 202389 创建对话  1191
+            ///SPELL_CONVERSATION_ 202389 ????  1191
             me->Say(104648, player);
         }
         if (quest->GetQuestId() == QUEST_A_WORTHY_BLADE)
@@ -297,11 +297,7 @@ struct npc_valeera_sanguinar_98102 : public ScriptedAI
 
     void DoAction(int32 param)
     {
-        switch (param)
-        {
-        //case ACTION_RESPONSEID_1:
-        //    break;
-        }
+
     }
 
     void UpdateAI(uint32 diff) override
@@ -366,11 +362,7 @@ struct npc_fleet_admiral_tethys_94159 : public ScriptedAI
 
     void DoAction(int32 param)
     {
-        switch (param)
-        {
-        //case ACTION_RESPONSEID_1:
-        //    break;
-        }
+
     }
 
     void UpdateAI(uint32 diff) override
@@ -411,11 +403,7 @@ struct npc_princess_tess_greymane_94138 : public ScriptedAI
 
     void DoAction(int32 param)
     {
-        switch (param)
-        {
-        //case ACTION_RESPONSEID_1:
-        //    break;
-        }
+
     }
 
     void UpdateAI(uint32 diff) override
