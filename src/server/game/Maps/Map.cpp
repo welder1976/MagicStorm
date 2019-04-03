@@ -3772,7 +3772,7 @@ bool Map::IsDungeon() const
 
 bool Map::IsScenario() const
 {
-    return i_mapEntry/* && i_mapEntry->IsScenario()*/;
+    return i_mapEntry/* && i_mapEntry->IsScenario()*/; // need fix! not found in MapEntry!
 }
 
 bool Map::IsNonRaidDungeon() const
