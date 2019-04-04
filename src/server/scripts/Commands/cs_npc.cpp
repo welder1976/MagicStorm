@@ -777,9 +777,9 @@ public:
         if (target->GetMotionMaster()->GetCurrentMovementGeneratorType() == IDLE_MOTION_TYPE ||
             target->GetMotionMaster()->GetCurrentMovementGeneratorType() == RANDOM_MOTION_TYPE ||
             target->GetMotionMaster()->GetCurrentMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
-            handler->PSendSysMessage("Motion type: %u", target->GetMotionMaster()->GetCurrentMovementGeneratorType());
+            handler->PSendSysMessage("Motion type: |CFFFF0000%u|R", target->GetMotionMaster()->GetCurrentMovementGeneratorType());
         else
-            handler->PSendSysMessage("Motion type: %u", target->GetMotionMaster()->GetCurrentMovementGeneratorType() == IDLE_MOTION_TYPE);
+            handler->PSendSysMessage("Motion type: |CFFFF0000%u|R", target->GetMotionMaster()->GetCurrentMovementGeneratorType() == IDLE_MOTION_TYPE);
 
         handler->PSendSysMessage(LANG_NPCINFO_AIINFO, target->GetAIName().c_str(), target->GetScriptName().c_str());
         handler->PSendSysMessage(LANG_NPCINFO_FLAGS_EXTRA, cInfo->flags_extra);
