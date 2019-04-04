@@ -442,9 +442,18 @@ INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`
 (177928*10,12,-9438.719,134.7248,58.30473,0,0,1);
 
 UPDATE `creature` SET `spawndist` = 0, `MovementType` = 2, `position_x` = -9620.014, `position_y` = -829.742, `position_z` = 43.698, `orientation` = 5.452 WHERE `guid` = 178787 AND id = 42218;
-DELETE FROM `creature_addon` WHERE `guid` = 178787;
+DELETE FROM `creature_addon` WHERE `guid` IN (178787, 178789, 178792, 178795, 178791, 178794, 178788, 178790, 178793);
 INSERT INTO `creature_addon` (`guid`,`path_id`,`mount`,`bytes1`,`bytes2`,`emote`,`auras`) VALUES
-(178787, 178787*10, 29284, 0, 1, 0, "32609");
+(178787, 178787*10, 29284, 0, 1, 0, "32609"),
+(178789, 0, 29284, 0, 1, 0, "32609"),
+(178792, 0, 29284, 0, 1, 0, "32609"),
+(178795, 0, 29284, 0, 1, 0, "32609"),
+(178791, 0, 29284, 0, 1, 0, "32609"),
+(178794, 0, 29284, 0, 1, 0, "32609"),
+(178788, 0, 29284, 0, 1, 0, "32609"),
+(178790, 0, 29284, 0, 1, 0, "32609"),
+(178793, 0, 29284, 0, 1, 0, "32609");
+
 DELETE FROM `waypoint_data` WHERE `id` = 178787*10;
 INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`, `move_type`, `action`, `action_chance`, `wpguid`) VALUES
 (178787*10, 1, -9599.69, -850.821, 43.5444, 0, 0, 0, 0, 100, 0),
