@@ -556,6 +556,11 @@ INSERT INTO `creature_formations` (`leaderGUID`, `memberGUID`, `dist`, `angle`, 
 -- Group#2
 -- 179871 179874 179873(l) 179877 179876 179869 178449 178448 178445
 
+-- 177459 - WPs
+-- 177192 - RP Event
+-- ID: 11328 - WPs + Emotes
+-- GUID: 179023 - OOC Texts
+
 -- WP Childs
 -- WP Murlocs
 -- WP Kobolds
