@@ -215,7 +215,7 @@ class reach_to_stage_2 : public PlayerScript
 public:
     reach_to_stage_2() : PlayerScript("reach_to_stage_2") {}
 
-    void OnUpdateArea(Player* player, uint32 newArea, uint32 /*oldArea*/)
+    void OnUpdateAreaAlternate(Player* player, uint32 newArea, uint32 /*oldArea*/)
     {
         if (newArea == 8189)
             if (InstanceScript * instance = player->GetInstanceScript())

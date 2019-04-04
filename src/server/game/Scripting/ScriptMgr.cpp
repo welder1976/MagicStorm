@@ -2383,9 +2383,14 @@ void ScriptMgr::OnPlayerUpdateZone(Player* player, Area* newArea, Area* oldArea)
     FOREACH_SCRIPT(PlayerScript)->OnUpdateZone(player, newArea, oldArea);
 }
 
-void ScriptMgr::OnPlayerUpdateArea(Player* player, uint32 newArea, uint32 oldArea)
+void ScriptMgr::OnPlayerUpdateArea(Player* player, Area* newArea, Area* oldArea)
 {
     FOREACH_SCRIPT(PlayerScript)->OnUpdateArea(player, newArea, oldArea);
+}
+
+void ScriptMgr::OnPlayerUpdateAreaAlternate(Player* player, uint32 newArea, uint32 oldArea)
+{
+    FOREACH_SCRIPT(PlayerScript)->OnUpdateAreaAlternate(player, newArea, oldArea);
 }
 
 void ScriptMgr::OnQuestAccept(Player* player, const Quest* quest)

@@ -773,7 +773,10 @@ class TC_GAME_API PlayerScript : public UnitScript
         virtual void OnUpdateZone(Player* /*player*/, Area* /*newArea*/, Area* /*oldArea*/) { }
 
         // Called when a player switches to a new area
-        virtual void OnUpdateArea(Player* /*player*/, uint32 /*newArea*/, uint32 /*oldArea*/) { }
+        virtual void OnUpdateArea(Player* /*player*/, Area* /*newArea*/, Area* /*oldArea*/) { }
+
+        // Called when a player switches to a new area
+        virtual void OnUpdateAreaAlternate(Player* /*player*/, uint32 /*newArea*/, uint32 /*oldArea*/) { }
 
         // Called when a player changes to a new map (after moving to new map)
         virtual void OnMapChanged(Player* /*player*/) { }
@@ -829,18 +832,18 @@ class TC_GAME_API PlayerScript : public UnitScript
         // Called when a charge recovery cooldown start for that player
         virtual void OnChargeRecoveryTimeStart(Player* /*player*/, uint32 /*chargeCategoryId*/, int32& /*chargeRecoveryTime*/) { }
 
-	//Called when a player Start ChallengeMode
+	    //Called when a player Start ChallengeMode
         virtual void OnStartChallengeMode(Player* /*player*/, uint8 /*level*/) { }
 
         virtual void OnCompleteQuestChoice(Player* /*player*/, uint32 /*choiceId*/, uint32 /*responseId*/) { }
 
-	// Called when a player UnsummonPetTemporary
+	    // Called when a player UnsummonPetTemporary
         virtual void OnUnsummonPetTemporary(Player* /*player*/) { }
 
         // Called when a player ResummonPetTemporary
         virtual void OnResummonPetTemporary(Player* /*player*/) { }
 		
-	// Called when a player Itemlevel changed
+	    // Called when a player Itemlevel changed
         virtual void OnItemLevelChange(Player* /*player*/) { }
 };
 
@@ -1262,6 +1265,7 @@ class TC_GAME_API ScriptMgr
         void OnPlayerBindToInstance(Player* player, Difficulty difficulty, uint32 mapid, bool permanent, uint8 extendState);
         void OnPlayerUpdateZone(Player* player, Area* newArea, Area* oldArea);
         void OnPlayerUpdateArea(Player* player, Area* newArea, Area* oldArea);
+        void OnPlayerUpdateAreaAlternate(Player* player, uint32 newArea, uint32 oldArea);
         void OnQuestAccept(Player* player, const Quest* quest);
         void OnQuestReward(Player* player, const Quest* quest);
         void OnObjectiveValidate(Player* player, uint32 questID, uint32 objectiveID);
