@@ -308,7 +308,7 @@ class spell_shivermaw_relentless_storm : public SpellScriptLoader
                             if (Player* ptr = it.GetSource())
                             {
                                 G3D::Vector3 tgt_pos = { pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ() };
-                                //ptr->SendPlayOrphanSpellVisual(tgt_pos, 52628, 3.f, true, false);
+                                ptr->SendPlayOrphanSpellVisualalternative(tgt_pos, 52628, 3.f, true, false);
                             }
                         }
 
@@ -354,7 +354,7 @@ class spell_shivermaw_relentless_storm_missile : public SpellScriptLoader
                         if (Player* ptr = it.GetSource())
                         {
                             G3D::Vector3 tgt_pos = { pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ() };
-                            //ptr->SendPlayOrphanSpellVisual(tgt_pos, 52630, 1.f, true, true);
+                            ptr->SendPlayOrphanSpellVisualalternative(tgt_pos, 52630, 1.f, true, true);
                         }
                     }
                 }
