@@ -150,7 +150,7 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
         {
             m_playerGUID = player->GetGUID();
             AddPlayer();
-           // Conversation::CreateConversation(CONVERSATION_FELSTORMS_PLEA, player, player->GetPosition(), { player->GetGUID() });
+            Conversation::CreateConversation(CONVERSATION_FELSTORMS_PLEA, player, player->GetPosition(), { player->GetGUID() });
             player->ForceCompleteQuest(QUEST_FELSTORMS_PLEA);
         }
 
@@ -158,7 +158,7 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
         {
             m_playerGUID = player->GetGUID();
             AddPlayer();
-           // Conversation::CreateConversation(CONVERSATION_THE_DREADLORDS_PRIZE, player, player->GetPosition(), { player->GetGUID() });
+            Conversation::CreateConversation(CONVERSATION_THE_DREADLORDS_PRIZE, player, player->GetPosition(), { player->GetGUID() });
         }
         ///conversation 1281 ?????!???? ?????
         if (!HasPlayer(player->GetGUID()) && (player->HasQuest(QUEST_THE_DREADLORDS_PRIZE)) && (player->GetQuestObjectiveData(QUEST_THE_DREADLORDS_PRIZE, 0)) && (!player->GetQuestObjectiveData(QUEST_THE_DREADLORDS_PRIZE, 2)))
@@ -179,7 +179,7 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
             {
             case MOVE_TO_POSITION:
             {
-                //events.ScheduleEvent(EVENT_TALK_1, 500);
+             events.ScheduleEvent(EVENT_TALK_1, 500);
                 break;
             }
 
@@ -191,13 +191,13 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
         if (quest->GetQuestId() == QUEST_THE_DREADLORDS_PRIZE)
         {
             m_playerGUID = player->GetGUID();
-            //Conversation::CreateConversation(CONVERSATION_THE_DREADLORDS_PRIZE, player, player->GetPosition(), { player->GetGUID() });
+            Conversation::CreateConversation(CONVERSATION_THE_DREADLORDS_PRIZE, player, player->GetPosition(), { player->GetGUID() });
             //PATH
             me->SetSpeed(MOVE_RUN, 1.8f);
-            //me->GetMotionMaster()->MovePath(PATH_THE_DREADLORDS_PRIZE, false);
+            me->GetMotionMaster()->MovePath(PATH_THE_DREADLORDS_PRIZE, false);
 
             events.ScheduleEvent(EVENT_TALK_1, 10000);
-           //player->AddConversationDelayedTeleport(14000, CONVERSATION_THE_DREADLORDS_PRIZE, 1494, 1276.16f, -263.27f, 44.36f, 6.275331f);
+           player->AddConversationDelayedTeleport(14000, CONVERSATION_THE_DREADLORDS_PRIZE, 1494, 1276.16f, -263.27f, 44.36f, 6.275331f);
             ///X: 1276.16 Y: -263.27 Z: 44.36 Orientation: 6.275331 MapID: 1494
         }
         if (quest->GetQuestId() == QUEST_FINDING_BONCHILL)
@@ -277,10 +277,10 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
                 case EVENT_BACK_HOME_1:
                 {
                     TC_LOG_ERROR("server.worldserver", "EVENT_BACK_HOME_1");
-                    //me->NearTeleportTo(me->GetHomePosition(), false);
-                    //me->KillSelf();
-                    //me->Respawn();
-                    //me->GetMotionMaster()->MoveTargetedHome();
+                    me->NearTeleportTo(me->GetHomePosition(), false);
+                    me->KillSelf();
+                    me->Respawn();
+                    me->GetMotionMaster()->MoveTargetedHome();
                     break;
                 }
                 case EVENT_THE_DREADLORDS_PRIZE_LAST_TALK:
