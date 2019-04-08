@@ -1,0 +1,3 @@
+UPDATE creature_template_addon SET auras = "170133 186895" WHERE entry IN (98278, 98251, 98279, 98245, 98250, 98247, 98269);
+UPDATE creature_template_addon SET auras = "186895" WHERE entry = 98249;
+DELETE FROM creature_addon WHERE guid IN (20546891, 20546893, 20546863, 20546878, 20546865, 20546894, 20546898);
