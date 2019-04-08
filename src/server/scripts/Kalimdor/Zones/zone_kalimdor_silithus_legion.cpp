@@ -7,7 +7,8 @@
 #include "Log.h"
 #include "Util.h"
 #include "PhasingHandler.h"
-enum QUEST
+
+enum Quests
 {
     QUEST_UNITING_THE_ISLES = 43341,
     QUEST_ANTORUS_THE_BURNING_THRONE_THE_DEATH_OF_A_TITAN = 49015,
@@ -39,7 +40,7 @@ enum QUEST
     QUEST_THE_SPEAKERS_PERSPECTIVE = 50055,
 };
 
-enum NPC
+enum Creatures
 {
     NPC_MASTER_MATHIAS_SHAW_132255 = 132255,
     NPC_ZIDORMI_128607 = 128607,
@@ -58,7 +59,7 @@ enum NPC
     NPC_ARCHMAGE_KHADGAR_130033 = 130033,
 };
 
-enum
+enum Misc
 {
     SCENE_GIFTS_OF_THE_FALLEN = 260706,
     KILLED_MONSTER_CREDIT_QUEST_GIFTS_OF_THE_FALLEN = 132274, //KILLED_MONSTER_CREDIT_QUEST_GIFTS_OF_THE_FALLEN
@@ -135,6 +136,7 @@ public:
 };
 
 #define GOSSIP_MASTER_MATHIAS_SHAW "Tell me about the lion's sleep."
+
 struct npc_master_mathias_shaw_132255 : public ScriptedAI
 {
     npc_master_mathias_shaw_132255(Creature* creature) : ScriptedAI(creature) { Initialize(); }
@@ -232,13 +234,15 @@ struct npc_master_mathias_shaw_132255 : public ScriptedAI
     }
 };
 
-enum
+enum Zidormi
 {
     AURA_TIME_TRAVELLING = 255152, ///262016 
     SPELL_BLACK = 129809,
 };
+
 #define GOSSIP_ZIDORMI_1 "Can you show me what it's like to be helissus before the trauma of the world?"
 #define GOSSIP_ZIDORMI_2 "Can you take me back now?"
+
 struct npc_zidormi_128607 : public ScriptedAI
 {
     npc_zidormi_128607(Creature* creature) : ScriptedAI(creature) { Initialize(); }
@@ -397,13 +401,14 @@ struct npc_khargus_stonemantle_132192 : public ScriptedAI
     }
 };
 
-enum
+enum ArchmageKhadgar
 {
     POINT_JUMP = 0,
     POINT_DESPAWN = 1,
 
     CONVERSATION_TALK = 6623,
 };
+
 struct npc_archmage_khadgar_130032 : public ScriptedAI
 {
     npc_archmage_khadgar_130032(Creature* creature) : ScriptedAI(creature) { }
@@ -441,11 +446,12 @@ private:
     TaskScheduler _scheduler;
 };
 
-enum
+enum MagniBronzebeard
 {
     CONVERSATION_A_THE_SPEAKERS_PERSPECTIVE = 6617,
     KILLMONSTERCREDIT_A_THE_SPEAKERS_PERSPECTIVE = 130216,
 };
+
 struct npc_magni_bronzebeard_130216 : public ScriptedAI
 {
     npc_magni_bronzebeard_130216(Creature* creature) : ScriptedAI(creature) { Initialize(); }
@@ -491,7 +497,7 @@ private:
     ObjectGuid   m_playerGUID;
 };
 
-enum
+enum Misc
 {
     NPC_ANGUS_STORMBREW = 132684, // angus - stormbrew
     GO_TWILIGHT_OUTHOUSE = 280948, //Twilight Outhouse
@@ -501,6 +507,7 @@ enum
     CONVERSATION_ON_QUEST_ACCEPT = 6723,
     CONVERSATION_ON_QUEST_COMPLETE = 6724,
 };
+
 class go_twilight_outhouse : public GameObjectScript
 {
 public:
@@ -622,6 +629,7 @@ struct npc_archmage_khadgar_130033 : public ScriptedAI
 
 ///-- PHASE 10401
 #define GOSSIP_NATHANOS_BLIGHTCALLER "Tell me what happened at the party."
+
 struct npc_nathanos_blightcaller_132254 : public ScriptedAI
 {
     npc_nathanos_blightcaller_132254(Creature* creature) : ScriptedAI(creature) { Initialize(); }

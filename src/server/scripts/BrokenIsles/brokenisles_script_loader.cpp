@@ -178,6 +178,7 @@ void AddSC_boss_harjatan();
 void AddSC_boss_tos_kiljaeden();
 void AddSC_boss_maiden_of_vigilance();
 void AddSC_boss_sasszine();
+void AddSC_boss_sisters_of_the_moon_debug();
 void AddSC_tomb_of_sargeras();
 void AddSC_instance_tomb_of_sargeras();
 
@@ -368,6 +369,7 @@ void AddBrokenIslesScripts()
     AddSC_boss_tos_kiljaeden();
     AddSC_boss_maiden_of_vigilance();
     AddSC_boss_sasszine();
+    AddSC_boss_sisters_of_the_moon_debug();
     AddSC_tomb_of_sargeras();
     AddSC_instance_tomb_of_sargeras();
 
