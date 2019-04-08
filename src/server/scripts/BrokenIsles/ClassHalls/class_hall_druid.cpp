@@ -2112,7 +2112,6 @@ Facing: 4.793286
             }
         }
 
-
         void OnUpdateAreaAlternate(Player* player, uint32 /*newArea*/, uint32 /*oldArea*/)
         {
             if (player->GetQuestStatus(QUEST_IN_DEEP_SLUMBER) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(QUEST_IN_DEEP_SLUMBER) == QUEST_STATUS_COMPLETE)

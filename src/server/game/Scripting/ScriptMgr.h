@@ -23,7 +23,6 @@
 #include "ObjectGuid.h"
 #include <vector>
 #include <boost/property_tree/ptree.hpp>
-#include "Unit.h"
 
 class AccountMgr;
 class Area;

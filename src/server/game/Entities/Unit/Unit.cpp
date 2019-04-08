@@ -12347,20 +12347,6 @@ void Unit::SendPlayOrphanSpellVisual(ObjectGuid const& target, uint32 spellVisua
     SendMessageToSet(playOrphanSpellVisual.Write(), true);
 }
 
-void Unit::SendPlayOrphanSpellVisualalternative(G3D::Vector3 const& targetLocation, uint32 spellVisualId, float travelSpeed, bool speedAsTime /*= false*/, bool withSourceOrientation /*= false*/) 
-{ 
-    WorldPackets::Spells::PlayOrphanSpellVisual playOrphanSpellVisual; 
-    playOrphanSpellVisual.SourceLocation = GetPosition(); 
-    if (withSourceOrientation) 
-        playOrphanSpellVisual.SourceOrientation.z = GetOrientation(); 
-    playOrphanSpellVisual.TargetLocation = targetLocation; // exclusive with Target 
-    playOrphanSpellVisual.SpellVisualID = spellVisualId; 
-    playOrphanSpellVisual.TravelSpeed = travelSpeed; 
-    playOrphanSpellVisual.SpeedAsTime = speedAsTime; 
-    playOrphanSpellVisual.UnkZero = 0.0f; 
-    SendMessageToSet(playOrphanSpellVisual.Write(), true);
-}
-
 void Unit::SendPlayOrphanSpellVisual(Position const& targetLocation, uint32 spellVisualId, float travelSpeed, bool speedAsTime /*= false*/, bool withSourceOrientation /*= false*/)
 {
     WorldPackets::Spells::PlayOrphanSpellVisual playOrphanSpellVisual;

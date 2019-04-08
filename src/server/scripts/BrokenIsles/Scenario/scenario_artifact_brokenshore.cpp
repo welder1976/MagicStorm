@@ -144,6 +144,7 @@ struct scenario_artifact_brokenshore : public InstanceScript
         Position: X: -1873.97 Y: -1207.44 Z: 0.14 O: 3.45
         */
         if (newArea->GetId() == 7796 && player->HasQuest(QUEST__RETURN_TO_THE_BROKEN_SHORE) && player->getClass() == CLASS_WARRIOR)
+
         {
             PhasingHandler::AddPhase(player, PHASE_WARRIOR);
             ClassMode = DATA_STAGE_5;
@@ -152,6 +153,7 @@ struct scenario_artifact_brokenshore : public InstanceScript
             ///SMSG_SET_DUNGEON_DIFFICULTY 12
         }
         ///.go -2421.58 144.59 7.7694 1500
+
         if (newArea->GetId() == 7797 && player->getClass() == CLASS_PALADIN)
         {
             PhasingHandler::AddPhase(player, PHASE_PALADIN);

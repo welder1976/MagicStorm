@@ -297,7 +297,11 @@ struct npc_valeera_sanguinar_98102 : public ScriptedAI
 
     void DoAction(int32 param)
     {
-
+        switch (param)
+        {
+        //case ACTION_RESPONSEID_1:
+        //    break;
+        }
     }
 
     void UpdateAI(uint32 diff) override
@@ -362,7 +366,11 @@ struct npc_fleet_admiral_tethys_94159 : public ScriptedAI
 
     void DoAction(int32 param)
     {
-
+        switch (param)
+        {
+        //case ACTION_RESPONSEID_1:
+        //    break;
+        }
     }
 
     void UpdateAI(uint32 diff) override
@@ -403,7 +411,11 @@ struct npc_princess_tess_greymane_94138 : public ScriptedAI
 
     void DoAction(int32 param)
     {
-
+        switch (param)
+        {
+        //case ACTION_RESPONSEID_1:
+        //    break;
+        }
     }
 
     void UpdateAI(uint32 diff) override

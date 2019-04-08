@@ -1,6 +1,5 @@
-﻿/*
- * Copyright (C) 2017-2018 AshamaneProject <https://github.com/AshamaneProject>
- * Copyright (C) 2008-2017 TrinityCore <http://www.trinitycore.org/>
+/*
+ * Copyright (C) 2017-2018 AshamaneProject <https://github.com/MagicStormTeam>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -22,35 +21,36 @@
 #include "GameObject.h"
 #include "ScriptedGossip.h"
 #include "Log.h"
+
 enum
 {
-    PLAYER_CHOICE_MAGE_SELECTION = 265,
+    PLAYER_CHOICE_MAGE_SELECTION                = 265,
 
-    NPC_MERYL_FELSTORM_102700 = 102700,
-    NPC_ALODI_102846 = 102846,
+    NPC_MERYL_FELSTORM_102700                   = 102700,
+    NPC_ALODI_102846                            = 102846,
 
-    QUEST_FELSTORMS_PLEA = 41035, /// after quest 44184 In the Blink of an Eye complete
-    QUEST_THE_DREADLORDS_PRIZE = 41036,
-    QUEST_A_MAGES_WEAPON = 41085,
-    QUEST_FINDING_BONCHILL = 42452,
-    PHASE_2 = 5985,
-    PHASE_3 = 6543,
+    QUEST_FELSTORMS_PLEA                        = 41035, /// after quest 44184 In the Blink of an Eye complete
+    QUEST_THE_DREADLORDS_PRIZE                  = 41036,
+    QUEST_A_MAGES_WEAPON                        = 41085,
+    QUEST_FINDING_BONCHILL                      = 42452,
+    PHASE_2                                     = 5985,
+    PHASE_3                                     = 6543,
 
-    CONVERSATION_FELSTORMS_PLEA = 1264,
-    CONVERSATION_THE_DREADLORDS_PRIZE = 3364,
-    CONVERSATION_THE_DREADLORDS_PRIZE_THIRD = 1281,
-    PATH_THE_DREADLORDS_PRIZE = 4471540,
-    MOVE_TO_POSITION = 15,
-    SPELL_TELE_TO_THE_DREADLORDS_PRIZE = 203241,///ID - 203241 TELEPORT_TO_LFG_DUNGEON EffectMiscValueA = 1276 EffectMiscValueB = 1187 Location: X: 1276.16 Y: -263.27 Z: 44.36 Orientation: 6.275331 MapID: 1494
+    CONVERSATION_FELSTORMS_PLEA                 = 1264,
+    CONVERSATION_THE_DREADLORDS_PRIZE           = 3364,
+    CONVERSATION_THE_DREADLORDS_PRIZE_THIRD     = 1281,
+    PATH_THE_DREADLORDS_PRIZE                   = 4471540,
+    MOVE_TO_POSITION                            = 15,
+    SPELL_TELE_TO_THE_DREADLORDS_PRIZE          = 203241, ///ID - 203241 TELEPORT_TO_LFG_DUNGEON EffectMiscValueA = 1276 EffectMiscValueB = 1187 Location: X: 1276.16 Y: -263.27 Z: 44.36 Orientation: 6.275331 MapID: 1494
 
-    EVENT_TALK_1 = 1,
-    EVENET_TELE_TO_LFG_DUNGENON = 2,
-    EVENT_BACK_HOME_1 =3,
-    EVENT_THE_DREADLORDS_PRIZE_LAST_TALK =4,
+    EVENT_TALK_1                                = 1,
+    EVENET_TELE_TO_LFG_DUNGENON                 = 2,
+    EVENT_BACK_HOME_1                           = 3,
+    EVENT_THE_DREADLORDS_PRIZE_LAST_TALK        = 4,
 
-    ACTION_RESPONSEID_1 = 584, //Arcane
-    ACTION_RESPONSEID_2 = 585, //Fire
-    ACTION_RESPONSEID_3 = 586, //Frost
+    ACTION_RESPONSEID_1                         = 584, //Arcane
+    ACTION_RESPONSEID_2                         = 585, //Fire
+    ACTION_RESPONSEID_3                         = 586, //Frost
 };
 
 struct npc_meryl_felstorm_102700 : public ScriptedAI
@@ -80,15 +80,17 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
             pList.erase(m_playerGUID);
         m_playerGUID = ObjectGuid::Empty;
     }
+
     ///107589
     void sGossipHello(Player* player)
     {
        
         if (player->HasQuest(QUEST_FINDING_BONCHILL) && (player->GetQuestObjectiveData(QUEST_FINDING_BONCHILL, 0) ) && !player->GetQuestObjectiveData(QUEST_FINDING_BONCHILL, 6))
         {
+
             //menu (19321, 0, 0, 'Tell Merrill about the information you found.', 0),
             ClearGossipMenuFor(player);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, string_To_UTF8("Tell Merrill about the information you found."), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF );
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Tell Merrill about the information you found.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
             SendGossipMenuFor(player, player->GetGossipTextId(me), me->GetGUID());
         }
         else
@@ -99,6 +101,7 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
             SendGossipMenuFor(player, player->GetGossipTextId(me), me->GetGUID());
         }
     }
+
     void sGossipSelect(Player* player, uint32 /*menuId*/, uint32 /*gossipListId*/)
     {
         CloseGossipMenuFor(player);
@@ -128,6 +131,7 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
             }); 
         }
     }
+
     void MoveInLineOfSight(Unit* who) override
     {
         if (!who || !who->IsInWorld())
@@ -146,7 +150,7 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
         {
             m_playerGUID = player->GetGUID();
             AddPlayer();
-            Conversation::CreateConversation(CONVERSATION_FELSTORMS_PLEA, player, player->GetPosition(), { player->GetGUID() });
+           // Conversation::CreateConversation(CONVERSATION_FELSTORMS_PLEA, player, player->GetPosition(), { player->GetGUID() });
             player->ForceCompleteQuest(QUEST_FELSTORMS_PLEA);
         }
 
@@ -154,7 +158,7 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
         {
             m_playerGUID = player->GetGUID();
             AddPlayer();
-            Conversation::CreateConversation(CONVERSATION_THE_DREADLORDS_PRIZE, player, player->GetPosition(), { player->GetGUID() });
+           // Conversation::CreateConversation(CONVERSATION_THE_DREADLORDS_PRIZE, player, player->GetPosition(), { player->GetGUID() });
         }
         ///conversation 1281 ?????!???? ?????
         if (!HasPlayer(player->GetGUID()) && (player->HasQuest(QUEST_THE_DREADLORDS_PRIZE)) && (player->GetQuestObjectiveData(QUEST_THE_DREADLORDS_PRIZE, 0)) && (!player->GetQuestObjectiveData(QUEST_THE_DREADLORDS_PRIZE, 2)))
@@ -193,7 +197,7 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
             //me->GetMotionMaster()->MovePath(PATH_THE_DREADLORDS_PRIZE, false);
 
             events.ScheduleEvent(EVENT_TALK_1, 10000);
-            player->AddConversationDelayedTeleport(14000, CONVERSATION_THE_DREADLORDS_PRIZE, 1494, 1276.16f, -263.27f, 44.36f, 6.275331f);
+           //player->AddConversationDelayedTeleport(14000, CONVERSATION_THE_DREADLORDS_PRIZE, 1494, 1276.16f, -263.27f, 44.36f, 6.275331f);
             ///X: 1276.16 Y: -263.27 Z: 44.36 Orientation: 6.275331 MapID: 1494
         }
         if (quest->GetQuestId() == QUEST_FINDING_BONCHILL)
@@ -233,6 +237,7 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
            }
         }
     }
+
     ///ACTION_RESPONSEID_1
     void DoAction(int32 param)
     {
@@ -247,6 +252,7 @@ struct npc_meryl_felstorm_102700 : public ScriptedAI
             break;
         }
     }
+
     void UpdateAI(uint32 diff) override
     {
         events.Update(diff);
@@ -345,6 +351,7 @@ public:
 
     }
 };
+
 /*QUEST_FINDING_BONCHILL*/
 class go_finding_bonchill_note : public GameObjectScript
 {
@@ -371,7 +378,6 @@ public:
         return false;
     }
 };
-
 
 void AddSC_class_hall_mage()
 {

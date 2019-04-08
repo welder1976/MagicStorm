@@ -1286,7 +1286,6 @@ class TC_GAME_API Unit : public WorldObject
         void SendCancelOrphanSpellVisual(uint32 id);
         void SendPlayOrphanSpellVisual(ObjectGuid const& target, uint32 spellVisualId, float travelSpeed, bool speedAsTime = false, bool withSourceOrientation = false);
         void SendPlayOrphanSpellVisual(Position const& targetLocation, uint32 spellVisualId, float travelSpeed, bool speedAsTime = false, bool withSourceOrientation = false);
-        void SendPlayOrphanSpellVisualalternative(G3D::Vector3 const& targetLocation, uint32 spellVisualId, float travelSpeed, bool speedAsTime = false, bool withSourceOrientation = false); 
         void SendCancelSpellVisual(uint32 id);
         void SendPlaySpellVisual(ObjectGuid const& target, uint32 spellVisualId, uint16 missReason = 0, uint16 reflectStatus = 0, float travelSpeed = .0f, bool speedAsTime = false);
         void SendPlaySpellVisual(Position const& targetPosition, float o, uint32 spellVisualId, uint16 missReason = 0, uint16 reflectStatus = 0, float travelSpeed = .0f, bool speedAsTime = false);
