@@ -182,14 +182,7 @@ enum Phases
 	SISTER_GHOST   = 4,
 };
 
-enum object
-{
-    DATA_HUNTRESS_KASPARIAN,
-    DATA_CAPTAIN_YATHAE_MOONSTRIKE,
-    DATA_PRIESTESS_LUNASPYRE,
-};
-
-uint32 extraDatas[3] =
+uint32 DDataTypes[3] =
 {
 	DATA_HUNTRESS_KASPARIAN,
 	DATA_CAPTAIN_YATHAE_MOONSTRIKE,
@@ -201,9 +194,9 @@ class boss_sisters_of_the_moon : public CreatureScript
 	public:
 	    boss_sisters_of_the_moon() : CreatureScript("boss_sisters_of_the_moon") { }
 		
-		struct boss_sisters_of_the_moonAI : public BossAI
+		struct boss_sisters_of_the_moon_AI : public BossAI
 		{
-			boss_sisters_of_the_moonAI(Creature* creature) : BossAI(creature, DATA_SISTERS_OF_THE_MOON)
+			boss_sisters_of_the_moon_AI(Creature* creature) : BossAI(creature, DATA_SISTERS_OF_THE_MOON)
 			{
 				instance->GetInstanceScript();
                 
@@ -252,7 +245,7 @@ class boss_sisters_of_the_moon : public CreatureScript
 				   instance->SetBossState(DATA_SISTERS_OF_THE_MOON, IN_PROGRESS);
 			    }
 				
-				events->SetPhase(THE_HUNTRESS);
+				events.AddPhase(THE_HUNTRESS);
 				DoAction(ACTION_SAY_SISTERS_AGGRO);
 				DoZoneInCombat();
 				
@@ -293,26 +286,27 @@ class boss_sisters_of_the_moon : public CreatureScript
 					case NPC_HUNTRESS_KASPARIAN:
 					{
 						if (events.IsInPhase(THE_HUNTRESS))
-							me->Talk(SAY_KASPARIAN_EVADE);
+                            me->AI()->Talk(SAY_KASPARIAN_EVADE);
 						break;
 					}
 					case NPC_CAPTAIN_YATHAE_MOONSTRIKE:
 					{
 						if (events.IsInPhase(THE_CAPTAIN))
-							me->Talk(SAY_YATHAE_EVADE);
+                            me->AI()->Talk(SAY_YATHAE_EVADE);
 						break;
 					}
 					case NPC_PRIESTESS_LUNASPYRE:
 					{
 						if (events.IsInPhase(THE_PRIESTESS))
-							me->Talk(SAY_LUNASPYRE_EVADE);
+                            me->AI()->Talk(SAY_LUNASPYRE_EVADE);
 						break;
 					}
 					default:
-					    break;	
-			}
+                        break;
+                }
+
 			
-			void DoAction(const int32 action) override
+                void DoAction(const int32 action) override
 			{
 				switch (action)
 				{
@@ -610,9 +604,9 @@ class boss_sisters_of_the_moon : public CreatureScript
 				}
 			}
 		};
-		CreatureAI* GetAI(Creature* creature) const override
+        CreatureAI* GetAI(Creature* creature) const override
 		{
-			return GetTombOfSargerasAI<boss_sisters_of_the_moonAI>(creature);
+            return new boss_sisters_of_the_moon_AI>(creature);
 		}
 };
 
@@ -670,7 +664,7 @@ struct at_twilight_volley : AreaTriggerAI
 			if (Creature* creCaster = caster->ToCreature())
 				if (creCaster->IsAIEnabled)
 					if (Unit* target = ObjectAccessor::GetUnit(*creCaster, creCaster->AI()->GetGUID()))
-						at->SetPosition(*target);
+						//at->SetPosition(*target);
 	}
 	
 	void OnUnitEnter(Unit* /*unit*/) override
@@ -706,26 +700,26 @@ class spell_embrace_of_the_eclipse : public SpellScriptLoader
 			                              SPELL_EMBRACE_OF_THE_ECLIPSE_BOSS });
 		   }
 		   
-		   void HandleAfterCast()
-		   {
-			   Unit* caster = GetCaster();
-			   Unit* target GetExplUnitTarget();
-			   Creature* kasparian = instance->GetCreature(NPC_HUNTRESS_KASPARIAN);
-			   Creature* yathae = instance->GetCreature(NPC_CAPTAIN_YATHAE_MOONSTRIKE);
+		  // void HandleAfterCast()
+		  // {
+			  // Unit* caster = GetCaster();
+			   //Unit* target GetExplUnitTarget();
+			   //Creature* kasparian = instance->GetCreature(NPC_HUNTRESS_KASPARIAN);
+			   //Creature* yathae = instance->GetCreature(NPC_CAPTAIN_YATHAE_MOONSTRIKE);
 			   
 			   
-			   if (!caster)
-				   return;
+			  // if (!caster)
+				  // return;
 			   
-			   std::list<Player*> playerList;
-			   GetPlayerListInGrid(playerList, me, 200.0f);
+			 //  std::list<Player*> playerList;
+			 //  GetPlayerListInGrid(playerList, me, 200.0f);
 			   
-			   for (auto itr : playerList)
-				   itr->AddAura(itr, SPELL_EMBRACE_OF_THE_ECLIPSE_HEAL);
+			  // for (auto itr : playerList)
+				   //itr->AddAura(itr, SPELL_EMBRACE_OF_THE_ECLIPSE_HEAL);
 			   
 			   //Encontrar la hermana mas cercana activa y ponerle el escudo
 			   
-		   }
+		  // }
 		   
 		   void Register() override
 		   {
@@ -832,7 +826,7 @@ struct at_lunar_barrage : AreaTriggerAI
 			if (Creature* creCaster = caster->ToCreature())
 				if (creCaster->IsAIEnabled)
 					if (Unit* target = ObjectAccessor::GetUnit(*creCaster, creCaster->AI()->GetGUID()))
-						at->SetPosition(*target);
+						at->SetDestination(*target, 1000);
 	}
 
     void OnUnitEnter(Unit* /*unit*/) override
