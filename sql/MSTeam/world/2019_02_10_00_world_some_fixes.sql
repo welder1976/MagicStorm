@@ -1,3 +1,67 @@
+UPDATE creature SET spawndist = 3, MovementType = 1 WHERE id = 65761;
+DELETE FROM creature_template_addon WHERE entry = 59685;
+INSERT INTO creature_template_addon (entry, auras) VALUES
+(59685, "29266");
+UPDATE `creature_template` SET `AIName` = "SmartAI" WHERE `entry` = 63820;
+DELETE FROM `smart_scripts` WHERE `source_type` = 0 AND `entryorguid` IN (-10559800, -10559830);
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(-10559800, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 17, 333, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Alliance Trainee - On Reset - Set Emote State (333)"),
+(-10559800, 0, 1, 0, 1, 0, 100, 0, 0, 6000, 3000, 8000, 10, 36, 389, 390, 60, 61, 54, 1, 0, 0, 0, 0, 0, 0, 0, "Alliance Trainee - OOC - Play Random Emote (36, 389, 390, 60, 61, 54)"),
+(-10559830, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 17, 333, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Alliance Trainee - On Reset - Set Emote State (333)"),
+(-10559830, 0, 1, 0, 1, 0, 100, 0, 0, 6000, 3000, 8000, 10, 36, 389, 390, 60, 61, 54, 1, 0, 0, 0, 0, 0, 0, 0, "Alliance Trainee - OOC - Play Random Emote (36, 389, 390, 60, 61, 54)");
+UPDATE creature SET position_x = 2158.501, position_y = 1437.346, position_z = 487.885, orientation = 4.802 WHERE guid = 10559820;
+DELETE FROM `creature_template_addon` WHERE `entry` = 67175;
+INSERT INTO `creature_template_addon` (`entry`, `path_id`, `mount`, `bytes1`, `bytes2`, `emote`, `auras`) VALUES
+(67175, 0, 0, 0, 1, 173, "");
+UPDATE creature SET position_x = 2124.36, position_y = 1476.82, position_z = 487.886, spawndist = 0, MovementType = 2 WHERE guid = 10546577;
+UPDATE `creature` SET `position_x` = 2136.98, `position_y` = 1450.2, `position_z` = 488.663, `orientation` = 5.18824 WHERE `guid` = 10558395 AND `id` = 63542;
+UPDATE `creature` SET `position_x` = 2144.18, `position_y` = 1449.7, `position_z` = 488.663, `orientation` = 4.05307 WHERE `guid` = 10546603 AND `id` = 59450;
+UPDATE `creature` SET `position_x` = 2136.44, `position_y` = 1443.98, `position_z` = 488.663, `orientation` = 0.78536 WHERE `guid` = 10559827 AND `id` = 63820;
+UPDATE `creature` SET `position_x` = 2167.49, `position_y` = 1477.11, `position_z` = 488.416, `orientation` = 0.172229 WHERE `guid` = 10559797 AND `id` = 63820;
+UPDATE `creature` SET `position_x` = 2171.78, `position_y` = 1474.33, `position_z` = 488.45, `orientation` = 2.19052 WHERE `guid` = 10559818 AND `id` = 63820;
+UPDATE `creature` SET `position_x` = 2170.1, `position_y` = 1481.15, `position_z` = 488.377, `orientation` = 4.57813 WHERE `guid` = 10559802 AND `id` = 63820;
+UPDATE `creature` SET `position_x` = 2180.81, `position_y` = 1467.068, `position_z` = 487.885, `orientation` = 3.079203 WHERE `guid` = 10559798 AND `id` = 63820;
+DELETE FROM creature_addon WHERE guid IN (10546577, 10558395, 10546603, 10559827, 10559797, 10559818, 10559802);
+DELETE FROM creature_addon WHERE guid IN (10559798, 10559805, 10559840, 10559811, 10559829, 10559810, 10559813, 10559823, 10559837, 10559801, 10559796, 10559832);
+INSERT INTO creature_addon (guid, path_id, bytes1, bytes2, emote) VALUES
+(10546577, 105465770, 0, 1, 0),
+(10558395, 0, 1, 1, 0),
+(10546603, 0, 1, 1, 0),
+(10559827, 0, 1, 1, 0),
+(10559797, 0, 1, 1, 0),
+(10559818, 0, 1, 1, 0),
+(10559802, 0, 1, 1, 0),
+(10559798, 0, 0, 0, 69),
+(10559805, 0, 1, 1, 0),
+(10559840, 0, 1, 1, 0),
+(10559811, 0, 3, 1, 0),
+(10559829, 0, 1, 1, 0),
+(10559810, 0, 1, 1, 0),
+(10559813, 0, 3, 1, 0),
+(10559823, 0, 3, 1, 0),
+(10559837, 0, 1, 1, 0),
+(10559801, 0, 1, 1, 0),
+(10559796, 0, 1, 1, 0),
+(10559832, 0, 3, 1, 0);
+
+DELETE FROM `waypoint_data` WHERE `id` = 105465770;
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`, `move_type`, `action`, `action_chance`, `wpguid`) VALUES
+(105465770, 1, 2124.36, 1476.82, 487.886, 0, 0, 0, 0, 100, 0),
+(105465770, 2, 2135.94, 1481.98, 487.886, 0, 0, 0, 0, 100, 0),
+(105465770, 3, 2124.04, 1476.91, 487.886, 0, 0, 0, 0, 100, 0),
+(105465770, 4, 2129.99, 1479.51, 487.886, 0, 0, 0, 0, 100, 0),
+(105465770, 5, 2130.21, 1479.03, 487.886, 5.110404, 30000, 0, 0, 100, 0),
+(105465770, 6, 2129.94, 1479.69, 487.886, 0, 0, 0, 0, 100, 0),
+(105465770, 7, 2128.72, 1479.07, 487.886, 0, 0, 0, 0, 100, 0);
+
+UPDATE creature_template SET AIName = "SmartAI" WHERE entry = 59690;
+DELETE FROM `smart_scripts` WHERE `entryorguid` IN (-10548310, -10548308, -10548309, -10548306) AND `source_type` = 0;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(-10548310, 0, 0, 0, 60, 0, 100, 0, 7000, 12000, 7000, 12000, 10, 396, 273, 274, 6, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Freed Farmhand - On Update - Play Random Emote (396, 273, 274, 6)"),
+(-10548308, 0, 0, 0, 60, 0, 100, 0, 7000, 12000, 7000, 12000, 10, 396, 273, 274, 6, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Freed Farmhand - On Update - Play Random Emote (396, 273, 274, 6)"),
+(-10548309, 0, 0, 0, 60, 0, 100, 0, 7000, 12000, 7000, 12000, 10, 396, 273, 274, 6, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Freed Farmhand - On Update - Play Random Emote (396, 273, 274, 6)"),
+(-10548306, 0, 0, 0, 60, 0, 100, 0, 7000, 12000, 7000, 12000, 10, 396, 273, 274, 6, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Freed Farmhand - On Update - Play Random Emote (396, 273, 274, 6)");
+
 DELETE FROM gameobject WHERE guid = 184384 AND id = 142075;
 UPDATE creature_addon SET path_id = 1802240, emote = 0 WHERE guid = 180224;
 UPDATE creature SET position_x = -9462.29, position_y = 87.8151, position_z = 58.4211, orientation = 0.733038, spawndist = 0, MovementType = 2 WHERE guid = 180224;
