@@ -1,3 +1,21 @@
+DELETE FROM creature_addon WHERE guid IN (10546324, 10546325, 10546326, 10546327, 10546328, 10546330, 10546332, 10546333, 10546334, 10546335, 10546336, 10546337, 10546338, 10546339);
+INSERT INTO creature_addon (guid, bytes1) VALUES
+(10546324, 1),
+(10546325, 1),
+(10546326, 1),
+(10546327, 1),
+(10546328, 1),
+(10546330, 1),
+(10546332, 1),
+(10546333, 1),
+(10546334, 1),
+(10546335, 1),
+(10546336, 1),
+(10546337, 1),
+(10546338, 1),
+(10546339, 1);
+
+UPDATE creature SET position_x = 2780.836, position_y = 293.652, position_z = 501.161, orientation = 2.843 WHERE guid = 10546328;
 UPDATE creature SET spawndist = 3, MovementType = 1 WHERE id = 65761;
 DELETE FROM creature_template_addon WHERE entry = 59685;
 INSERT INTO creature_template_addon (entry, auras) VALUES
