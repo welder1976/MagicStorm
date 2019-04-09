@@ -15,6 +15,20 @@ INSERT INTO creature_addon (guid, bytes1) VALUES
 (10546338, 1),
 (10546339, 1);
 
+DELETE FROM creature_text WHERE CreatureID = 60491;
+INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `Comment`, `BroadcastTextID`, `TextRange`) VALUES
+(60491, 0, 0, "Yes, YES! Bring your rage to bear! Try to strike me down!", 14, 0, 100, 0, 0, 28999, 'Sha of Anger', 60159, 0),
+(60491, 1, 0, "Extinguished!", 14, 0, 100, 0, 0, 29001, 'Sha of Anger', 66403, 0),
+(60491, 1, 1, "Does that make you angry?", 14, 0, 100, 0, 0, 29002, 'Sha of Anger', 66404, 0),
+(60491, 1, 2, "Feel your rage!", 14, 0, 100, 0, 0, 29003, 'Sha of Anger', 66405, 0),
+(60491, 1, 3, "Let your rage consume you!", 14, 0, 100, 0, 0, 29004, 'Sha of Anger', 66406, 0),
+(60491, 2, 0, "Feed me with your ANGER!", 14, 0, 100, 0, 0, 29010, 'Sha of Anger', 66407, 0),
+(60491, 3, 0, "My fury is UNLEASHED!", 14, 0, 100, 0, 0, 29011, 'Sha of Anger', 66408, 0),
+(60491, 4, 0, "Your rage sustains me!", 14, 0, 100, 0, 0, 29007, 'Sha of Anger', 60035, 2),
+(60491, 4, 1, "My wrath flows freely!", 14, 0, 100, 0, 0, 29009, 'Sha of Anger', 60036, 2),
+(60491, 4, 2, "Your rage gives you strength!", 14, 0, 100, 0, 0, 29006, 'Sha of Anger', 60037, 2),
+(60491, 4, 3, "You will not bury me again!", 14, 0, 100, 0, 0, 29008, 'Sha of Anger', 60038, 2);
+
 UPDATE creature SET position_x = 2780.836, position_y = 293.652, position_z = 501.161, orientation = 2.843 WHERE guid = 10546328;
 UPDATE creature SET spawndist = 3, MovementType = 1 WHERE id = 65761;
 DELETE FROM creature_template_addon WHERE entry = 59685;

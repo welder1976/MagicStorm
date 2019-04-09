@@ -63,12 +63,11 @@ enum eCreatures
 
 enum eTalk
 {
-    TALK_INTRO                  = 0,
-    TALK_ANGER                  = 1,
-    TALK_SPAWN                  = 2,
-    TALK_RESET                  = 3,
-    TALK_SLAY                   = 4,
-    TALK_AGGRO                  = 5
+    TALK_AGGRO                  = 0,
+    TALK_SLAY                   = 1,
+    TALK_GROWING_ANGER          = 2,
+    TALK_UNLEASHED_WRATH        = 3,
+    TALK_RESET                  = 4
 };
 
 class boss_sha_of_anger : public CreatureScript
@@ -133,9 +132,11 @@ class boss_sha_of_anger : public CreatureScript
                     Talk(TALK_SLAY);
             }
 
-            void EnterCombat(Unit* /*who*/) override
+            void EnterCombat(Unit* who) override
             {
-                Talk(TALK_AGGRO);
+                if (who->ToPlayer())
+                    if (roll_chance_i(30))
+                        Talk(TALK_AGGRO);
             }
 
             void JustSummoned(Creature* summon) override
@@ -210,7 +211,7 @@ class boss_sha_of_anger : public CreatureScript
                             if (_targetCount < _maxTargetCount)
                             {
                                 if (_targetCount == 0)
-                                    Talk(TALK_INTRO);
+                                    Talk(TALK_UNLEASHED_WRATH);
 
                                 _targetCount++;
                                 events.ScheduleEvent(EVENT_UNLEASHED_WRATH, 2s);
@@ -226,7 +227,7 @@ class boss_sha_of_anger : public CreatureScript
                         }
                         case EVENT_GROWING_ANGER_WARNING:
                         {
-                            Talk(TALK_ANGER);
+                            Talk(TALK_GROWING_ANGER);
 
                             for (uint8 i = 0; i < _dominateMindCount; ++i)
                                 if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM))
@@ -251,8 +252,6 @@ class boss_sha_of_anger : public CreatureScript
                         }
                         case EVENT_SPAWN:
                         {
-                            Talk(TALK_SPAWN);
-
                             for (uint8 i = 0; i < _cloudCount; ++i)
                                 if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM))
                                     me->CastSpell(target, SPELL_ENDLESS_RAGE, false);
@@ -311,7 +310,7 @@ class boss_sha_of_anger : public CreatureScript
 class mob_sha_of_anger_bunny : public CreatureScript
 {
     public:
-        mob_sha_of_anger_bunny() : CreatureScript("mob_sha_of_anger_bunny") {}
+        mob_sha_of_anger_bunny() : CreatureScript("mob_sha_of_anger_bunny") { }
 
         struct mob_sha_of_anger_bunnyAI : public ScriptedAI
         {
