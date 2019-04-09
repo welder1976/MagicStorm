@@ -9,12 +9,6 @@
 #include "MotionMaster.h"
 #include <G3D/Quat.h>
 
-enum DarkmoonFaireYells
-{
-    // Selina
-    SAY_SELINA_WELCOME           = 0,
-};
-
 class npc_darkmoon_faire_mystic_mage : public CreatureScript
 {
 public:
@@ -25,23 +19,7 @@ public:
         if (creature->IsQuestGiver())
             player->PrepareQuestMenu(creature->GetGUID());
 
-        char const* GOSSIP_BUTTON;
-        char const* BOX_TEXT;
-
-        switch (LocaleConstant currentlocale = player->GetSession()->GetSessionDbcLocale())
-        {
-            case LOCALE_esES:
-            case LOCALE_esMX:
-                GOSSIP_BUTTON         = "Llevame a la zona de escala de la feria.";
-                BOX_TEXT              = "Viajar a la zona de escala de la feria te costara:";
-                break;
-            default:
-                GOSSIP_BUTTON         = "Take me to the faire staging area.";
-                BOX_TEXT              = "Travel to the faire staging area will cost:";
-                break;
-        };
-
-        AddGossipItemFor(player, 0, GOSSIP_BUTTON, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1, BOX_TEXT, 25, false);
+        AddGossipItemFor(player, 0, "Отправь меня на ярмарку.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1, "Путешествие на ярмарку обойдется вам в:", 25, false);
         SendGossipMenuFor(player, 18269, creature->GetGUID());
         return true;
     }
@@ -71,7 +49,9 @@ public:
 
 enum SelinaDourmanEvent
 {
-    EVENT_RENEW_SELINA_TEXT = 1,
+    SAY_SELINA_WELCOME                              = 0,
+
+    EVENT_RENEW_SELINA_TEXT                         = 1,
 };
 
 class npc_selina_dourman : public CreatureScript
@@ -79,88 +59,16 @@ class npc_selina_dourman : public CreatureScript
 public:
     npc_selina_dourman() : CreatureScript("npc_selina_dourman") { }
 
-    CreatureAI* GetAI(Creature* creature) const
-    {
-        return new npc_selina_dourmanAI (creature);
-    }
-
-    struct npc_selina_dourmanAI : public ScriptedAI
-    {
-        npc_selina_dourmanAI(Creature* creature) : ScriptedAI(creature) { }
-
-        EventMap events;
-
-        bool Talked;
-
-        void Reset()
-        {
-            Talked = false;
-        }
-
-        void MoveInLineOfSight(Unit* who)
-        {
-            if (who->GetTypeId() != TYPEID_PLAYER)
-                return;
-
-            if (who->GetExactDist(me) <= 20.0f && !Talked)
-            {
-                Talked = true;
-                Talk(SAY_SELINA_WELCOME);
-                events.ScheduleEvent(EVENT_RENEW_SELINA_TEXT, 60000);
-            }
-        }
-
-        void UpdateAI(uint32 diff)
-        {
-            events.Update(diff);
-
-            while (uint32 eventId = events.ExecuteEvent())
-            {
-                switch (eventId)
-                {
-                    case EVENT_RENEW_SELINA_TEXT:
-                        Talked = false;
-                        break;
-                }
-            }
-        }
-    };
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
         if (creature->IsQuestGiver())
             player->PrepareQuestMenu(creature->GetGUID());
 
-        char const* GOSSIP_BUTTON_1;
-        char const* GOSSIP_BUTTON_2;
-        char const* GOSSIP_BUTTON_3;
-        char const* GOSSIP_BUTTON_4;
-        char const* GOSSIP_BUTTON_5;
-
-        switch (LocaleConstant currentlocale = player->GetSession()->GetSessionDbcLocale())
-        {
-            case LOCALE_esES:
-            case LOCALE_esMX:
-                GOSSIP_BUTTON_1         = "?Guia del aventurero de la Luna Negra?";
-                GOSSIP_BUTTON_2         = "?Que puedo comprar?";
-                GOSSIP_BUTTON_3         = "?Vales para la Feria de la Luna Negra?";
-                GOSSIP_BUTTON_4         = "?Cartas de la Luna Negra?";
-                GOSSIP_BUTTON_5         = "?Atracciones?";
-                break;
-            default:
-                GOSSIP_BUTTON_1         = "Darkmoon Adventurer's Guide?";
-                GOSSIP_BUTTON_2         = "What can I purchase?";
-                GOSSIP_BUTTON_3         = "Darkmoon Faire Prize Tickets?";
-                GOSSIP_BUTTON_4         = "Darkmoon Cards?";
-                GOSSIP_BUTTON_5         = "Attractions?";
-                break;
-        };
-
-        AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-        AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-        AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-        AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
-        AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Справочник ярмарки Новолуния?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Что я могу у вас приобрести?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Что это за призовые купоны ярмарки Новолуния?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Карты Новолуния?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Развлечения?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
 
         SendGossipMenuFor(player, 23004, creature->GetGUID());
         return true;
@@ -168,60 +76,11 @@ public:
 
     bool OnGossipSelect(Player* player, Creature* creature, uint32 uiSender, uint32 action)
     {
-        char const* GOSSIP_BUTTON_1;
-        char const* GOSSIP_BUTTON_2;
-        char const* GOSSIP_BUTTON_3;
-        char const* GOSSIP_BUTTON_4;
-        char const* GOSSIP_BUTTON_5;
-        char const* GOSSIP_BUTTON_6;
-        char const* GOSSIP_BUTTON_7;
-        char const* GOSSIP_BUTTON_8;
-        char const* GOSSIP_BUTTON_9;
-        char const* GOSSIP_BUTTON_10;
-        char const* GOSSIP_BUTTON_11;
-        char const* GOSSIP_BUTTON_12;
-        char const* GOSSIP_BUTTON_13;
-
-        switch (LocaleConstant currentlocale = player->GetSession()->GetSessionDbcLocale())
-        {
-            case LOCALE_esES:
-            case LOCALE_esMX:
-                GOSSIP_BUTTON_1         = "?Guia del aventurero de la Luna Negra?";
-                GOSSIP_BUTTON_2         = "?Que puedo comprar?";
-                GOSSIP_BUTTON_3         = "?Vales para la Feria de la Luna Negra?";
-                GOSSIP_BUTTON_4         = "?Cartas de la Luna Negra?";
-                GOSSIP_BUTTON_5         = "?Atracciones?";
-                GOSSIP_BUTTON_6         = "?Me puedes dar una guia del aventurero de la Luna Negra?";
-                GOSSIP_BUTTON_7         = "Cuentame mas.";
-                GOSSIP_BUTTON_8         = "?Tonques?";
-                GOSSIP_BUTTON_9         = "?Canon?";
-                GOSSIP_BUTTON_10        = "?Golpear al gnoll?";
-                GOSSIP_BUTTON_11        = "?Lanzamiento de anillos?";
-                GOSSIP_BUTTON_12        = "?Galeria de tiro?";
-                GOSSIP_BUTTON_13        = "?Clarividente?";
-                break;
-            default:
-                GOSSIP_BUTTON_1         = "Darkmoon Adventurer's Guide?";
-                GOSSIP_BUTTON_2         = "What can I purchase?";
-                GOSSIP_BUTTON_3         = "Darkmoon Faire Prize Tickets?";
-                GOSSIP_BUTTON_4         = "Darkmoon Cards?";
-                GOSSIP_BUTTON_5         = "Attractions?";
-                GOSSIP_BUTTON_6         = "May I have another Darkmoon Adventurer's Guide?";
-                GOSSIP_BUTTON_7         = "Tell me more.";
-                GOSSIP_BUTTON_8         = "Tonk Challenge?";
-                GOSSIP_BUTTON_9         = "Cannon?";
-                GOSSIP_BUTTON_10        = "Whack-a-gnoll?";
-                GOSSIP_BUTTON_11        = "Ring Toss?";
-                GOSSIP_BUTTON_12        = "Shooting Gallery?";
-				GOSSIP_BUTTON_13		= "Farseer?";
-                break;
-        };
-
         player->PlayerTalkClass->ClearMenus();
 
         if (action == GOSSIP_ACTION_INFO_DEF + 1)
         {
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Можно мне получить новый экземпляр справочника ярмарки Новолуния?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
             SendGossipMenuFor(player, 23005, creature->GetGUID());
         }
 
@@ -233,18 +92,18 @@ public:
 
         if (action == GOSSIP_ACTION_INFO_DEF + 4)
         {
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Рассказывайте дальше.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
             SendGossipMenuFor(player, 23008, creature->GetGUID());
         }
 
         if (action == GOSSIP_ACTION_INFO_DEF + 5)
         {
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_8, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_9, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 9);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_10, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_11, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_12, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_BUTTON_13, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Танки?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Пушка?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 9);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Гноллобой?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Метание кольца?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Тир?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Предсказатель?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
             SendGossipMenuFor(player, 23010, creature->GetGUID());
         }
 
@@ -295,6 +154,53 @@ public:
         }
 
         return true;
+    }
+
+    struct npc_selina_dourmanAI : public ScriptedAI
+    {
+        npc_selina_dourmanAI(Creature* creature) : ScriptedAI(creature) { }
+
+        EventMap events;
+
+        bool Talked;
+
+        void Reset()
+        {
+            Talked = false;
+        }
+
+        void MoveInLineOfSight(Unit* who)
+        {
+            if (who->GetTypeId() != TYPEID_PLAYER)
+                return;
+
+            if (who->GetExactDist(me) <= 20.0f && !Talked)
+            {
+                Talked = true;
+                Talk(SAY_SELINA_WELCOME);
+                events.ScheduleEvent(EVENT_RENEW_SELINA_TEXT, 1min);
+            }
+        }
+
+        void UpdateAI(uint32 diff)
+        {
+            events.Update(diff);
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                    case EVENT_RENEW_SELINA_TEXT:
+                        Talked = false;
+                        break;
+                }
+            }
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_selina_dourmanAI (creature);
     }
 };
 

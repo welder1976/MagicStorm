@@ -1,3 +1,7 @@
+UPDATE creature_template SET AIName = "", ScriptName = "npc_darkmoon_faire_mystic_mage" WHERE entry = 54334;
+DELETE FROM smart_scripts WHERE entryorguid = 54334 AND source_type = 0;
+UPDATE creature_template SET ScriptName = "npc_selina_dourman" WHERE entry = 10445;
+
 UPDATE game_event_gameobject SET eventEntry = 3 WHERE eventEntry = 75;
 
 UPDATE `creature` SET `spawndist` = 0, `MovementType` = 2, `position_x` = -4029.083, `position_y` = 6276.619, `position_z` = 10.18344 WHERE `guid` = 1400011;
