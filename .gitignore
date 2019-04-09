@@ -22,3 +22,5 @@ nbproject/*
 .vscode
 cmake-build-*/
 .vs
+
+src/server/scripts/BrokenIsles/TombOfSargeras/boss_sisters_of_moon\.cpp

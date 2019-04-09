@@ -36,10 +36,10 @@ enum DruidSpells
     SPELL_DRUID_BLESSING_OF_ANSHE                   = 202739,
     SPELL_DRUID_STARLORD_DUMMY                      = 202345,
     SPELL_DRUID_STARLORD_SOLAR                      = 202416,
-	SPELL_DRUID_FORM_AQUATIC						= 1066,
-    SPELL_DRUID_FORM_FLIGHT							= 33943,
-    SPELL_DRUID_FORM_STAG							= 165961,
-    SPELL_DRUID_FORM_SWIFT_FLIGHT					= 40120,
+    SPELL_DRUID_FORM_AQUATIC                        = 1066,
+    SPELL_DRUID_FORM_FLIGHT                         = 33943,
+    SPELL_DRUID_FORM_STAG                           = 165961,
+    SPELL_DRUID_FORM_SWIFT_FLIGHT                   = 40120,
     SPELL_DRUID_STARLORD_LUNAR                      = 202423,
     SPELL_DRUID_GLYPH_OF_STARS                      = 114301,
     SPELL_DRUID_CHOSEN_OF_ELUNE                     = 102560,
@@ -74,59 +74,59 @@ enum ShapeshiftFormSpells
 
 enum SoulOfTheForestSpells
 {
-    SPELL_DRUID_SOUL_OF_THE_FOREST_RESTO_TALENT  = 158478,
-    SPELL_DRUID_SOUL_OF_THE_FOREST_RESTO         = 114108
+    SPELL_DRUID_SOUL_OF_THE_FOREST_RESTO_TALENT     = 158478,
+    SPELL_DRUID_SOUL_OF_THE_FOREST_RESTO            = 114108
 };
 
 enum EfflorescenceSpells
 {
-    SPELL_DRUID_EFFLORESCENCE_HEAL   = 81269,
-    SPELL_DRUID_EFFLORESCENCE_DUMMY  = 81262
+    SPELL_DRUID_EFFLORESCENCE_HEAL                  = 81269,
+    SPELL_DRUID_EFFLORESCENCE_DUMMY                 = 81262
 };
 
 enum GoreSpells
 {
-    SPELL_DRUID_THRASH = 106832,
-    SPELL_DRUID_MAUL = 6807,
-    SPELL_DRUID_MOONFIRE = 8921,
-    SPELL_DRUID_SWIPE = 213764
+    SPELL_DRUID_THRASH                              = 106832,
+    SPELL_DRUID_MAUL                                = 6807,
+    SPELL_DRUID_MOONFIRE                            = 8921,
+    SPELL_DRUID_SWIPE                               = 213764
 };
 
 enum BalanceAffinitySpells
 {
-    SPELL_DRUID_BALANCE_AFFINITY_DPS    = 197488,
-    SPELL_DRUID_BALANCE_AFFINITY_RESTO  = 197632,
+    SPELL_DRUID_BALANCE_AFFINITY_DPS                = 197488,
+    SPELL_DRUID_BALANCE_AFFINITY_RESTO              = 197632,
 
-    SPELL_DRUID_ASTRAL_INFLUENCE        = 197524,
-    SPELL_DRUID_MOONKIN_FORM_TALENT     = 197625,
-    SPELL_DRUID_STARSURGE               = 197626,
-    SPELL_DRUID_LUNAR_STRIKE            = 197628,
-    SPELL_DRUID_SOLAR_WRATH             = 197629,
-    SPELL_DRUID_SUNFIRE                 = 197630
+    SPELL_DRUID_ASTRAL_INFLUENCE                    = 197524,
+    SPELL_DRUID_MOONKIN_FORM_TALENT                 = 197625,
+    SPELL_DRUID_STARSURGE                           = 197626,
+    SPELL_DRUID_LUNAR_STRIKE                        = 197628,
+    SPELL_DRUID_SOLAR_WRATH                         = 197629,
+    SPELL_DRUID_SUNFIRE                             = 197630
 };
 
 enum FeralAffinitySpells
 {
-    SPELL_DRUID_FERAL_AFFINITY_BALANCE  = 202157,
-    SPELL_DRUID_FERAL_AFFINITY_RESTO    = 197490,
-    SPELL_DRUID_FERAL_AFFINITY_TANK     = 202155
+    SPELL_DRUID_FERAL_AFFINITY_BALANCE              = 202157,
+    SPELL_DRUID_FERAL_AFFINITY_RESTO                = 197490,
+    SPELL_DRUID_FERAL_AFFINITY_TANK                 = 202155
 };
 
 enum GuardianAffinitySpells
 {
-    SPELL_DRUID_GUARDIAN_AFFINITY_RESTO = 197491,
-    SPELL_DRUID_GUARDIAN_AFFINITY_DPS   = 217615,
+    SPELL_DRUID_GUARDIAN_AFFINITY_RESTO             = 197491,
+    SPELL_DRUID_GUARDIAN_AFFINITY_DPS               = 217615,
 
-    SPELL_DRUID_THICK_HIDE              = 16931,
-    SPELL_DRUID_MANGLE                  = 33917,
-    SPELL_DRUID_THRASH_BEAR             = 106832,
-    SPELL_DRUID_IRON_FUR                = 192081,
-    SPELL_DRUID_FRENZIED_REGENERATION   = 22842
+    SPELL_DRUID_THICK_HIDE                          = 16931,
+    SPELL_DRUID_MANGLE                              = 33917,
+    SPELL_DRUID_THRASH_BEAR                         = 106832,
+    SPELL_DRUID_IRON_FUR                            = 192081,
+    SPELL_DRUID_FRENZIED_REGENERATION               = 22842
 };
 
 enum RestorationAffinitySpells
 {
-    SPELL_DRUID_RESTORATION_AFFINITY    = 197492
+    SPELL_DRUID_RESTORATION_AFFINITY                = 197492
 };
 
 // 210706 - Gore 7.3.5
@@ -2706,7 +2706,7 @@ public:
     }
 };
 
-// 194153 Lunar Strike
+// 194153 - Lunar Strike
 class spell_druid_lunar_strike : public SpellScript
 {
     PrepareSpellScript(spell_druid_lunar_strike);
@@ -2825,9 +2825,9 @@ void AddSC_druid_spell_scripts()
     RegisterAuraScript(aura_dru_feral_affinity_resto);
     RegisterAuraScript(aura_dru_feral_affinity_tank);
     RegisterAuraScript(aura_dru_frenzied_regeneration);
-	new spell_dru_blessing_of_elune();
-	
-	RegisterSpellScript(spell_druid_lunar_strike);
+    new spell_dru_blessing_of_elune();
+
+    RegisterSpellScript(spell_druid_lunar_strike);
 
     // AreaTrigger Scripts
     new at_dru_solar_beam();

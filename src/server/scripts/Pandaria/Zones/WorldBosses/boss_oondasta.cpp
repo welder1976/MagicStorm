@@ -27,31 +27,31 @@
 
 enum eTexts
 {
-    SAY_INTRO_01                = 0,      // How dare you interupt our preparations! The Zandalari will not be stopped! Not this time!
-    SAY_INTRO_02                = 1,      // Destroy them! I command you! No, stop, STOP!
+    SAY_INTRO_01                = 0,
+    SAY_INTRO_02                = 1,
 
-    SAY_INTRO_END               = 0       // Oondasta eats Dohaman.
+    SAY_INTRO_END               = 0
 };
 
 enum eSpells
 {
     SPELL_CRUSH                 = 137504,
-    SPELL_ALPHA_MALE            = 138391, // Boss Passive Aura. Triggers 138390 Tank Threat Multiplier.
+    SPELL_ALPHA_MALE            = 138391,
     SPELL_FRILL_BLAST           = 137505,
     SPELL_GROWING_FURY          = 137502,
     SPELL_PIERCING_ROAR         = 137457,
-    SPELL_SPIRITFIRE_BEAM       = 137511, // Or 137508??
+    SPELL_SPIRITFIRE_BEAM       = 137511,
 
     SPELL_KILL_DOHAMAN          = 138859
 };
 
 enum eEvents
 {
-    EVENT_CRUSH                 = 1, // 60s from start. Every 25 - 30s.
-    EVENT_FRILL_BLAST,               // 40s from start. Every 25 - 30s.
-    EVENT_GROWING_FURY,              // Every 30s.
-    EVENT_PIERCING_ROAR,             // 20s from start. Every 25 - 30s.
-    EVENT_SPIRITFIRE_BEAM,           // 15s from start. Every 25 - 30s.
+    EVENT_CRUSH                 = 1,
+    EVENT_FRILL_BLAST,
+    EVENT_GROWING_FURY,
+    EVENT_PIERCING_ROAR,
+    EVENT_SPIRITFIRE_BEAM,
 
     EVENT_INTRO_01,
     EVENT_INTRO_02,
@@ -63,7 +63,6 @@ enum eCreatures
     NPC_DOHAMAN_THE_BEAST_LORD  = 69926
 };
 
-// Oondasta - 69161
 class boss_oondasta : public CreatureScript
 {
     public:
@@ -237,7 +236,6 @@ class boss_oondasta : public CreatureScript
         }
 };
 
-// Tank check for Alpha Male.
 class TankCheck : public std::unary_function<Unit*, bool>
 {
     public:
@@ -258,7 +256,6 @@ class TankCheck : public std::unary_function<Unit*, bool>
         Unit* caster;
 };
 
-// Alpha Male - Tank Threat Multiplier 138390.
 class spell_alpha_male_threat: public SpellScriptLoader
 {
     public:
@@ -273,7 +270,6 @@ class spell_alpha_male_threat: public SpellScriptLoader
                 if (targets.empty())
                     return;
 
-                // Set targets.
                 targets.remove_if(TankCheck(GetCaster()));
             }
 
