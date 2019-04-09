@@ -5021,4 +5021,5 @@ void AddSC_item_spell_scripts()
     new spell_item_brutal_kinship();
     RegisterAuraScript(spell_item_xavarics_magnum_opus);
     RegisterAuraScript(aura_item_burning_essence);
+
 }

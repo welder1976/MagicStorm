@@ -1255,6 +1255,87 @@ class spell_draenor_profession : public SpellScriptLoader
         }
 };*/
 
+// item 147330 Shoulders-of-the-foregone-protector
+// item 147329
+// item 147328
+// 7.3.5
+class loot_item_shoulders_of_the_foregone_protector : public ItemScript
+{
+public:
+    loot_item_shoulders_of_the_foregone_protector() : ItemScript("loot_item_shoulders_of_the_foregone_protector") { }
+
+    bool OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/, ObjectGuid castId) override
+    {
+        uint32 itemId = item->GetEntry();
+
+        std::vector<uint32> items;
+
+        items.push_back(138347);
+        items.push_back(138337);
+        items.push_back(138363);
+        items.push_back(138348);
+        items.push_back(138323);
+        items.push_back(138362);
+        items.push_back(138322);
+        items.push_back(138380);
+        items.push_back(138321);
+        items.push_back(138361);
+        items.push_back(138336);
+        items.push_back(138338);
+
+        // Process items
+        Trinity::Containers::RandomShuffle(items);
+        for (auto itemId : items)
+        {
+            // Safe! Item rewards always have an item template
+            ItemTemplate const* proto = sObjectMgr->GetItemTemplate(itemId);
+
+            bool allowRace = proto->GetAllowableRace() && (proto->GetAllowableRace() & player->getRaceMask());
+            bool allowSpec = !proto->HasSpec() || proto->IsUsableByLootSpecialization(player, false);
+            if (!allowRace || !allowSpec)
+                continue;
+
+            // Generate bonuses for selected item
+            uint32 itemLevel = ITEM_LEVEL_LEGION_T19;
+            uint32 epicbonus = BONUS_ITEM_T20_EPIC;
+            for (uint32 bonusListID : item->GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUSLIST_IDS))
+            {
+                if (bonusListID == BONUS_CACHE_HEROIC)
+                {
+                    itemLevel = 915;
+                    epicbonus = BONUS_ITEM_T19_HEROIC;
+                }
+                if (bonusListID == BONUS_CACHE_MYTHIC)
+                {
+                    itemLevel = 930;
+                    epicbonus = BONUS_ITEM_T19_MYTHIC;
+                }
+
+            }
+
+            std::vector<int32> bonusLists;
+
+            int32 diff = itemLevel - ITEM_LEVEL_LEGION_T19;
+            bonusLists.push_back(epicbonus);
+
+            bonusLists.push_back(int32(BONUS_ITEM_T19_LEVEL_START + diff));
+
+            ItemPosCountVec dest;
+            bool mailed = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, 1) != EQUIP_ERR_OK;
+            player->SendDisplayToast(itemId, 0, 1, DISPLAY_TOAST_METHOD_CURRENCY_OR_ITEM, TOAST_TYPE_ITEM, false, mailed, bonusLists);
+            if (mailed)
+                player->SendItemRetrievalMail(itemId, 1, GenerateItemRandomPropertyId(itemId), bonusLists);
+            else
+                player->StoreNewItem(dest, itemId, true, GenerateItemRandomPropertyId(itemId), GuidSet(), 0, bonusLists);
+
+            break;
+        }
+        player->DestroyItem(item->GetBagSlot(), item->GetSlot(), true);
+
+        return true;
+    }
+};
+
 void AddSC_item_scripts()
 {
     new item_only_for_flight();
@@ -1279,4 +1360,5 @@ void AddSC_item_scripts()
     new loot_item_unsullied_plate_helmet();
     new spell_draenor_profession();
     //new item_script_challengers_strongbox();
+    new loot_item_shoulders_of_the_foregone_protector();
 }

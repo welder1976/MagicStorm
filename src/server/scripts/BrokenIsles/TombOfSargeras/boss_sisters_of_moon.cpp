@@ -62,10 +62,10 @@ Position const KasparianJumps[5] =
 enum Says
 {
     //Sisters
-    /*SAY_SISTERS_AGGRO     = 1,
+    SAY_SISTERS_AGGRO     = 1,
     SAY_SISTERS_DEATH     = 2,
     SAY_SISTERS_EVADE     = 3,
-	SAY_SISTER_KILLS      = 4,*/
+	SAY_SISTER_KILLS      = 4,
     //Kasparian 
 	SAY_KASPARIAN_AGGRO   = 1,
     SAY_SPELL_GLAIVE      = 2,
@@ -274,6 +274,7 @@ class boss_sisters_of_the_moon : public CreatureScript
 			void EnterEvadeMode(EvadeReason /*why*/) override
 			{ 
                 _DespawnAtEvade();
+
 				RemoveAllAreaTriggers();
 				
 				instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_MOON_BURN);
@@ -700,26 +701,26 @@ class spell_embrace_of_the_eclipse : public SpellScriptLoader
 			                              SPELL_EMBRACE_OF_THE_ECLIPSE_BOSS });
 		   }
 		   
-		  // void HandleAfterCast()
-		  // {
-			  // Unit* caster = GetCaster();
-			   //Unit* target GetExplUnitTarget();
-			   //Creature* kasparian = instance->GetCreature(NPC_HUNTRESS_KASPARIAN);
-			   //Creature* yathae = instance->GetCreature(NPC_CAPTAIN_YATHAE_MOONSTRIKE);
+		   void HandleAfterCast()
+		   {
+			   Unit* caster = GetCaster();
+			   Unit* target GetExplUnitTarget();
+			   Creature* kasparian = instance->GetCreature(NPC_HUNTRESS_KASPARIAN);
+			   Creature* yathae = instance->GetCreature(NPC_CAPTAIN_YATHAE_MOONSTRIKE);
 			   
 			   
-			  // if (!caster)
-				  // return;
+			   if (!caster)
+				   return;
 			   
-			 //  std::list<Player*> playerList;
-			 //  GetPlayerListInGrid(playerList, me, 200.0f);
+			   std::list<Player*> playerList;
+			   GetPlayerListInGrid(playerList, me, 200.0f);
 			   
-			  // for (auto itr : playerList)
-				   //itr->AddAura(itr, SPELL_EMBRACE_OF_THE_ECLIPSE_HEAL);
+			   for (auto itr : playerList)
+				   itr->RemoveAura(SPELL_EMBRACE_OF_THE_ECLIPSE_HEAL);
 			   
 			   //Encontrar la hermana mas cercana activa y ponerle el escudo
 			   
-		  // }
+		   }
 		   
 		   void Register() override
 		   {
