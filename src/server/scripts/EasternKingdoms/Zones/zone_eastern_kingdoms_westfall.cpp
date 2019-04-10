@@ -44,15 +44,43 @@ EndContentData */
 #include "ScriptedEscortAI.h"
 #include "ScriptedGossip.h"
 
+/************\
+ * npc_thug *
+\************/
+
 enum eThug
 {
-    QUEST_LOUS_PARTING_THOUGHTS = 26232,
-    NPC_THUG = 42387,
-    NPC_TRIGGER = 42562,
-    NPC_WESTFALL_STEW = 42617,
-    NPC_HOMELESS_STORMWIND_CITIZEN = 42384,
-    NPC_TRANSIENT = 42383,
-    NPC_WEST_PLAINS_DRIFTERS = 42400
+    QUEST_LOUS_PARTING_THOUGHTS                 = 26232,
+
+    NPC_THUG                                    = 42387,
+    NPC_TRIGGER                                 = 42562,
+    NPC_WESTFALL_STEW                           = 42617,
+    NPC_HOMELESS_STORMWIND_CITIZEN              = 42384,
+    NPC_TRANSIENT                               = 42383,
+    NPC_WEST_PLAINS_DRIFTERS                    = 42400,
+
+    THUG_TEXT_01                                = 0,
+    THUG_TEXT_02                                = 1,
+    THUG_TEXT_03                                = 2,
+    THUG_TEXT_04                                = 3,
+    THUG_TEXT_05                                = 4,
+    THUG_TEXT_06                                = 5,
+    THUG_TEXT_07                                = 6,
+    TEXT_EMOTE_01                               = 7,
+
+    THUG_EVENT_STEP_01                          = 0,
+    THUG_EVENT_STEP_02                          = 1,
+    THUG_EVENT_STEP_03                          = 2,
+    THUG_EVENT_STEP_04                          = 3,
+    THUG_EVENT_STEP_05                          = 4,
+    THUG_EVENT_STEP_06                          = 5,
+    THUG_EVENT_STEP_07                          = 6,
+    THUG_EVENT_STEP_08                          = 7,
+    THUG_EVENT_STEP_09                          = 8,
+    THUG_EVENT_STEP_10                          = 9,
+    THUG_EVENT_STEP_11                          = 10,
+    THUG_EVENT_STEP_12                          = 11,
+    THUG_EVENT_STEP_13                          = 12
 };
 
 class npc_thug: public CreatureScript
@@ -67,7 +95,7 @@ public:
 
     struct npc_thugAI : public ScriptedAI
     {
-        npc_thugAI(Creature* creature) : ScriptedAI(creature) {}
+        npc_thugAI(Creature* creature) : ScriptedAI(creature) { }
 
         uint32 SummonTimer;
         ObjectGuid PlayerGUID;
@@ -139,42 +167,45 @@ public:
                 {
                     if (Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID))
                     {
-                        // TODO: Say move to ->creature_texts
                         switch (Phase)
                         {
-                            case 0:
+                            case THUG_EVENT_STEP_01:
                             {
                                 if (Creature* thug = GetThug(0))
-                                    thug->Say("Did you... did you meet her?", LANG_UNIVERSAL);
+                                    thug->AI()->Talk(THUG_TEXT_01);
+
                                 SummonTimer = 3500;
                                 Phase++;
                                 break;
                             }
-                            case 1:
+                            case THUG_EVENT_STEP_02:
                             {
                                 if (Creature* thug = GetThug(1))
-                                    thug->Say("Yep. She's for real?", LANG_UNIVERSAL);
+                                    thug->AI()->Talk(THUG_TEXT_02);
+
                                 SummonTimer = 4000;
                                 Phase++;
                                 break;
                             }
-                            case 2:
+                            case THUG_EVENT_STEP_03:
                             {
                                 if (Creature* thug = GetThug(1))
-                                    thug->Say("She wanted me to tell you that she appreciates the job that we did for her on the Furlbrows. Gave me a pile o'gold to split with you all.", LANG_UNIVERSAL);
+                                    thug->AI()->Talk(THUG_TEXT_03);
+
                                 SummonTimer = 7000;
                                 Phase++;
                                 break;
                             }
-                            case 3:
+                            case THUG_EVENT_STEP_04:
                             {
                                 if (Creature* thug = GetThug(2))
-                                    thug->Say(" See her face. It is really...", LANG_UNIVERSAL);
+                                    thug->AI()->Talk(THUG_TEXT_04);
+
                                 SummonTimer = 4000;
                                 Phase++;
                             }
                             break;
-                            case 4:
+                            case THUG_EVENT_STEP_05:
                             {
                                 for (uint8 i = 0; i < 4; ++i)
                                     if (Creature* thug = GetThug(i))
@@ -184,31 +215,34 @@ public:
                                 Phase++;
                                 break;
                             }
-                            case 5:
+                            case THUG_EVENT_STEP_06:
                             {
                                 if (Creature* thug = GetThug(0))
-                                    thug->Say("Whoa, what do we have here? Looks like we have ourselves an eavesdropper, boys.", LANG_UNIVERSAL);
+                                    thug->AI()->Talk(THUG_TEXT_05);
+
                                 SummonTimer = 4500;
                                 Phase++;
                                 break;
                             }
-                            case 6:
+                            case THUG_EVENT_STEP_07:
                             {
                                 if (Creature* thug = GetThug(0))
-                                    thug->Say("Only one thing to do with a louisy, good-for-nothin eavesdropper.", LANG_UNIVERSAL);
+                                    thug->AI()->Talk(THUG_TEXT_06);
+
                                 SummonTimer = 4500;
                                 Phase++;
                                 break;
                             }
-                            case 7:
+                            case THUG_EVENT_STEP_08:
                             {
                                 if (Creature* thug = GetThug(0))
-                                    thug->Say("DIE!!!", LANG_UNIVERSAL);
+                                    thug->AI()->Talk(THUG_TEXT_07);
+
                                 SummonTimer = 2000;
                                 Phase++;
                                 break;
                             }
-                            case 8:
+                            case THUG_EVENT_STEP_09:
                             {
                                 for (uint8 i = 0; i < 4; ++i)
                                 {
@@ -224,7 +258,7 @@ public:
                                 Phase++;
                                 break;
                             }
-                            case 9:
+                            case THUG_EVENT_STEP_10:
                             {
                                 for (uint8 i = 0; i < 4; ++i)
                                     if (Creature* thug = GetThug(i))
@@ -234,22 +268,23 @@ public:
                                 Phase++;
                                 break;
                             }
-                            case 10:
+                            case THUG_EVENT_STEP_11:
                             {
                                 if (Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID))
                                     player->KilledMonsterCredit(42417, PlayerGUID);
+
                                 SummonTimer = 2500;
                                 Phase++;
                                 break;
                             }
-                            case 11:
+                            case THUG_EVENT_STEP_12:
                             {
-                                me->TextEmote("Hurry back to the Furlbrow's Cottage", 0, true);
+                                Talk(TEXT_EMOTE_01);
                                 SummonTimer = 15000;
                                 Phase++;
                                 break;
                             }
-                            case 12:
+                            case THUG_EVENT_STEP_13:
                                 Reset();
                                 break;
                             default:
@@ -263,24 +298,42 @@ public:
     };
 };
 
-/*############
-##npc_horatio#
-############*/
+/***************\
+ * npc_horatio *
+\***************/
 
 enum eHoratio
 {
-    QUEST_HERO_WESTFALL1 = 28562,
-    QUEST_HERO_WESTFALL2 = 26378,
+    QUEST_HERO_WESTFALL1                        = 28562,
+    QUEST_HERO_WESTFALL2                        = 26378,
 
-    NPC_HORATIO = 42308,
-    NPC_INVESTIGATOR1 = 42309,
-    NPC_INVESTIGATOR2 = 42745
+    NPC_HORATIO                                 = 42308,
+    NPC_INVESTIGATOR1                           = 42309,
+    NPC_INVESTIGATOR2                           = 42745,
+
+    HORATIO_TEXT_01                             = 0,
+    HORATIO_TEXT_02                             = 1,
+    HORATIO_TEXT_03                             = 2,
+
+    INVESTIGATOR_TEXT_01                        = 0,
+    INVESTIGATOR_TEXT_02                        = 1,
+    INVESTIGATOR_TEXT_03                        = 2,
+
+    INVESTIGATOR_EVENT_STEP_01                  = 0,
+    INVESTIGATOR_EVENT_STEP_02                  = 1,
+    INVESTIGATOR_EVENT_STEP_03                  = 2,
+    INVESTIGATOR_EVENT_STEP_04                  = 3,
+    INVESTIGATOR_EVENT_STEP_05                  = 4,
+    INVESTIGATOR_EVENT_STEP_06                  = 5,
+    INVESTIGATOR_EVENT_STEP_07                  = 6,
+    INVESTIGATOR_EVENT_STEP_08                  = 7,
+    INVESTIGATOR_EVENT_STEP_09                  = 8
 };
 
 class npc_horatio : public CreatureScript
 {
 public:
-    npc_horatio() : CreatureScript("npc_horatio") {}
+    npc_horatio() : CreatureScript("npc_horatio") { }
 
     CreatureAI* GetAI(Creature* creature) const override
     {
@@ -289,7 +342,7 @@ public:
 
     struct npc_horatioAI : public ScriptedAI
     {
-        npc_horatioAI(Creature* creature) : ScriptedAI(creature) {}
+        npc_horatioAI(Creature* creature) : ScriptedAI(creature) { }
 
         uint8 Phase;
         uint32 TextTimer;
@@ -345,6 +398,7 @@ public:
                 }
             }
         }
+
         void UpdateAI(uint32 diff) override
         {
             if (TextTimer < diff)
@@ -357,32 +411,34 @@ public:
                             {
                                 switch (Phase)
                                 {
-                                case 0:
+                                    case INVESTIGATOR_EVENT_STEP_01:
                                     {
-                                        Investigator01->Say("It's a bloodbath, lieutenant. They've been murdered.", LANG_UNIVERSAL);
+                                        Investigator01->AI()->Talk(INVESTIGATOR_TEXT_01);
                                         me->SetStandState(UNIT_STAND_STATE_KNEEL);
+
                                         TextTimer = 6000;
                                         Phase++;
                                         break;
                                     }
-                                case 1:
+                                    case INVESTIGATOR_EVENT_STEP_02:
                                     {
-                                        Investigator01->Say("Given the body temperature. I'd say they've been dead no more than 6 hours.", LANG_UNIVERSAL);
+                                        Investigator01->AI()->Talk(INVESTIGATOR_TEXT_02);
                                         Investigator01->SetStandState(UNIT_STAND_STATE_KNEEL);
+
                                         TextTimer = 6000;
                                         Phase++;
                                         break;
                                     }
-                                case 2:
+                                    case INVESTIGATOR_EVENT_STEP_03:
                                     {
-                                        Investigator02->Say("Damn shame what they did to Old Blanchy...", LANG_UNIVERSAL);
+                                        Investigator02->AI()->Talk(INVESTIGATOR_TEXT_03);
                                         TextTimer = 6000;
                                         Phase++;
                                         break;
                                     }
-                                case 3:
+                                    case INVESTIGATOR_EVENT_STEP_04:
                                     {
-                                        me->Say("No kidding, rookie.", LANG_UNIVERSAL);
+                                        Talk(HORATIO_TEXT_01);
                                         me->SetWalk(true);
                                         me->GetMotionMaster()->MovePoint(0, -9852.267f, 911.928f, 30.028f);
                                         me->GetMotionMaster()->MovePoint(1, -9851.928f, 909.8602f, 29.931f);
@@ -391,21 +447,21 @@ public:
                                         Phase++;
                                         break;
                                     }
-                                case 4:
+                                    case INVESTIGATOR_EVENT_STEP_05:
                                     {
-                                        me->Say("Looks like they really put the cart.", LANG_UNIVERSAL);
+                                        Talk(HORATIO_TEXT_02);
                                         TextTimer = 5000;
                                         Phase++;
                                         break;
                                     }
-                                case 5:
+                                    case INVESTIGATOR_EVENT_STEP_06:
                                     {
-                                        me->Say("...before the horse.", LANG_UNIVERSAL);
+                                        Talk(HORATIO_TEXT_03);
                                         TextTimer = 4000;
                                         Phase++;
                                         break;
                                     }
-                                case 6:
+                                    case INVESTIGATOR_EVENT_STEP_07:
                                     {
                                         me->SetStandState(UNIT_STAND_STATE_STAND);
                                         me->GetMotionMaster()->MovePoint(0, -9852.267f, 911.928f, 30.028f);
@@ -416,18 +472,18 @@ public:
                                         Phase++;
                                         break;
                                     }
-                                case 7:
+                                    case INVESTIGATOR_EVENT_STEP_08:
                                     {
                                         me->SetFacingToObject(player);
                                         TextTimer = 60000;
                                         Phase++;
                                         break;
                                     }
-                                case 8:
-                                    Reset();
-                                    break;
-                                default:
-                                    break;
+                                    case INVESTIGATOR_EVENT_STEP_09:
+                                        Reset();
+                                        break;
+                                    default:
+                                        break;
                                 }
                             }
                 }

@@ -1,3 +1,4 @@
+-- Pandaria
 DELETE FROM creature_addon WHERE guid IN (10546324, 10546325, 10546326, 10546327, 10546328, 10546330, 10546332, 10546333, 10546334, 10546335, 10546336, 10546337, 10546338, 10546339);
 INSERT INTO creature_addon (guid, bytes1) VALUES
 (10546324, 1),
@@ -520,6 +521,7 @@ INSERT INTO waypoint_data (`id`, `point`, `position_x`, `position_y`, `position_
 (105577370, 47, 3110.61, 628.485, 502.448, 0, 0, 1, 0, 100, 0),
 (105577370, 48, 3102.17, 624.641, 502.921, 0, 0, 1, 0, 100, 0);
 
+-- Elwynn Forest
 DELETE FROM gameobject WHERE guid = 184384 AND id = 142075;
 UPDATE creature_addon SET path_id = 1802240, emote = 0 WHERE guid = 180224;
 UPDATE creature SET position_x = -9462.29, position_y = 87.8151, position_z = 58.4211, orientation = 0.733038, spawndist = 0, MovementType = 2 WHERE guid = 180224;
@@ -1210,5 +1212,29 @@ INSERT INTO waypoints (`entry`, `pointid`, `position_x`, `position_y`, `position
 -- WP Murlocs
 -- WP Kobolds
 
+-- Westfall
+DELETE FROM creature WHERE guid = 214354 AND id = 42309;
+DELETE FROM creature_addon WHERE guid = 214354;
+
+DELETE FROM creature_text WHERE CreatureID IN (42387, 42308, 42309);
+INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `Comment`, `BroadcastTextID`) VALUES
+(42387, 0, 0, "Did you... Did you meet her?", 12, 0, 100, 0, 0, 0, 'Thug', 42439),
+(42387, 1, 0, "Yep. She's for real.", 12, 0, 100, 0, 0, 0, 'Thug', 42440),
+(42387, 2, 0, "She wanted me to tell you lugs that she appreciates the job that we did for her on the Furlbrows. Gave me a pile o' gold to split with you all.", 12, 0, 100, 0, 0, 0, 'Thug', 42441),
+(42387, 3, 0, "See her face? Is it really...", 12, 0, 100, 0, 0, 0, 'Thug', 42442),
+(42387, 4, 0, "Whoa, what do we have here? Looks like we have ourselves an eavesdropper, boys.", 12, 0, 100, 0, 0, 0, 'Thug', 42443),
+(42387, 5, 0, "Only one thing to do with a lousy, good-for-nothin eavesdropper.", 12, 0, 100, 0, 0, 0, 'Thug', 42444),
+(42387, 6, 0, "DIE!", 12, 0, 100, 0, 0, 0, 'Thug', 42445),
+(42387, 7, 0, "Hurry back to the Furlbrow's Cottage!", 41 0, 100, 0, 0, 0, 'Text Emote', 42446),
+
+(42308, 0, 0, "No kidding, rookie...", 12 0, 100, 0, 0, 0, 'Lieutenant Horatio Laine', 42227),
+(42308, 1, 0, "Looks like they really put the cart...", 12 0, 100, 0, 0, 0, 'Lieutenant Horatio Laine', 42228),
+(42308, 2, 0, "...before the horse.", 12 0, 100, 0, 0, 0, 'Lieutenant Horatio Laine', 42229),
+
+(42309, 0, 0, "It's a bloodbath, lieutenant. They've been murdered.", 12 0, 100, 0, 0, 0, 'Stormwind Investigator', 42224),
+(42309, 1, 0, "Given the body temperature, I'd say they've been dead no more than 6 hours.", 12 0, 100, 0, 0, 0, 'Stormwind Investigator', 42225),
+(42309, 2, 0, "Damn shame what they did to Old Blanchy...", 12 0, 100, 0, 0, 0, 'Stormwind Investigator', 42226);
+
+-- Other
 INSERT INTO `areatrigger` VALUES ('49', '100007', '1712', '245760', '-3442.35', '9521.4', '9.57194', '');
 INSERT INTO `areatrigger` VALUES ('48', '100010', '1669', '1', '-3217.97', '9423.45', '-172.491', '');
