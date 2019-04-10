@@ -310,14 +310,18 @@ enum eHoratio
     NPC_HORATIO                                 = 42308,
     NPC_INVESTIGATOR1                           = 42309,
     NPC_INVESTIGATOR2                           = 42745,
+    NPC_FARMER_FURLBROW                         = 237,
+    NPC_VERNA_FURLBROW                          = 238,
+    NPC_OLD_BLANCHY                             = 582,
 
     HORATIO_TEXT_01                             = 0,
     HORATIO_TEXT_02                             = 1,
     HORATIO_TEXT_03                             = 2,
 
-    INVESTIGATOR_TEXT_01                        = 0,
-    INVESTIGATOR_TEXT_02                        = 1,
-    INVESTIGATOR_TEXT_03                        = 2,
+    INVESTIGATOR_01_TEXT_01                     = 0,
+    INVESTIGATOR_01_TEXT_02                     = 1,
+
+    INVESTIGATOR_02_TEXT_01                     = 0,
 
     INVESTIGATOR_EVENT_STEP_01                  = 0,
     INVESTIGATOR_EVENT_STEP_02                  = 1,
@@ -327,7 +331,13 @@ enum eHoratio
     INVESTIGATOR_EVENT_STEP_06                  = 5,
     INVESTIGATOR_EVENT_STEP_07                  = 6,
     INVESTIGATOR_EVENT_STEP_08                  = 7,
-    INVESTIGATOR_EVENT_STEP_09                  = 8
+    INVESTIGATOR_EVENT_STEP_09                  = 8,
+    INVESTIGATOR_EVENT_STEP_10                  = 9,
+    INVESTIGATOR_EVENT_STEP_11                  = 10,
+    INVESTIGATOR_EVENT_STEP_12                  = 11,
+    INVESTIGATOR_EVENT_STEP_13                  = 12,
+    INVESTIGATOR_EVENT_STEP_14                  = 13,
+    INVESTIGATOR_EVENT_STEP_15                  = 14
 };
 
 class npc_horatio : public CreatureScript
@@ -357,9 +367,12 @@ public:
         void Reset() override
         {
             Phase = 0;
+            me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+
             bSummoned = false;
             bSummoned1 = false;
             bSummoned2 = false;
+
             TextTimer = 1000;
         }
 
@@ -381,7 +394,7 @@ public:
         {
             if (!bSummoned)
             {
-                if (Creature* Investigator01 = me->SummonCreature(NPC_INVESTIGATOR2,-9854.414f, 916.481f, 30.100f, 5.3867f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 66000))
+                if (Creature* Investigator01 = me->SummonCreature(NPC_INVESTIGATOR1, -9854.414f, 916.481f, 30.100f, 5.3867f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 66000))
                 {
                     Investigator01GUID = Investigator01->GetGUID();
                     bSummoned1 = true;
@@ -413,73 +426,129 @@ public:
                                 {
                                     case INVESTIGATOR_EVENT_STEP_01:
                                     {
-                                        Investigator01->AI()->Talk(INVESTIGATOR_TEXT_01);
-                                        me->SetStandState(UNIT_STAND_STATE_KNEEL);
+                                        me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+                                        Investigator01->AI()->Talk(INVESTIGATOR_01_TEXT_01);
 
-                                        TextTimer = 6000;
+                                        TextTimer = 2000;
                                         Phase++;
                                         break;
                                     }
                                     case INVESTIGATOR_EVENT_STEP_02:
                                     {
-                                        Investigator01->AI()->Talk(INVESTIGATOR_TEXT_02);
+                                        if (Creature* FarmerFurlbrow = me->FindNearestCreature(NPC_FARMER_FURLBROW, 10.f))
+                                            me->SetFacingToObject(FarmerFurlbrow);
+
+                                        me->SetStandState(UNIT_STAND_STATE_KNEEL);
+
+                                        TextTimer = 4000;
+                                        Phase++;
+                                        break;
+                                    }
+                                    case INVESTIGATOR_EVENT_STEP_03:
+                                    {
+                                        if (Creature* VernaFurlbrow = me->FindNearestCreature(NPC_VERNA_FURLBROW, 10.f))
+                                            Investigator01->SetFacingToObject(VernaFurlbrow);
+
+                                        Investigator01->AI()->Talk(INVESTIGATOR_01_TEXT_02);
                                         Investigator01->SetStandState(UNIT_STAND_STATE_KNEEL);
 
                                         TextTimer = 6000;
                                         Phase++;
                                         break;
                                     }
-                                    case INVESTIGATOR_EVENT_STEP_03:
-                                    {
-                                        Investigator02->AI()->Talk(INVESTIGATOR_TEXT_03);
-                                        TextTimer = 6000;
-                                        Phase++;
-                                        break;
-                                    }
                                     case INVESTIGATOR_EVENT_STEP_04:
                                     {
-                                        Talk(HORATIO_TEXT_01);
-                                        me->SetWalk(true);
-                                        me->GetMotionMaster()->MovePoint(0, -9852.267f, 911.928f, 30.028f);
-                                        me->GetMotionMaster()->MovePoint(1, -9851.928f, 909.8602f, 29.931f);
-                                        me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                                        TextTimer = 6000;
+                                        Investigator02->AI()->Talk(INVESTIGATOR_02_TEXT_01);
+
+                                        TextTimer = 4000;
                                         Phase++;
                                         break;
                                     }
                                     case INVESTIGATOR_EVENT_STEP_05:
+                                    {
+                                        me->SetStandState(UNIT_STAND_STATE_STAND);
+
+                                        TextTimer = 2000;
+                                        Phase++;
+                                        break;
+                                    }
+                                    case INVESTIGATOR_EVENT_STEP_06:
+                                    {
+                                        Talk(HORATIO_TEXT_01);
+                                        me->SetWalk(true);
+                                        me->GetMotionMaster()->MovePoint(0, -9852.267f, 911.928f, 30.028f);
+
+                                        TextTimer = 1600;
+                                        Phase++;
+                                        break;
+                                    }
+                                    case INVESTIGATOR_EVENT_STEP_07:
+                                    {
+                                        me->GetMotionMaster()->MovePoint(1, -9851.928f, 909.8602f, 29.931f);
+
+                                        TextTimer = 2000;
+                                        Phase++;
+                                        break;
+                                    }
+                                    case INVESTIGATOR_EVENT_STEP_08:
+                                    {
+                                        if (Creature* OldBlanchy = me->FindNearestCreature(NPC_OLD_BLANCHY, 10.f))
+                                            me->SetFacingToObject(OldBlanchy);
+
+                                        me->SetStandState(UNIT_STAND_STATE_KNEEL);
+
+                                        TextTimer = 2000;
+                                        Phase++;
+                                        break;
+                                    }
+                                    case INVESTIGATOR_EVENT_STEP_09:
                                     {
                                         Talk(HORATIO_TEXT_02);
                                         TextTimer = 5000;
                                         Phase++;
                                         break;
                                     }
-                                    case INVESTIGATOR_EVENT_STEP_06:
+                                    case INVESTIGATOR_EVENT_STEP_10:
                                     {
                                         Talk(HORATIO_TEXT_03);
                                         TextTimer = 4000;
                                         Phase++;
                                         break;
                                     }
-                                    case INVESTIGATOR_EVENT_STEP_07:
+                                    case INVESTIGATOR_EVENT_STEP_11:
                                     {
                                         me->SetStandState(UNIT_STAND_STATE_STAND);
-                                        me->GetMotionMaster()->MovePoint(0, -9852.267f, 911.928f, 30.028f);
-                                        me->GetMotionMaster()->MovePoint(1, -9849.818f, 914.904f, 30.27f);
-                                        me->GetMotionMaster()->MovePoint(2, -9849.86f, 914.859f, 30.268f);
-                                        me->SetWalk(false);
-                                        TextTimer = 8000;
+
+                                        TextTimer = 2000;
                                         Phase++;
                                         break;
                                     }
-                                    case INVESTIGATOR_EVENT_STEP_08:
+                                    case INVESTIGATOR_EVENT_STEP_12:
+                                    {
+                                        me->GetMotionMaster()->MovePoint(0, -9852.267f, 911.928f, 30.028f);
+
+                                        TextTimer = 1400;
+                                        Phase++;
+                                        break;
+                                    }
+                                    case INVESTIGATOR_EVENT_STEP_13:
+                                    {
+                                        me->GetMotionMaster()->MovePoint(1, -9849.818f, 914.904f, 30.27f);
+                                        me->SetWalk(false);
+
+                                        TextTimer = 4000;
+                                        Phase++;
+                                        break;
+                                    }
+                                    case INVESTIGATOR_EVENT_STEP_14:
                                     {
                                         me->SetFacingToObject(player);
+                                        me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
                                         TextTimer = 60000;
                                         Phase++;
                                         break;
                                     }
-                                    case INVESTIGATOR_EVENT_STEP_09:
+                                    case INVESTIGATOR_EVENT_STEP_15:
                                         Reset();
                                         break;
                                     default:
