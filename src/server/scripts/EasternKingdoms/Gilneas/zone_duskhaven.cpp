@@ -145,17 +145,17 @@ enum eDuskHaven
     SPELL_FORCECAST_UPDATE_ZONE_AURAS           = 94828,
     SPELL_LAUNCH4                               = 96185,
 
-    SPELL_PHASE_QUEST_ZONE_SPECIFIC_06 = 68481, // 181
-    SPELL_PHASE_QUEST_ZONE_SPECIFIC_07 = 68482, // 182
-    SPELL_PHASE_QUEST_ZONE_SPECIFIC_08 = 68483, // 183
-    SPELL_PHASE_QUEST_ZONE_SPECIFIC_09 = 69077, // 184
-    SPELL_PHASE_QUEST_ZONE_SPECIFIC_10 = 69078, // 185
-    SPELL_PHASE_QUEST_ZONE_SPECIFIC_11 = 69484, // 186
-    SPELL_PHASE_QUEST_ZONE_SPECIFIC_12 = 69485, // 187
-    SPELL_PHASE_QUEST_ZONE_SPECIFIC_19 = 74096, // 194
+    SPELL_PHASE_QUEST_ZONE_SPECIFIC_06          = 68481, // 181
+    SPELL_PHASE_QUEST_ZONE_SPECIFIC_07          = 68482, // 182
+    SPELL_PHASE_QUEST_ZONE_SPECIFIC_08          = 68483, // 183
+    SPELL_PHASE_QUEST_ZONE_SPECIFIC_09          = 69077, // 184
+    SPELL_PHASE_QUEST_ZONE_SPECIFIC_10          = 69078, // 185
+    SPELL_PHASE_QUEST_ZONE_SPECIFIC_11          = 69484, // 186
+    SPELL_PHASE_QUEST_ZONE_SPECIFIC_12          = 69485, // 187
+    SPELL_PHASE_QUEST_ZONE_SPECIFIC_19          = 74096  // 194
 };
 
-// player
+// Player
 class player_zone_duskhaven : public PlayerScript
 {
 public:
@@ -200,7 +200,7 @@ public:
 class npc_slain_watchman_36205 : public CreatureScript
 {
 public:
-    npc_slain_watchman_36205() : CreatureScript("npc_slain_watchman_36205") {}
+    npc_slain_watchman_36205() : CreatureScript("npc_slain_watchman_36205") { }
 
     bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest) override
     {
@@ -245,18 +245,18 @@ public:
     {
         npc_krennan_aranas_36331AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        bool        m_videoStarted = false;
-        ObjectGuid  m_playerGUID;
-        ObjectGuid  m_kingGUID;
-        ObjectGuid  m_godfreyGUID;
+        EventMap m_events;
+        bool m_videoStarted = false;
+        ObjectGuid m_playerGUID;
+        ObjectGuid m_kingGUID;
+        ObjectGuid m_godfreyGUID;
         std::set<ObjectGuid> pList;
 
         void Reset() override
         {
             m_kingGUID = ObjectGuid::Empty;
             m_godfreyGUID = ObjectGuid::Empty;
-            m_events.RescheduleEvent(EVENT_CHECK_ARRIVEL_PLAYER, 1000);
+            m_events.RescheduleEvent(EVENT_CHECK_ARRIVEL_PLAYER, 1s);
         }
 
         void UpdateAI(uint32 diff) override
@@ -270,6 +270,7 @@ public:
                     case EVENT_CHECK_ARRIVEL_PLAYER:
                     {
                         CheckVideoMember();
+
                         if (!m_videoStarted)
                             if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                             {
@@ -278,13 +279,13 @@ public:
                                 player->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_DISABLE_TURN);
                                 m_videoStarted = true;
 
-                                m_events.ScheduleEvent(EVENT_TALK_PART_00, 4000);
+                                m_events.ScheduleEvent(EVENT_TALK_PART_00, 4s);
                                 return;
                             }
 
                         m_videoStarted = false;
                         m_playerGUID = ObjectGuid::Empty;
-                        m_events.ScheduleEvent(EVENT_CHECK_ARRIVEL_PLAYER, 1000);
+                        m_events.ScheduleEvent(EVENT_CHECK_ARRIVEL_PLAYER, 1s);
                         break;
                     }
                     case EVENT_TALK_PART_00:
@@ -294,7 +295,7 @@ public:
                         if (Creature* king = ObjectAccessor::GetCreature(*me, m_kingGUID))
                             king->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
 
-                        m_events.ScheduleEvent(EVENT_TALK_PART_01, 14000);
+                        m_events.ScheduleEvent(EVENT_TALK_PART_01, 14s);
                         break;
                     }
                     case EVENT_TALK_PART_01:
@@ -305,7 +306,7 @@ public:
                                 player->CastSpell(player, SPELL_CATACLYSM_1);
                                 lord->AI()->Talk(0, player);
                             }
-                        m_events.ScheduleEvent(EVENT_TALK_PART_02, 8000);
+                        m_events.ScheduleEvent(EVENT_TALK_PART_02, 8s);
                         break;
                     }
                     case EVENT_TALK_PART_02:
@@ -316,7 +317,7 @@ public:
                                 player->CastSpell(player, SPELL_CATACLYSM_2);
                                 king->AI()->Talk(0, player);
                             }
-                        m_events.ScheduleEvent(EVENT_TALK_PART_03, 9000);
+                        m_events.ScheduleEvent(EVENT_TALK_PART_03, 9s);
                         break;
                     }
                     case EVENT_TALK_PART_03:
@@ -327,7 +328,7 @@ public:
                                 player->CastSpell(player, SPELL_CATACLYSM_3);
                                 king->AI()->Talk(1, player);
                             }
-                        m_events.ScheduleEvent(EVENT_TALK_PART_04, 8000);
+                        m_events.ScheduleEvent(EVENT_TALK_PART_04, 8s);
                         break;
                     }
                     case EVENT_TALK_PART_04:
@@ -337,12 +338,13 @@ public:
                             //player->CastSpell(player, SPELL_LAST_STAND_COMPLETE_2);
                             AddPlayer();
                         }
+
                         if (Creature* king = ObjectAccessor::GetCreature(*me, m_kingGUID))
                             king->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
 
                         m_videoStarted = false;
                         m_playerGUID = ObjectGuid::Empty;
-                        m_events.ScheduleEvent(EVENT_CHECK_ARRIVEL_PLAYER, 1000);
+                        m_events.ScheduleEvent(EVENT_CHECK_ARRIVEL_PLAYER, 1s);
                         break;
                     }
                 }
@@ -354,6 +356,7 @@ public:
             if (!m_kingGUID)
                 if (Creature* king = me->FindNearestCreature(NPC_KING_GENN_GREYMANE_36332, 25.0f))
                     m_kingGUID = king->GetGUID();
+
             if (!m_godfreyGUID)
                 if (Creature* lord = me->FindNearestCreature(NPC_LORD_GODFREY_36330, 25.0f))
                     m_godfreyGUID = lord->GetGUID();
@@ -395,7 +398,7 @@ public:
 class npc_gwen_armstead_34571 : public CreatureScript
 {
 public:
-    npc_gwen_armstead_34571() : CreatureScript("npc_gwen_armstead_34571") {}
+    npc_gwen_armstead_34571() : CreatureScript("npc_gwen_armstead_34571") { }
 
     bool OnQuestAccept(Player* player, Creature* /*creature*/, Quest const* quest) override
     {
@@ -413,7 +416,7 @@ public:
 class go_mandragore_196394 : public GameObjectScript
 {
 public:
-    go_mandragore_196394() : GameObjectScript("go_mandragore_196394") {}
+    go_mandragore_196394() : GameObjectScript("go_mandragore_196394") { }
 
     bool OnQuestReward(Player* player, GameObject* /*gameObject*/, Quest const* quest, uint32 /*opt*/) override
     {
@@ -438,14 +441,15 @@ public:
 
     enum eHorrid
     {
-        SAY_BARREL = 0,
-        EVENT_KEG_PLACED = 101,
+        SAY_BARREL                              = 0,
+
+        EVENT_KEG_PLACED                        = 101,
         EVENT_KEG_CREDIT,
     };
 
     struct npc_horrid_abomination_36231AI : public ScriptedAI
     {
-        npc_horrid_abomination_36231AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_horrid_abomination_36231AI(Creature* creature) : ScriptedAI(creature) { }
 
         bool m_creditGiven;
 
@@ -464,10 +468,11 @@ public:
                     Talk(SAY_BARREL);
                     me->AddUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED);
                 }
+
                 if (!m_creditGiven && player->GetQuestStatus(QUEST_YOU_CANT_TAKE_EM_ALONE) == QUEST_STATUS_INCOMPLETE)
                 {
-                        player->KilledMonsterCredit(NPC_QUEST_14348_KILL_CREDIT);
-                        m_creditGiven = true;
+                    player->KilledMonsterCredit(NPC_QUEST_14348_KILL_CREDIT);
+                    m_creditGiven = true;
                 }
             }
         }
@@ -511,7 +516,7 @@ public:
 class npc_cynthia_36267 : public CreatureScript
 {
 public:
-    npc_cynthia_36267() : CreatureScript("npc_cynthia_36267") {}
+    npc_cynthia_36267() : CreatureScript("npc_cynthia_36267") { }
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
@@ -530,7 +535,7 @@ public:
 class npc_james_36268 : public CreatureScript
 {
 public:
-    npc_james_36268() : CreatureScript("npc_james_36268") {}
+    npc_james_36268() : CreatureScript("npc_james_36268") { }
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
@@ -549,7 +554,7 @@ public:
 class npc_ashley_36269 : public CreatureScript
 {
 public:
-    npc_ashley_36269() : CreatureScript("npc_ashley_36269") {}
+    npc_ashley_36269() : CreatureScript("npc_ashley_36269") { }
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
@@ -574,9 +579,9 @@ public:
     {
         npc_forsaken_catapult_36283AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_playerGUID; // guid only set if mounted
-        ObjectGuid  m_forsakenGUID; // guid only set if mounted
+        EventMap m_events;
+        ObjectGuid m_playerGUID; // guid only set if mounted
+        ObjectGuid m_forsakenGUID; // guid only set if mounted
 
         void Reset() override
         {
@@ -592,15 +597,16 @@ public:
                 if (Player* player = passenger->ToPlayer())
                 {
                     m_playerGUID = player->GetGUID();
+
                     if (seatId == 1)
-                        m_events.ScheduleEvent(EVENT_PLAYER_LAUNCH, 2000);
+                        m_events.ScheduleEvent(EVENT_PLAYER_LAUNCH, 2s);
                 }
                 else if (Creature* npc = passenger->ToCreature())
                 {
                     m_forsakenGUID = npc->GetGUID();
                     npc->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC | UNIT_FLAG_NOT_SELECTABLE);
-                    m_events.ScheduleEvent(EVENT_CAST_BOULDER, urand(100, 5000));
-                    m_events.ScheduleEvent(EVENT_CHECK_PLAYER, 1000);
+                    m_events.ScheduleEvent(EVENT_CAST_BOULDER, 100ms, 5s);
+                    m_events.ScheduleEvent(EVENT_CHECK_PLAYER, 1s);
                     me->setFaction(1735);
                     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 }
@@ -618,7 +624,7 @@ public:
                     npc->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC | UNIT_FLAG_NOT_SELECTABLE);
                     m_events.CancelEvent(EVENT_CAST_BOULDER);
                     m_events.CancelEvent(EVENT_CHECK_PLAYER);
-                    m_events.ScheduleEvent(EVENT_MASTER_RESET, 180000);
+                    m_events.ScheduleEvent(EVENT_MASTER_RESET, 3min);
                     me->setFaction(35);
                     me->RemoveAllAuras();
                     me->HandleEmoteCommand(EMOTE_ONESHOT_NONE);
@@ -635,55 +641,51 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_CHECK_PLAYER:
-                {
-                    if (Creature* target = ObjectAccessor::GetCreature(*me, m_forsakenGUID))
-                        if (me->SelectNearestPlayer(7.0f))
+                    case EVENT_CHECK_PLAYER:
+                    {
+                        if (Creature* target = ObjectAccessor::GetCreature(*me, m_forsakenGUID))
+                            if (me->SelectNearestPlayer(7.0f))
+                            {
+                                target->ExitVehicle();
+                                break;
+                            }
+
+                        m_events.ScheduleEvent(EVENT_CHECK_PLAYER, 1s);
+                        break;
+                    }
+                    case EVENT_CAST_BOULDER:
+                    {
+                        me->CastSpell(me, SPELL_FIERY_BOULDER, true);
+                        m_events.ScheduleEvent(EVENT_CAST_BOULDER, 8s, 15s);
+                        break;
+                    }
+                    case EVENT_MASTER_RESET:
+                    {
+                        if (!m_forsakenGUID.IsEmpty() || !m_playerGUID.IsEmpty())
+                            m_events.ScheduleEvent(EVENT_MASTER_RESET, 3min);
+                        else
                         {
-                            target->ExitVehicle();
-                            break;
+                            if (TempSummon* npc = me->SummonCreature(NPC_FORSAKEN_MACHINIST, me->GetPosition()))
+                                npc->EnterVehicle(me, 0);
+
+                            Reset();
                         }
-
-                    m_events.ScheduleEvent(EVENT_CHECK_PLAYER, 1000);
-                    break;
-                }
-                case EVENT_CAST_BOULDER:
-                {
-                    me->CastSpell(me, SPELL_FIERY_BOULDER, true);
-                    m_events.ScheduleEvent(EVENT_CAST_BOULDER, urand(8000, 15000));
-                    break;
-                }
-                case EVENT_MASTER_RESET:
-                {
-                    if (!m_forsakenGUID.IsEmpty() || !m_playerGUID.IsEmpty())
-                        m_events.ScheduleEvent(EVENT_MASTER_RESET, 180000);
-                    else
-                    {
-                        if (TempSummon* npc = me->SummonCreature(NPC_FORSAKEN_MACHINIST, me->GetPosition()))
-                            npc->EnterVehicle(me, 0);
-
-                        Reset();
+                        break;
                     }
-                    break;
-                }
-                case EVENT_PLAYER_LAUNCH:
-                {
-                    if (ObjectAccessor::GetPlayer(*me, m_playerGUID))
+                    case EVENT_PLAYER_LAUNCH:
                     {
-                        me->CastSpell(me, 96185, true); // trigger spell 66251 (Aura Id 144 (SPELL_AURA_SAFE_FALL)
+                        if (ObjectAccessor::GetPlayer(*me, m_playerGUID))
+                            me->CastSpell(me, 96185, true); // trigger spell 66251 (Aura Id 144 (SPELL_AURA_SAFE_FALL)
+
+                        m_events.ScheduleEvent(EVENT_PLAYER_LANDING, 5s);
+                        break;
                     }
-
-                    m_events.ScheduleEvent(EVENT_PLAYER_LANDING, 5000);
-                    break;
-                }
-                case EVENT_PLAYER_LANDING:
-                {
-
-                    m_events.RescheduleEvent(EVENT_MASTER_RESET, 10000);
-                    m_playerGUID = ObjectGuid::Empty;
-
-                    break;
-                }
+                    case EVENT_PLAYER_LANDING:
+                    {
+                        m_events.RescheduleEvent(EVENT_MASTER_RESET, 10s);
+                        m_playerGUID = ObjectGuid::Empty;
+                        break;
+                    }
                 }
             }
         }
@@ -841,17 +843,17 @@ public:
 
     enum eNPC
     {
-        EVENT_SEND_MORE_MASTIFF = 901
+        EVENT_SEND_MORE_MASTIFF                 = 901
     };
 
     struct npc_mastiff_36409AI : public ScriptedAI
     {
         npc_mastiff_36409AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_thyalaGUID;
-        ObjectGuid  m_player_GUID;
-        uint32      m_mastiff_counter;
+        EventMap m_events;
+        ObjectGuid m_thyalaGUID;
+        ObjectGuid m_player_GUID;
+        uint32 m_mastiff_counter;
 
         void Reset() override
         {
@@ -859,8 +861,8 @@ public:
             m_player_GUID = ObjectGuid::Empty;
             m_mastiff_counter = 0;
             m_events.Reset();
-            m_events.ScheduleEvent(EVENT_CHECK_ATTACK, 500);
-            m_events.ScheduleEvent(EVENT_SEND_MORE_MASTIFF, 250);
+            m_events.ScheduleEvent(EVENT_CHECK_ATTACK, 500ms);
+            m_events.ScheduleEvent(EVENT_SEND_MORE_MASTIFF, 250ms);
         }
 
         void IsSummonedBy(Unit* summoner) override
@@ -914,7 +916,7 @@ public:
                                 if (Player* player = ObjectAccessor::GetPlayer(*me, m_player_GUID))
                                     player->KilledMonsterCredit(NPC_DARK_RANGER_THYALA);
 
-                                me->DespawnOrUnsummon(1000);
+                                me->DespawnOrUnsummon(1s);
                             }
 
                             if (me->GetDistance2d(thyala) < 20.0f)
@@ -923,7 +925,8 @@ public:
                                 me->GetMotionMaster()->MoveIdle();
                             }
                         }
-                        m_events.ScheduleEvent(EVENT_CHECK_ATTACK, 1000);
+
+                        m_events.ScheduleEvent(EVENT_CHECK_ATTACK, 1s);
                         break;
                     }
                     case EVENT_SEND_MORE_MASTIFF:
@@ -938,7 +941,7 @@ public:
                                     me->SummonCreature(NPC_MASTIFF, (*itr)->GetNearPosition(5.0f, frand(0.0f, 6.28f)), TEMPSUMMON_TIMED_DESPAWN, urand(30000, 60000));
                             }
 
-                        m_events.ScheduleEvent(EVENT_SEND_MORE_MASTIFF, 250);
+                        m_events.ScheduleEvent(EVENT_SEND_MORE_MASTIFF, 250ms);
                         break;
                     }
                 }
@@ -967,9 +970,9 @@ public:
     {
         npc_mastiff_36405AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_thyalaGUID;
-        ObjectGuid  m_player_GUID;
+        EventMap m_events;
+        ObjectGuid m_thyalaGUID;
+        ObjectGuid m_player_GUID;
 
         void Reset() override
         {
@@ -979,7 +982,7 @@ public:
             m_events.Reset();
             m_thyalaGUID = ObjectGuid::Empty;
             m_player_GUID = ObjectGuid::Empty;
-            m_events.RescheduleEvent(EVENT_CHECK_ATTACK, 1000);
+            m_events.RescheduleEvent(EVENT_CHECK_ATTACK, 1s);
         }
 
         void SetGUID(ObjectGuid guid, int32 id) override
@@ -1002,7 +1005,7 @@ public:
         void EnterEvadeMode(EvadeReason /*reason*/) override
         {
             StartAttackThyala();
-            m_events.RescheduleEvent(EVENT_CHECK_ATTACK, 1000);
+            m_events.RescheduleEvent(EVENT_CHECK_ATTACK, 1s);
         }
 
         void UpdateAI(uint32 diff) override
@@ -1016,7 +1019,7 @@ public:
                     case EVENT_CHECK_ATTACK:
                     {
                         StartAttackThyala();
-                        m_events.ScheduleEvent(EVENT_CHECK_ATTACK, 1000);
+                        m_events.ScheduleEvent(EVENT_CHECK_ATTACK, 1s);
                         break;
                     }
                 }
@@ -1090,16 +1093,16 @@ public:
 
     enum eNpc
     {
-        EVENT_CHECK_NEAR_GREYMANE = 901
+        EVENT_CHECK_NEAR_GREYMANE               = 901
     };
 
     struct npc_drowning_watchman_36440AI : public ScriptedAI
     {
         npc_drowning_watchman_36440AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_playerGUID;
-        bool        m_isOnPlayer;
+        EventMap m_events;
+        ObjectGuid m_playerGUID;
+        bool m_isOnPlayer;
 
         void Reset() override
         {
@@ -1116,8 +1119,8 @@ public:
                         {
                             m_isOnPlayer = true;
                             m_playerGUID = player->GetGUID();
-                            m_events.ScheduleEvent(EVENT_MASTER_RESET, 60000);
-                            m_events.ScheduleEvent(EVENT_CHECK_NEAR_GREYMANE, 1000);
+                            m_events.ScheduleEvent(EVENT_MASTER_RESET, 1min);
+                            m_events.ScheduleEvent(EVENT_CHECK_NEAR_GREYMANE, 1s);
                         }
         }
 
@@ -1129,29 +1132,29 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_MASTER_RESET:
-                    me->DespawnOrUnsummon(10);
-                    break;
-                case EVENT_CHECK_NEAR_GREYMANE:
-                    if (m_isOnPlayer)
-                        if (me->FindNearestCreature(NPC_PRINCE_LIAM_GREYMANE, 15.0f))
-                            if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
-                                if (me->m_positionZ > 0.75f)
-                                {
-                                    player->KilledMonsterCredit(NPC_DROWNING_WATCHMANN_CREDIT);
-                                    player->CastSpell(me, SPELL_SAVE_DROWNING_MILITIA_EFFECT, true);
-                                    player->CastSpell(me, SPELL_EXIT_VEHICLE, true);
-                                    Talk(0, player);
-                                    //me->ExitVehicle();
-                                    m_events.ScheduleEvent(EVENT_DESPAWN_PART_00, 3000);
-                                    break;
-                                }
+                    case EVENT_MASTER_RESET:
+                        me->DespawnOrUnsummon(10ms);
+                        break;
+                    case EVENT_CHECK_NEAR_GREYMANE:
+                        if (m_isOnPlayer)
+                            if (me->FindNearestCreature(NPC_PRINCE_LIAM_GREYMANE, 15.0f))
+                                if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
+                                    if (me->m_positionZ > 0.75f)
+                                    {
+                                        player->KilledMonsterCredit(NPC_DROWNING_WATCHMANN_CREDIT);
+                                        player->CastSpell(me, SPELL_SAVE_DROWNING_MILITIA_EFFECT, true);
+                                        player->CastSpell(me, SPELL_EXIT_VEHICLE, true);
+                                        Talk(0, player);
+                                        //me->ExitVehicle();
+                                        m_events.ScheduleEvent(EVENT_DESPAWN_PART_00, 3s);
+                                        break;
+                                    }
 
-                    m_events.ScheduleEvent(EVENT_CHECK_NEAR_GREYMANE, 1000);
-                    break;
-                case EVENT_DESPAWN_PART_00:
-                    me->DespawnOrUnsummon(10);
-                    break;
+                        m_events.ScheduleEvent(EVENT_CHECK_NEAR_GREYMANE, 1s);
+                        break;
+                    case EVENT_DESPAWN_PART_00:
+                        me->DespawnOrUnsummon(10ms);
+                        break;
                 }
             }
         }
@@ -1182,11 +1185,13 @@ public:
         {
             if (GetCaster()->GetTypeId() != TYPEID_PLAYER || GetHitUnit()->GetTypeId() != TYPEID_UNIT || GetCaster()->GetVehicleKit() == NULL)
                 return;
+
             if (GetCaster()->ToPlayer()->GetQuestStatus(14395) != QUEST_STATUS_INCOMPLETE)
             {
                 GetCaster()->RemoveAurasDueToSpell(68735);
                 return;
             }
+
             if (GetCaster()->IsInWater())
                 GetHitUnit()->CastCustomSpell(VEHICLE_SPELL_RIDE_HARDCODED, SPELLVALUE_BASE_POINT0, 1, GetCaster(), false);
             else if (GetHitUnit()->GetVehicle())
@@ -1196,7 +1201,7 @@ public:
                 GetHitUnit()->CastSpell(GetHitUnit(), 68442, true);
                 GetCaster()->ToPlayer()->KilledMonsterCredit(36440);
                 GetCaster()->RemoveAurasDueToSpell(68735);
-                GetHitUnit()->ToCreature()->DespawnOrUnsummon(5000);
+                GetHitUnit()->ToCreature()->DespawnOrUnsummon(5s);
                 GetHitUnit()->ToCreature()->AI()->Talk(0);
             }
             else
@@ -1223,22 +1228,22 @@ public:
 
     enum eNpc
     {
-        EVENT_CREATE_LUCIUS = 901
+        EVENT_CREATE_LUCIUS                     = 901
     };
 
     struct npc_chance_36459AI : public ScriptedAI
     {
         npc_chance_36459AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_luciusGUID;
-        ObjectGuid  m_playerGUID;
-        bool        m_isLucisKilled;
+        EventMap m_events;
+        ObjectGuid m_luciusGUID;
+        ObjectGuid m_playerGUID;
+        bool m_isLucisKilled;
 
         void Reset() override
         {
             m_events.Reset();
-            m_events.ScheduleEvent(EVENT_CHECK_PLAYER, 1000);
+            m_events.ScheduleEvent(EVENT_CHECK_PLAYER, 1s);
             m_luciusGUID = ObjectGuid::Empty;
             m_playerGUID = ObjectGuid::Empty;
             m_isLucisKilled = false;
@@ -1280,14 +1285,14 @@ public:
                         {
                             if (player->GetQuestStatus(QUEST_GRANDMAS_CAT) == QUEST_STATUS_COMPLETE)
                             {
-                                me->DespawnOrUnsummon(10);
+                                me->DespawnOrUnsummon(10ms);
                                 Reset();
                             }
                         }
                         else if (m_isLucisKilled)
                             Reset();
 
-                        m_events.ScheduleEvent(EVENT_CHECK_PLAYER, 1000);
+                        m_events.ScheduleEvent(EVENT_CHECK_PLAYER, 1s);
                         break;
                     }
                     case EVENT_MASTER_RESET:
@@ -1322,9 +1327,9 @@ public:
         npc_forsaken_castaway_36488AI(Creature* creature) : ScriptedAI(creature) { }
 
         EventMap m_events;
-        ObjectGuid   m_luciusGUID;
-        ObjectGuid   m_playerGUID;
-        bool     m_isLucisKilled;
+        ObjectGuid m_luciusGUID;
+        ObjectGuid m_playerGUID;
+        bool m_isLucisKilled;
 
         void DamageDealt(Unit* victim, uint32& damage, DamageEffectType /*damageType*/) override
         {
@@ -1367,17 +1372,16 @@ public:
     {
         npc_mountain_horse_36555AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_playerGUID;
-        ObjectGuid  m_lornaGUID;
-        float       m_dist;
-        float       m_angle;
-        float       m_size;
-        Position    m_oldPosition;
-        bool        m_isLornaNear;
-        bool        m_isPlayerMounted;
-        bool        m_hasPlayerRope;
-
+        EventMap m_events;
+        ObjectGuid m_playerGUID;
+        ObjectGuid m_lornaGUID;
+        float m_dist;
+        float m_angle;
+        float m_size;
+        Position m_oldPosition;
+        bool m_isLornaNear;
+        bool m_isPlayerMounted;
+        bool m_hasPlayerRope;
 
         void Reset() override
         {
@@ -1401,7 +1405,7 @@ public:
                 m_angle = frand(2.59f, 3.53f);
                 m_size = me->GetObjectSize();
                 m_oldPosition = player->GetPosition();
-                m_events.ScheduleEvent(EVENT_START_FOLLOWING, 100);
+                m_events.ScheduleEvent(EVENT_START_FOLLOWING, 100ms);
             }
         }
 
@@ -1433,14 +1437,16 @@ public:
                                 me->GetMotionMaster()->MovePoint(0, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ());
                                 m_oldPosition = player->GetPosition();
                             }
+
                             if (!m_isPlayerMounted && m_hasPlayerRope)
                             {
                                 if (m_isLornaNear)
                                     me->CastSpell(player, SPELL_MOUNTAIN_HORSE_CREDIT);
+
                                 me->DespawnOrUnsummon();
                             }
                         }
-                        m_events.ScheduleEvent(EVENT_START_FOLLOWING, 100);
+                        m_events.ScheduleEvent(EVENT_START_FOLLOWING, 100ms);
                         break;
                     }
                 }
@@ -1454,6 +1460,7 @@ public:
 
             m_isPlayerMounted = player->HasAura(SPELL_RIDE_VEHICLE);
             m_hasPlayerRope = player->HasAura(SPELL_ROPE_CHANNEL);
+
             if (!m_lornaGUID.IsEmpty())
                 if (Creature* lorna = ObjectAccessor::GetCreature(*me, m_lornaGUID))
                     m_isLornaNear = (player->GetDistance(lorna) < 10.0f);
@@ -1474,21 +1481,21 @@ public:
 
     enum eNpc
     {
-        EVENT_CHECK_HEALTH_AND_LORNA = 901,
+        EVENT_CHECK_HEALTH_AND_LORNA            = 901
     };
 
     struct npc_mountain_horse_36540AI : public ScriptedAI
     {
         npc_mountain_horse_36540AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_playerGUID;
-        ObjectGuid  m_lornaGUID;
-        float       m_dist;
-        float       m_angle;
-        float       m_size;
-        Position    m_oldPosition;
-        bool        m_lornaIsNear;
+        EventMap m_events;
+        ObjectGuid m_playerGUID;
+        ObjectGuid m_lornaGUID;
+        float m_dist;
+        float m_angle;
+        float m_size;
+        Position m_oldPosition;
+        bool m_lornaIsNear;
 
         void Reset() override
         {
@@ -1507,14 +1514,15 @@ public:
                     m_playerGUID = player->GetGUID();
                     me->SetMaxHealth(250);
                 }
-                m_events.ScheduleEvent(EVENT_CHECK_HEALTH_AND_LORNA, 1000);
+
+                m_events.ScheduleEvent(EVENT_CHECK_HEALTH_AND_LORNA, 1s);
             }
             else if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
             {
                 if (m_lornaIsNear)
                 {
                     player->KilledMonsterCredit(36560);
-                    me->DespawnOrUnsummon(1000);
+                    me->DespawnOrUnsummon(1s);
                 }
             }
         }
@@ -1527,24 +1535,24 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_CHECK_HEALTH_AND_LORNA:
-                    me->SetHealth(me->GetMaxHealth());
+                    case EVENT_CHECK_HEALTH_AND_LORNA:
+                        me->SetHealth(me->GetMaxHealth());
 
-                    if (!m_lornaGUID)
-                        if (Creature* lorna = me->FindNearestCreature(NPC_LORNA_CROWLEY, 100.0f))
-                            m_lornaGUID = lorna->GetGUID();
+                        if (!m_lornaGUID)
+                            if (Creature* lorna = me->FindNearestCreature(NPC_LORNA_CROWLEY, 100.0f))
+                                m_lornaGUID = lorna->GetGUID();
 
-                    if (Creature* lorna = ObjectAccessor::GetCreature(*me, m_lornaGUID))
-                        if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
-                        {
-                            m_lornaIsNear = player->GetDistance(lorna) < 7.0f;
+                        if (Creature* lorna = ObjectAccessor::GetCreature(*me, m_lornaGUID))
+                            if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
+                            {
+                                m_lornaIsNear = player->GetDistance(lorna) < 7.0f;
 
-                            if (m_lornaIsNear)
-                                player->ExitVehicle();
-                        }
+                                if (m_lornaIsNear)
+                                    player->ExitVehicle();
+                            }
 
-                    m_events.ScheduleEvent(EVENT_CHECK_HEALTH_AND_LORNA, 1000);
-                    break;
+                            m_events.ScheduleEvent(EVENT_CHECK_HEALTH_AND_LORNA, 1s);
+                            break;
                 }
             }
         }
@@ -1568,13 +1576,14 @@ public:
 
         bool Validate(SpellInfo const* /*spellInfo*/) override
         {
-            return ValidateSpellInfo({ 68903  });
+            return ValidateSpellInfo({ 68903 });
         }
 
         void HandleEffectDummy(SpellEffIndex /*effIndex*/)
         {
             if (GetHitUnit()->GetTypeId() != TYPEID_UNIT || GetCaster()->GetTypeId() != TYPEID_PLAYER || GetCaster()->ToPlayer()->GetQuestStatus(14416) != QUEST_STATUS_INCOMPLETE)
                 return;
+
             GetHitUnit()->ToCreature()->DespawnOrUnsummon();
         }
 
@@ -1594,7 +1603,7 @@ public:
 class npc_gwen_armstead_36452 : public CreatureScript
 {
 public:
-    npc_gwen_armstead_36452() : CreatureScript("npc_gwen_armstead_36452") {}
+    npc_gwen_armstead_36452() : CreatureScript("npc_gwen_armstead_36452") { }
 
     bool OnQuestAccept(Player* player, Creature* /*creature*/, Quest const* quest) override
     {
@@ -1617,7 +1626,7 @@ public:
 class go_gate_196399 : public GameObjectScript
 {
 public:
-    go_gate_196399() : GameObjectScript("go_gate_196399") {}
+    go_gate_196399() : GameObjectScript("go_gate_196399") { }
 
     struct go_gate_196399AI : public GameObjectAI
     {
@@ -1629,7 +1638,7 @@ public:
 
         void Reset() override
         {
-            m_events.RescheduleEvent(EVENT_CHECK_PLAYER_NEAR, 1000);
+            m_events.RescheduleEvent(EVENT_CHECK_PLAYER_NEAR, 1s);
             m_isUsed = false;
         }
 
@@ -1641,27 +1650,28 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_CHECK_PLAYER_NEAR:
-                {
-                    cList.clear();
-                    std::list<Creature*> c1;
-                    go->GetCreatureListWithEntryInGrid(c1, NPC_SWIFT_MOUNTAIN_HORSE, 20.0f);
-                    for (auto horse : c1)
-                        if (Unit* p1 = horse->GetOwner())
-                            if (Player* player = p1->ToPlayer())
-                                if (player->GetQuestStatus(QUEST_TO_GREYMANE_MANOR) == QUEST_STATUS_INCOMPLETE)
-                                    cList.push_back(horse->GetGUID());
+                    case EVENT_CHECK_PLAYER_NEAR:
+                    {
+                        cList.clear();
+                        std::list<Creature*> c1;
+                        go->GetCreatureListWithEntryInGrid(c1, NPC_SWIFT_MOUNTAIN_HORSE, 20.0f);
 
-                    m_events.RescheduleEvent(EVENT_CHECK_PLAYER_NEAR, 1000);
-                    break;
-                }
-                case EVENT_COOLDOWN_00:
-                {
-                    m_isUsed = false;
-                    cList.clear();
-                    go->ResetDoorOrButton();
-                    break;
-                }
+                        for (auto horse : c1)
+                            if (Unit* p1 = horse->GetOwner())
+                                if (Player* player = p1->ToPlayer())
+                                    if (player->GetQuestStatus(QUEST_TO_GREYMANE_MANOR) == QUEST_STATUS_INCOMPLETE)
+                                        cList.push_back(horse->GetGUID());
+
+                        m_events.RescheduleEvent(EVENT_CHECK_PLAYER_NEAR, 1s);
+                        break;
+                    }
+                    case EVENT_COOLDOWN_00:
+                    {
+                        m_isUsed = false;
+                        cList.clear();
+                        go->ResetDoorOrButton();
+                        break;
+                    }
                 }
             }
 
@@ -1672,7 +1682,7 @@ public:
                         {
                             go->UseDoorOrButton(5000);
                             m_isUsed = true;
-                            m_events.ScheduleEvent(EVENT_COOLDOWN_00, 5000);
+                            m_events.ScheduleEvent(EVENT_COOLDOWN_00, 5s);
                         }
         }
     };
@@ -1689,7 +1699,7 @@ public:
 class go_gate_196401 : public GameObjectScript
 {
 public:
-    go_gate_196401() : GameObjectScript("go_gate_196401") {}
+    go_gate_196401() : GameObjectScript("go_gate_196401") { }
 
     struct go_gate_196401AI : public GameObjectAI
     {
@@ -1701,7 +1711,7 @@ public:
 
         void Reset() override
         {
-            m_events.RescheduleEvent(EVENT_CHECK_PLAYER_NEAR, 1000);
+            m_events.RescheduleEvent(EVENT_CHECK_PLAYER_NEAR, 1s);
             m_isUsed = false;
         }
 
@@ -1717,12 +1727,13 @@ public:
                     {
                         cList.clear();
                         std::list<Creature*> c1 = FindHorseNear();
+
                         for (auto mount : c1)
                             if (Player* player = GetPlayer(mount))
                                 if (player->GetQuestStatus(QUEST_TO_GREYMANE_MANOR) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(QUEST_EXODUS) == QUEST_STATUS_COMPLETE)
                                     cList.push_back(mount->GetGUID());
 
-                        m_events.RescheduleEvent(EVENT_CHECK_PLAYER_NEAR, 1000);
+                        m_events.RescheduleEvent(EVENT_CHECK_PLAYER_NEAR, 1s);
                         break;
                     }
                     case EVENT_COOLDOWN_00:
@@ -1741,7 +1752,7 @@ public:
                         {
                             go->UseDoorOrButton(5000);
                             m_isUsed = true;
-                            m_events.ScheduleEvent(EVENT_COOLDOWN_00, 6000);
+                            m_events.ScheduleEvent(EVENT_COOLDOWN_00, 6s);
                         }
         }
 
@@ -1779,7 +1790,7 @@ public:
 
     enum eNpc
     {
-        WAYPOINT_ID = 3674101,
+        WAYPOINT_ID                             = 3674101
     };
 
     struct npc_swift_mountain_horse_36741AI : public ScriptedAI
@@ -1824,7 +1835,7 @@ public:
                     player->AreaExploredOrEventHappens(QUEST_TO_GREYMANE_MANOR);
                 }
 
-                me->DespawnOrUnsummon(1000);
+                me->DespawnOrUnsummon(1s);
             }
         }
     };
@@ -1891,6 +1902,7 @@ public:
                 break;
             }
         }
+
         return false;
     }
 
@@ -1898,8 +1910,8 @@ public:
     {
         npc_king_genn_greymane_36743AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_playerGUID;
+        EventMap m_events;
+        ObjectGuid m_playerGUID;
 
         void Reset() override
         {
@@ -1924,12 +1936,12 @@ public:
             {
                 case EVENT_CHANGE_PHASE:
                 {
-                    m_events.RescheduleEvent(EVENT_CHANGE_PHASE, 4000);
+                    m_events.RescheduleEvent(EVENT_CHANGE_PHASE, 4s);
                     break;
                 }
                 case EVENT_START_VIDEO:
                 {
-                    m_events.RescheduleEvent(EVENT_START_VIDEO, 1000);
+                    m_events.RescheduleEvent(EVENT_START_VIDEO, 1s);
                     break;
                 }
             }
@@ -2007,16 +2019,16 @@ public:
 
     enum eNpc
     {
-        WAYPOINT_ID = 4492801,
+        WAYPOINT_ID                             = 4492801
     };
 
     struct npc_harness_43336AI : public ScriptedAI
     {
         npc_harness_43336AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_playerGUID;
-        ObjectGuid  m_carriageGUID;
+        EventMap m_events;
+        ObjectGuid m_playerGUID;
+        ObjectGuid m_carriageGUID;
 
         void Reset() override
         {
@@ -2031,7 +2043,7 @@ public:
             switch (param)
             {
                 case EVENT_START_MOVEMENT:
-                    m_events.RescheduleEvent(EVENT_START_MOVEMENT, 3000);
+                    m_events.RescheduleEvent(EVENT_START_MOVEMENT, 3s);
                     break;
             }
         }
@@ -2051,6 +2063,7 @@ public:
             if (Player* player = summoner->ToPlayer())
             {
                 m_playerGUID = player->GetGUID();
+
                 if (Creature* car = ObjectAccessor::GetCreature(*me, m_carriageGUID))
                 {
                     car->AI()->SetGUID(m_playerGUID, PLAYER_GUID);
@@ -2074,28 +2087,29 @@ public:
         {
             if (type == WAYPOINT_MOTION_TYPE)
                 switch (id)
-            {
-                case 28:
                 {
-                    // attack from orc...
-                    if (Creature* car = ObjectAccessor::GetCreature(*me, m_carriageGUID))
-                        car->GetAI()->DoAction(EVENT_SAY_ATTACK);
-                    break;
+                    case 28:
+                    {
+                        // attack from orc...
+                        if (Creature* car = ObjectAccessor::GetCreature(*me, m_carriageGUID))
+                            car->GetAI()->DoAction(EVENT_SAY_ATTACK);
+                        break;
+                    }
+                    case 33:
+                    {
+                        if (Creature* car = ObjectAccessor::GetCreature(*me, m_carriageGUID))
+                            car->GetAI()->DoAction(EVENT_EXIT_VEHICLE);
+                        break;
+                    }
+                    case 44:
+                    {
+                        me->DespawnOrUnsummon(1s);
+
+                        if (Creature* car = ObjectAccessor::GetCreature(*me, m_carriageGUID))
+                            car->GetAI()->DoAction(EVENT_DESPAWN_PART_00);
+                        break;
+                    }
                 }
-                case 33:
-                {
-                    if (Creature* car = ObjectAccessor::GetCreature(*me, m_carriageGUID))
-                        car->GetAI()->DoAction(EVENT_EXIT_VEHICLE);
-                    break;
-                }
-                case 44:
-                {
-                    me->DespawnOrUnsummon(1000);
-                    if (Creature* car = ObjectAccessor::GetCreature(*me, m_carriageGUID))
-                        car->GetAI()->DoAction(EVENT_DESPAWN_PART_00);
-                    break;
-                }
-            }
         }
 
         void UpdateAI(uint32 diff) override
@@ -2106,11 +2120,11 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_START_MOVEMENT:
-                {
-                    me->GetMotionMaster()->MovePath(WAYPOINT_ID, false);
-                    break;
-                }
+                    case EVENT_START_MOVEMENT:
+                    {
+                        me->GetMotionMaster()->MovePath(WAYPOINT_ID, false);
+                        break;
+                    }
                 }
             }
         }
@@ -2132,10 +2146,10 @@ public:
     {
         npc_stagecoach_carriage_43337AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_playerGUID;
-        ObjectGuid  m_lornaGUID;
-        ObjectGuid  m_harnessGUID;
+        EventMap m_events;
+        ObjectGuid m_playerGUID;
+        ObjectGuid m_lornaGUID;
+        ObjectGuid m_harnessGUID;
 
         void Reset() override
         {
@@ -2193,7 +2207,7 @@ public:
                         lorna->AI()->Talk(0);
                     break;
                 case EVENT_DESPAWN_PART_00:
-                    me->DespawnOrUnsummon(1000);
+                    me->DespawnOrUnsummon(1s);
                     break;
                 case EVENT_EXIT_VEHICLE:
                     if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
@@ -2218,7 +2232,7 @@ public:
 class go_kings_gate_196412 : public GameObjectScript
 {
 public:
-    go_kings_gate_196412() : GameObjectScript("go_kings_gate_196412") {}
+    go_kings_gate_196412() : GameObjectScript("go_kings_gate_196412") { }
 
     struct go_kings_gate_196412AI : public GameObjectAI
     {
@@ -2230,7 +2244,7 @@ public:
 
         void Reset() override
         {
-            m_events.RescheduleEvent(EVENT_CHECK_PLAYER_NEAR, 1000);
+            m_events.RescheduleEvent(EVENT_CHECK_PLAYER_NEAR, 1s);
             m_isUsed = false;
         }
 
@@ -2251,7 +2265,7 @@ public:
                                 if (player->GetQuestStatus(QUEST_EXODUS) == QUEST_STATUS_COMPLETE)
                                     cList.push_back(mount->GetGUID());
 
-                        m_events.RescheduleEvent(EVENT_CHECK_PLAYER_NEAR, 1000);
+                        m_events.RescheduleEvent(EVENT_CHECK_PLAYER_NEAR, 1s);
                         break;
                     }
                     case EVENT_COOLDOWN_00:
@@ -2270,7 +2284,7 @@ public:
                         {
                             go->UseDoorOrButton(5000);
                             m_isUsed = true;
-                            m_events.ScheduleEvent(EVENT_COOLDOWN_00, 6000);
+                            m_events.ScheduleEvent(EVENT_COOLDOWN_00, 6s);
                         }
         }
 
@@ -2329,7 +2343,7 @@ public:
                         {
                             me->CastSpell(who, SPELL_THROW_BOULDER, true);
                             m_cast_cooldown = true;
-                            m_events.ScheduleEvent(EVENT_COOLDOWN_00, urand(2500, 3500));
+                            m_events.ScheduleEvent(EVENT_COOLDOWN_00, 2s + 500ms, 3s + 500ms);
                         }
                     }
         }
@@ -2378,7 +2392,7 @@ public:
 
     enum eNpc
     {
-        MOVEMENT_KOROTH = 2515531,
+        MOVEMENT_KOROTH                         = 2515531
     };
 
     bool OnQuestReward(Player* player, Creature* creature, Quest const* quest, uint32 /*opt*/) override
@@ -2412,19 +2426,17 @@ public:
     bool OnQuestAccept(Player* player, Creature* /*creature*/, Quest const* quest) override
     {
         if (quest->GetQuestId() == QUEST_STORMGLEN)
-        {
             player->RemoveAura(SPELL_GENERIC_QUEST_INVISIBLE_DETECTION_10);
-        }
-        return true;
+            return true;
     }
 
     struct npc_prince_liam_greymane_37065AI : public ScriptedAI
     {
         npc_prince_liam_greymane_37065AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_playerGUID;
-        ObjectGuid  m_korothGUID;
+        EventMap m_events;
+        ObjectGuid m_playerGUID;
+        ObjectGuid m_korothGUID;
 
         void Reset() override
         {
@@ -2450,7 +2462,7 @@ public:
             switch (param)
             {
                 case 1:
-                    m_events.ScheduleEvent(EVENT_TALK_PART_00, 2000);
+                    m_events.ScheduleEvent(EVENT_TALK_PART_00, 2s);
                     break;
             }
         }
@@ -2462,7 +2474,7 @@ public:
                 {
                     case 1020:
                     {
-                        m_events.ScheduleEvent(EVENT_TALK_PART_01, 1000);
+                        m_events.ScheduleEvent(EVENT_TALK_PART_01, 1s);
                         break;
                     }
                 }
@@ -2492,20 +2504,21 @@ public:
                     case EVENT_TALK_PART_01:
                     {
                         me->CastSpell(me, 70511, true);
-                        m_events.ScheduleEvent(EVENT_TALK_PART_02, 1000);
+                        m_events.ScheduleEvent(EVENT_TALK_PART_02, 1s);
                         break;
                     }
                     case EVENT_TALK_PART_02:
                     {
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                             Talk(1, player);
-                        m_events.ScheduleEvent(EVENT_TALK_PART_03, 3000);
+
+                        m_events.ScheduleEvent(EVENT_TALK_PART_03, 3s);
                         break;
                     }
                     case EVENT_TALK_PART_03:
                     {
                         me->GetMotionMaster()->MoveTargetedHome();
-                        m_events.ScheduleEvent(EVENT_TALK_PART_04, 10000);
+                        m_events.ScheduleEvent(EVENT_TALK_PART_04, 10s);
                         break;
                     }
                     case EVENT_TALK_PART_04:
@@ -2513,7 +2526,8 @@ public:
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                             if (Creature* asther = me->FindNearestCreature(37806, 50.0f))
                                 asther->AI()->Talk(0, player);
-                        m_events.ScheduleEvent(EVENT_TALK_PART_05, 5000);
+
+                        m_events.ScheduleEvent(EVENT_TALK_PART_05, 5s);
                         break;
                     }
                     case EVENT_TALK_PART_05:
@@ -2555,7 +2569,7 @@ public:
         void Reset() override
         {
             me->SetReactState(REACT_DEFENSIVE);
-            m_events.RescheduleEvent(EVENT_CHECK_FOR_CREATURE, 1000);
+            m_events.RescheduleEvent(EVENT_CHECK_FOR_CREATURE, 1s);
         }
 
         void AttackStart(Unit* target) override
@@ -2577,19 +2591,19 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_CHECK_FOR_CREATURE:
-                {
-                    if (!me->IsInCombat())
-                        if (Creature* croc = me->FindNearestCreature(37078, 4.0f))
-                        {
-                            me->HandleEmoteCommand(EMOTE_ONESHOT_NONE);
-                            me->SetFacingToObject(croc);
-                            me->Attack(croc, true);
-                        }
+                    case EVENT_CHECK_FOR_CREATURE:
+                    {
+                        if (!me->IsInCombat())
+                            if (Creature* croc = me->FindNearestCreature(37078, 4.0f))
+                            {
+                                me->HandleEmoteCommand(EMOTE_ONESHOT_NONE);
+                                me->SetFacingToObject(croc);
+                                me->Attack(croc, true);
+                            }
 
-                    m_events.ScheduleEvent(EVENT_CHECK_FOR_CREATURE, 1000);
-                    break;
-                }
+                        m_events.ScheduleEvent(EVENT_CHECK_FOR_CREATURE, 1s);
+                        break;
+                    }
                 }
             }
 
@@ -2646,15 +2660,15 @@ public:
 class go_koroths_banner_201594 : public GameObjectScript
 {
 public:
-    go_koroths_banner_201594() : GameObjectScript("go_koroths_banner_201594") {}
+    go_koroths_banner_201594() : GameObjectScript("go_koroths_banner_201594") { }
 
     struct go_koroths_banner_201594AI : public GameObjectAI
     {
         go_koroths_banner_201594AI(GameObject* go) : GameObjectAI(go) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_playerGUID;
-        ObjectGuid  m_korothGUID;
+        EventMap m_events;
+        ObjectGuid m_playerGUID;
+        ObjectGuid m_korothGUID;
 
         void Reset() override
         {
@@ -2670,7 +2684,7 @@ public:
                     {
                         m_playerGUID = player->GetGUID();
                         m_korothGUID = koroth->GetGUID();
-                        m_events.RescheduleEvent(EVENT_TALK_PART_00, 1000);
+                        m_events.RescheduleEvent(EVENT_TALK_PART_00, 1s);
                     }
         }
 
@@ -2682,21 +2696,22 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_TALK_PART_00:
-                {
-                    if (Creature* koroth = ObjectAccessor::GetCreature(*go, m_korothGUID))
-                        if (Player* player = ObjectAccessor::GetPlayer(*go, m_playerGUID))
-                            koroth->AI()->Talk(0, player);
-                    m_events.ScheduleEvent(EVENT_TALK_PART_01, 6000);
-                    break;
-                }
-                case EVENT_TALK_PART_01:
-                {
-                    if (Creature* koroth = ObjectAccessor::GetCreature(*go, m_korothGUID))
-                        if (Player* player = ObjectAccessor::GetPlayer(*go, m_playerGUID))
-                            koroth->AI()->Talk(1, player);
-                    break;
-                }
+                    case EVENT_TALK_PART_00:
+                    {
+                        if (Creature* koroth = ObjectAccessor::GetCreature(*go, m_korothGUID))
+                            if (Player* player = ObjectAccessor::GetPlayer(*go, m_playerGUID))
+                                koroth->AI()->Talk(0, player);
+
+                        m_events.ScheduleEvent(EVENT_TALK_PART_01, 6s);
+                        break;
+                    }
+                    case EVENT_TALK_PART_01:
+                    {
+                        if (Creature* koroth = ObjectAccessor::GetCreature(*go, m_korothGUID))
+                            if (Player* player = ObjectAccessor::GetPlayer(*go, m_playerGUID))
+                                koroth->AI()->Talk(1, player);
+                        break;
+                    }
                 }
             }
         }
@@ -2719,6 +2734,7 @@ public:
         if (player->GetQuestStatus(QUEST_LOSING_YOUR_TAIL) == QUEST_STATUS_INCOMPLETE)
             if (!player->FindNearestCreature(NPC_DARK_SCOUT, 50.0f))
                 player->CastSpell(player, SPELL_FREEZING_TRAP_EFFECT, true);
+
         return false;
     }
 };
@@ -2731,17 +2747,17 @@ public:
 
     enum eNpc
     {
-        TALK_EASY = 0,
-        TALK_DO = 2,
-        TALK_HOW = 1,
+        TALK_EASY                               = 0,
+        TALK_HOW                                = 1,
+        TALK_DO                                 = 2
     };
 
     struct npc_dark_scout_37953AI : public ScriptedAI
     {
         npc_dark_scout_37953AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_playerGUID;
+        EventMap m_events;
+        ObjectGuid m_playerGUID;
 
         void Reset() override
         {
@@ -2757,8 +2773,8 @@ public:
                 me->GetMotionMaster()->Clear();
                 me->SetFacingToObject(player);
                 me->AI()->Talk(TALK_EASY);
-                m_events.ScheduleEvent(EVENT_TALK_START, 5000);
-                m_events.ScheduleEvent(EVENT_CHECK_PLAYER, 1000);
+                m_events.ScheduleEvent(EVENT_TALK_START, 5s);
+                m_events.ScheduleEvent(EVENT_CHECK_PLAYER, 1s);
             }
         }
 
@@ -2777,19 +2793,22 @@ public:
                                 if (player->GetDistance2d(me) < 30.0f)
                                 {
                                     if (!me->IsInCombat())
-                                        m_events.ScheduleEvent(EVENT_MELEE_ATTACK, 500);
-                                    m_events.ScheduleEvent(EVENT_CHECK_PLAYER, 1000);
+                                        m_events.ScheduleEvent(EVENT_MELEE_ATTACK, 500ms);
+
+                                    m_events.ScheduleEvent(EVENT_CHECK_PLAYER, 1s);
                                     break;
                                 }
-                        me->DespawnOrUnsummon(100);
+
+                        me->DespawnOrUnsummon(100ms);
                         break;
                     }
                     case EVENT_TALK_START:
                     {
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                             Talk(TALK_DO, player);
-                        m_events.ScheduleEvent(EVENT_SHOOT, 7500);
-                        m_events.ScheduleEvent(EVENT_CHECK_AURA, 250);
+
+                        m_events.ScheduleEvent(EVENT_SHOOT, 7s + 500ms);
+                        m_events.ScheduleEvent(EVENT_CHECK_AURA, 250ms);
                         break;
                     }
                     case EVENT_SHOOT:
@@ -2814,9 +2833,10 @@ public:
                                 m_events.ScheduleEvent(EVENT_CHECK_AURA, 250);
                                 break;
                             }
+
                         m_events.CancelEvent(EVENT_SHOOT);
                         Talk(TALK_HOW);
-                        m_events.ScheduleEvent(EVENT_MELEE_ATTACK, 1500);
+                        m_events.ScheduleEvent(EVENT_MELEE_ATTACK, 1s + 500ms);
                         break;
                     }
                     case EVENT_MELEE_ATTACK:
@@ -2831,7 +2851,8 @@ public:
                                     me->GetMotionMaster()->MoveChase(player);
                                     me->Attack(player, true);
                                 }
-                        m_events.ScheduleEvent(EVENT_MELEE_ATTACK, 1500);
+
+                        m_events.ScheduleEvent(EVENT_MELEE_ATTACK, 1s + 500ms);
                         break;
                     }
                 }
@@ -2871,8 +2892,10 @@ public:
         {
             if (who->GetTypeId() != TYPEID_PLAYER)
                 return;
+
             if (who->ToPlayer()->GetQuestStatus(24616) != QUEST_STATUS_INCOMPLETE || me->FindNearestCreature(37953, 100, false) != NULL)
                 return;
+
             if (me->IsWithinDistInMap(who, 20.0f))
             {
                 allowSummon = true;
@@ -2884,6 +2907,7 @@ public:
         {
             if (!allowSummon)
                 return;
+
             if (mui_timerAllowSummon <= diff)
             {
                 if (Player *player = ObjectAccessor::GetPlayer(*me, playerGUID))
@@ -2893,7 +2917,8 @@ public:
                 playerGUID = ObjectGuid::Empty;
                 mui_timerAllowSummon = urand(3000, 5000);
             }
-            else mui_timerAllowSummon -= diff;
+            else
+                mui_timerAllowSummon -= diff;
         }
 
     private:
@@ -2934,16 +2959,18 @@ public:
     {
         npc_tobias_mistmantle_38051AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_dariusGUID;
+        EventMap m_events;
+        ObjectGuid m_dariusGUID;
 
         void Reset() override
         {
             m_events.Reset();
             m_dariusGUID = ObjectGuid::Empty;
+
             if (Creature* darius = me->FindNearestCreature(NPC_LORD_DARIUS_CROWLEY, 50.0f))
                 m_dariusGUID = darius->GetGUID();
-            m_events.ScheduleEvent(EVENT_START_ANIM, 250);
+
+            m_events.ScheduleEvent(EVENT_START_ANIM, 250ms);
         }
 
         void MovementInform(uint32 type, uint32 id) override
@@ -2953,7 +2980,7 @@ public:
                 if (id == 1001)
                 {
                     me->HandleEmoteCommand(EMOTE_ONESHOT_KNEEL);
-                    m_events.ScheduleEvent(EVENT_START_TALK, 250);
+                    m_events.ScheduleEvent(EVENT_START_TALK, 250ms);
                 }
                 else if (id == 1002)
                     me->DespawnOrUnsummon();
@@ -2968,38 +2995,41 @@ public:
             {
                 switch (eventId)
                 {
-                case EVENT_START_ANIM:
-                {
-                    me->GetMotionMaster()->MovePoint(1001, -2068.833252f, 1277.579468f, -85.201454f, true);
-                    break;
-                }
-                case EVENT_START_TALK:
-                {
-                    Talk(0);
-                    if (Creature* darius = ObjectAccessor::GetCreature(*me, m_dariusGUID))
-                        darius->SetFacingToObject(me);
-                    m_events.ScheduleEvent(EVENT_START_TALK + 1, 5000);
-                    break;
-                }
-                case EVENT_START_TALK + 1:
-                {
-                    if (Creature* darius = ObjectAccessor::GetCreature(*me, m_dariusGUID))
-                        darius->AI()->Talk(1);
-                    m_events.ScheduleEvent(EVENT_START_TALK + 2, 5000);
-                    break;
-                }
-                case EVENT_START_TALK + 2:
-                {
-                    Talk(1);
-                    m_events.ScheduleEvent(EVENT_START_TALK + 3, 5000);
-                    break;
-                }
-                case EVENT_START_TALK + 3:
-                {
-                    me->HandleEmoteCommand(EMOTE_STATE_NONE);
-                    me->GetMotionMaster()->MovePoint(1002, -2069.574951f, 1305.952393f, -83.195412f, true);
-                    break;
-                }
+                    case EVENT_START_ANIM:
+                    {
+                        me->GetMotionMaster()->MovePoint(1001, -2068.833252f, 1277.579468f, -85.201454f, true);
+                        break;
+                    }
+                    case EVENT_START_TALK:
+                    {
+                        Talk(0);
+
+                        if (Creature* darius = ObjectAccessor::GetCreature(*me, m_dariusGUID))
+                            darius->SetFacingToObject(me);
+
+                        m_events.ScheduleEvent(EVENT_START_TALK + 1, 5s);
+                        break;
+                    }
+                    case EVENT_START_TALK + 1:
+                    {
+                        if (Creature* darius = ObjectAccessor::GetCreature(*me, m_dariusGUID))
+                            darius->AI()->Talk(1);
+
+                        m_events.ScheduleEvent(EVENT_START_TALK + 2, 5s);
+                        break;
+                    }
+                    case EVENT_START_TALK + 2:
+                    {
+                        Talk(1);
+                        m_events.ScheduleEvent(EVENT_START_TALK + 3, 5s);
+                        break;
+                    }
+                    case EVENT_START_TALK + 3:
+                    {
+                        me->HandleEmoteCommand(EMOTE_STATE_NONE);
+                        me->GetMotionMaster()->MovePoint(1002, -2069.574951f, 1305.952393f, -83.195412f, true);
+                        break;
+                    }
                 }
             }
 
@@ -3038,13 +3068,14 @@ public:
     {
         npc_king_genn_greymane_37876AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_godfreyGUID;
+        EventMap m_events;
+        ObjectGuid m_godfreyGUID;
 
         void Reset() override
         {
             m_events.Reset();
             m_godfreyGUID = ObjectGuid::Empty;
+
             if (Creature* godfrey = me->FindNearestCreature(NPC_LORD_GODFREY, 20.0f))
                 m_godfreyGUID = godfrey->GetGUID();
         }
@@ -3055,7 +3086,7 @@ public:
                 if (Creature* godfrey = me->FindNearestCreature(NPC_LORD_GODFREY, 20.0f))
                     m_godfreyGUID = godfrey->GetGUID();
 
-            m_events.ScheduleEvent(EVENT_START_ANIM, 100);
+            m_events.ScheduleEvent(EVENT_START_ANIM, 100ms);
         }
 
         void MovementInform(uint32 type, uint32 id) override
@@ -3069,7 +3100,7 @@ public:
                         if (Creature* godfrey = ObjectAccessor::GetCreature(*me, m_godfreyGUID))
                         {
                             godfrey->SetDisableGravity(false);
-                            godfrey->DespawnOrUnsummon(5000);
+                            godfrey->DespawnOrUnsummon(5s);
                         }
                         break;
                     }
@@ -3088,20 +3119,21 @@ public:
                     case EVENT_START_ANIM:
                     {
                         if (ObjectAccessor::GetCreature(*me, m_godfreyGUID))
-                            m_events.ScheduleEvent(EVENT_START_ANIM+1, 100);
+                            m_events.ScheduleEvent(EVENT_START_ANIM + 1, 100ms);
                         break;
                     }
-                    case EVENT_START_ANIM+1:
+                    case EVENT_START_ANIM + 1:
                     {
                         Talk(0);
-                        m_events.ScheduleEvent(EVENT_START_ANIM + 2, 5000);
+                        m_events.ScheduleEvent(EVENT_START_ANIM + 2, 5s);
                         break;
                     }
                     case EVENT_START_ANIM + 2:
                     {
                         if (Creature* godfrey = ObjectAccessor::GetCreature(*me, m_godfreyGUID))
                             godfrey->AI()->Talk(0);
-                        m_events.ScheduleEvent(EVENT_START_ANIM + 3, 3000);
+
+                        m_events.ScheduleEvent(EVENT_START_ANIM + 3, 3s);
                         break;
                     }
                     case EVENT_START_ANIM + 3:
@@ -3139,9 +3171,7 @@ public:
     bool OnGossipSelect(Player* player, Creature* /*creature*/, uint32 /*sender*/, uint32 /*action*/) override
     {
         if (player->GetQuestStatus(QUEST_FLANK_THE_FORSAKEN) == QUEST_STATUS_COMPLETE)
-        {
             player->CastSpell(player, 72773);
-        }
 
         return false;
     }
@@ -3155,15 +3185,15 @@ public:
 
     enum eNpc
     {
-        PATH_ID = 3876500,
+        PATH_ID                                 = 3876500
     };
 
     struct npc_stout_mountain_horse_38765AI : public ScriptedAI
     {
         npc_stout_mountain_horse_38765AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_playerGUID;
+        EventMap m_events;
+        ObjectGuid m_playerGUID;
 
         void Reset() override
         {
@@ -3176,7 +3206,7 @@ public:
             if (summoner->IsPlayer())
             {
                 m_playerGUID = summoner->GetGUID();
-                m_events.ScheduleEvent(EVENT_START_WAYPOINTS, 1500);
+                m_events.ScheduleEvent(EVENT_START_WAYPOINTS, 1s + 500ms);
             }
         }
 
@@ -3188,7 +3218,7 @@ public:
                 {
                     case 41:
                     {
-                        m_events.ScheduleEvent(EVENT_STOP_WAYPOINTS, 1000);
+                        m_events.ScheduleEvent(EVENT_STOP_WAYPOINTS, 1s);
                         break;
                     }
                 }
@@ -3211,11 +3241,13 @@ public:
                     case EVENT_STOP_WAYPOINTS:
                     {
                         me->CastSpell(me, SPELL_DANS_EJECT_ALL_PASSENGERS);
-                        me->DespawnOrUnsummon(3000);
+                        me->DespawnOrUnsummon(3s);
+
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                         {
                             if (player->HasAura(SPELL_FORCE_REACTION_1))
                                 player->RemoveAura(SPELL_FORCE_REACTION_1);
+
                             if (player->HasAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_09))
                                 player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_09);
                         }
@@ -3265,9 +3297,9 @@ public:
     {
         npc_enslaved_villager_37694AI(Creature* creature) : ScriptedAI(creature) { }
 
-        EventMap    m_events;
-        ObjectGuid  m_playerGUID;
-        ObjectGuid  m_ballGUID;
+        EventMap m_events;
+        ObjectGuid m_playerGUID;
+        ObjectGuid m_ballGUID;
 
         void Reset() override
         {
@@ -3297,7 +3329,7 @@ public:
                     if (GameObject* ball = ObjectAccessor::GetGameObject(*me, m_ballGUID))
                         ball->DestroyForNearbyPlayers();
 
-                    m_events.ScheduleEvent(EVENT_START_ANIM, 1000);
+                    m_events.ScheduleEvent(EVENT_START_ANIM, 1s);
                     break;
                 }
             }
@@ -3314,13 +3346,14 @@ public:
                     case EVENT_START_ANIM:
                     {
                         me->HandleEmoteCommand(EMOTE_STATE_NONE);
+
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                         {
                             me->SetFacingToObject(player);
                             Talk(0, player);
                         }
 
-                        m_events.ScheduleEvent(EVENT_TALK_PART_00, 3000);
+                        m_events.ScheduleEvent(EVENT_TALK_PART_00, 3s);
                         break;
                     }
                     case EVENT_TALK_PART_00:
@@ -3328,7 +3361,7 @@ public:
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                             me->GetMotionMaster()->MoveFleeing(player, 7000);
 
-                        m_events.ScheduleEvent(EVENT_TALK_PART_01, 6000);
+                        m_events.ScheduleEvent(EVENT_TALK_PART_01, 6s);
                         break;
                     }
                     case EVENT_TALK_PART_01:
@@ -3354,7 +3387,7 @@ public:
 class go_ball_and_chain_201775 : public GameObjectScript
 {
 public:
-    go_ball_and_chain_201775() : GameObjectScript("go_ball_and_chain_201775") {}
+    go_ball_and_chain_201775() : GameObjectScript("go_ball_and_chain_201775") { }
 
     void OnLootStateChanged(GameObject* go, uint32 state, Unit* unit) override
     {
