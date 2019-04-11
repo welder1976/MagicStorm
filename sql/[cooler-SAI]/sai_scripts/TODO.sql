@@ -1,16 +1,5 @@
 SmartAI Scripts TODO:
 
-WoD Zones:
-	
--- Tanaan Jungle	
-
-WoD Dungeons:
-
-WoD Raids:
-
-http://www.wowhead.com/level-90-100-zones#zones:0+1+2+4
-
-
 Legion Zones:
 
 -- Stormheim	
