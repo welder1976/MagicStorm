@@ -38,15 +38,16 @@ INSERT INTO waypoint_data (`id`, `point`, `position_x`, `position_y`, `position_
 (5401*10, 6, -9303.19, -292.231, 70.63, 0, 0, 0, 0, 100, 0),
 (5401*10, 7, -9301.44, -289.602, 70.782, 0, 0, 0, 0, 100, 0);
 
-DELETE FROM pool_template WHERE entry IN (460, 461, 463, 464, 571);
+DELETE FROM pool_template WHERE entry IN (460, 461, 463, 464, 465, 571);
 INSERT INTO pool_template (entry, max_limit, description) VALUES
 (460, 1, "Bayne"),
 (461, 1, "Farmer Solliden"),
 (463, 1, "Gruff Swiftbite"),
 (464, 1, "Thuros Lightfingers"),
+(465, 1, "Ambassador Jerrikar"),
 (571, 1, "Sha of Anger");
 
-DELETE FROM pool_creature WHERE pool_entry IN (460, 461, 463, 464, 571);
+DELETE FROM pool_creature WHERE pool_entry IN (460, 461, 463, 464, 465, 571);
 INSERT INTO pool_creature (guid, pool_entry, chance, description) VALUES
 (131458, 460, 0, "Bayne (Spawn 1)"),
 (131459, 460, 0, "Bayne (Spawn 2)"),
@@ -72,6 +73,12 @@ INSERT INTO pool_creature (guid, pool_entry, chance, description) VALUES
 (53205, 464, 0, "Thuros Lightfingers (Spawn 6)"),
 (74373, 464, 0, "Thuros Lightfingers (Spawn 7)"),
 (74377, 464, 0, "Thuros Lightfingers (Spawn 8)"),
+
+(126689, 465, 0, "Ambassador Jerrikar (Spawn 1)"),
+(126690, 465, 0, "Ambassador Jerrikar (Spawn 2)"),
+(131431, 465, 0, "Ambassador Jerrikar (Spawn 3)"),
+(131432, 465, 0, "Ambassador Jerrikar (Spawn 4)"),
+(131433, 465, 0, "Ambassador Jerrikar (Spawn 5)"),
 
 (10576396, 571, 0, "Sha of Anger (Spawn 1)"),
 (10576395, 571, 0, "Sha of Anger (Spawn 2)"),
