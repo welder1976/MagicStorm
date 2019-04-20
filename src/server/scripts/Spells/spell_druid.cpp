@@ -61,6 +61,10 @@ enum DruidSpells
     SPELL_DRUID_MOONFIRE_CAT                        = 155625,
     SPELL_DRUID_SWIPE_CAT                           = 106785,
     SPELL_DRUID_SABERTOOTH                          = 202031,
+    SPELL_DRUID_TALLENT_STONEBARK                   = 197061,
+    SPELL_DRUID_REJUVENATION_GERMINATION            = 155777,
+    SPELL_DRUID_TALLNET_REJUVENATION_GERMINATION    = 155675,
+
 };
 
 enum ShapeshiftFormSpells
@@ -2765,6 +2769,67 @@ class spell_druid_lunar_strike : public SpellScript
     }
 };
 
+class spell_dru_ironbark : public SpellScriptLoader
+{
+public:
+    spell_dru_ironbark() : SpellScriptLoader("spell_dru_ironbark") { }
+
+    class spell_dru_ironbark_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_dru_ironbark_SpellScript);
+
+
+        void HandleAfterCast()
+        {
+            if (GetCaster()->HasAura(SPELL_DRUID_TALLENT_STONEBARK))
+                GetCaster()->ToPlayer()->GetSpellHistory()->ModifyCooldown(GetSpellInfo()->Id, 0);
+        }
+
+
+        void Register() override
+        {
+            AfterCast += SpellCastFn(spell_dru_ironbark_SpellScript::HandleAfterCast);
+        }
+    };
+    SpellScript* GetSpellScript() const override
+    {
+        return new spell_dru_ironbark_SpellScript();
+    }
+};
+
+class spell_dru_germination : public SpellScriptLoader
+{
+public:
+    spell_dru_germination() : SpellScriptLoader("spell_dru_germination") { }
+
+    class spell_dru_germination_AuraScript : public AuraScript
+    {
+        PrepareAuraScript(spell_dru_germination_AuraScript);
+        void HandleCalculateAmount(AuraEffect const* p_AurEff, int32& amount, bool& /*canBeRecalculated*/)
+        {
+            if (Unit* l_Caster = GetCaster())
+            {
+                ///If soul of the forest is activated we increase the heal by 100%
+                if (l_Caster->HasAura(SPELL_DRUID_SOUL_OF_THE_FOREST_RESTO))
+                {
+                    amount *= 2;
+                    l_Caster->RemoveAura(SPELL_DRUID_SOUL_OF_THE_FOREST_RESTO);
+                }
+            }
+        }
+
+        void Register()
+        {
+            DoEffectCalcAmount += AuraEffectCalcAmountFn(spell_dru_germination_AuraScript::HandleCalculateAmount, EFFECT_0, SPELL_AURA_PERIODIC_HEAL);
+        }
+    };
+
+    AuraScript* GetAuraScript() const
+    {
+        return new spell_dru_germination_AuraScript();
+    }
+};
+
 void AddSC_druid_spell_scripts()
 {
     // Spells Scripts
@@ -2826,6 +2891,9 @@ void AddSC_druid_spell_scripts()
     RegisterAuraScript(aura_dru_feral_affinity_tank);
     RegisterAuraScript(aura_dru_frenzied_regeneration);
     new spell_dru_blessing_of_elune();
+    new spell_dru_germination();
+    new spell_dru_ironbark();
+
 
     RegisterSpellScript(spell_druid_lunar_strike);
 
