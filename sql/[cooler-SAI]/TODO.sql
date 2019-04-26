@@ -16,8 +16,6 @@ Legion Dungeons:
 
 Legion Raids:
 
--- The Nighthold	
-
 http://www.wowhead.com/level-100-110-zones#zones:0+1+2+4
 
 \\ -- 8.1.x patch \\
