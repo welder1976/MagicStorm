@@ -244,7 +244,7 @@ DELETE FROM creature_addon WHERE guid IN (20556588, 20556564, 20556562, 20556559
 DELETE FROM creature WHERE guid IN (20556430, 20556565, 20556427, 20556429, 20556534, 20556531, 20556563, 20556428);
 DELETE FROM creature_addon WHERE guid IN (20556430, 20556565, 20556427, 20556429, 20556534, 20556531, 20556563, 20556428);
 
-UPDATE `creature_template` SET `ScriptName` = "npc_gilnean_crow", `InhabitType` = 4 WHERE `entry` = 50260;
+UPDATE `creature_template` SET `ScriptName` = "npc_gilneas_crow", `InhabitType` = 4 WHERE `entry` = 50260;
 UPDATE creature SET PhaseId = 169 WHERE guid = 20556373;
 
 DELETE FROM `creature_text` WHERE `CreatureID` IN (44086, 34864, 34851);
@@ -758,4 +758,24 @@ UPDATE creature_addon SET emote = 214 WHERE guid = 20556450;
 UPDATE creature_template SET unit_flags = 33538 WHERE entry = 35912;
 UPDATE creature_template SET AIName = "" WHERE entry = 35118;
 DELETE FROM `smart_scripts` WHERE `entryorguid` = 35118 AND `source_type` = 0;
-UPDATE creature SET spawndist = 25, MovementType = 1 WHERE id = 35118;
+
+UPDATE creature SET spawndist = 0, MovementType = 0 WHERE guid = 20556525 AND id = 35232;
+UPDATE creature SET position_x = -1728.332, position_y = 1386.65, position_z = 20.427, orientation = 4.157 WHERE guid = 20556490;
+UPDATE creature SET position_x = -1699.611, position_y = 1404.57, position_z = 21.668, orientation = 2.872 WHERE guid = 20556486;
+UPDATE creature SET position_x = -1759.682, position_y = 1396.006, position_z = 19.852, orientation = 5.579 WHERE guid = 20556535;
+UPDATE creature SET position_x = -1701.328, position_y = 1425.705, position_z = 21.669, orientation = 0.038 WHERE guid = 20556549;
+UPDATE creature SET position_x = -1708.567, position_y = 1395.527, position_z = 21.668, orientation = 1.715 WHERE guid = 20556473;
+UPDATE creature SET position_x = -1703.845, position_y = 1415.557, position_z = 21.668, orientation = 1.082 WHERE guid = 20556475;
+UPDATE creature SET position_x = -1727.599, position_y = 1405.174, position_z = 21.668, orientation = 3.659 WHERE guid = 20556543;
+UPDATE creature SET position_x = -1749.173, position_y = 1376.732, position_z = 19.884, orientation = 6.126 WHERE guid = 20556616;
+UPDATE creature SET position_x = -1714.524, position_y = 1357.972, position_z = 19.752, orientation = 2.121 WHERE guid = 20556615;
+UPDATE creature SET position_x = -1697.882, position_y = 1346.894, position_z = 16.95, orientation = 6.256 WHERE guid = 20556619;
+UPDATE creature SET position_x = -1710.696, position_y = 1423.352, position_z = 21.668, orientation = 2.934 WHERE guid = 20556521;
+UPDATE creature SET position_x = -1724.198, position_y = 1433.102, position_z = 21.668, orientation = 3.515 WHERE guid = 20556519;
+UPDATE creature SET position_x = -1723.642, position_y = 1347.209, position_z = 19.63, orientation = 5.5534 WHERE guid = 20556611;
+UPDATE creature SET position_x = -1724.389, position_y = 1368.983, position_z = 19.783, orientation = 2.5595 WHERE guid = 20556522;
+
+UPDATE creature SET spawndist = 5, MovementType = 1 WHERE guid IN (20556522, 20556445, 20556457, 20556444, 20556446, 20556619, 20556611, 20556477) AND id = 35118;
+UPDATE creature SET spawndist = 5, MovementType = 1 WHERE guid IN (20556616, 20556484, 20556551, 20556604, 20556543, 20556473, 20556617, 20556550) AND id = 35118;
+UPDATE creature SET spawndist = 5, MovementType = 1 WHERE guid IN (20556475, 20556545, 20556521, 20556518, 20556519) AND id = 35118;
+UPDATE creature SET spawndist = 2, MovementType = 1 WHERE guid IN (20556460, 20556458, 20556462, 20556454) AND id = 35118;

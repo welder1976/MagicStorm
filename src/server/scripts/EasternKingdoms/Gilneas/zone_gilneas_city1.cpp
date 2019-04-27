@@ -182,9 +182,9 @@ public:
     }
 };
 
-struct npc_gilnean_crow : public ScriptedAI
+struct npc_gilneas_crow : public ScriptedAI
 {
-    npc_gilnean_crow(Creature* creature) : ScriptedAI(creature), flying(false) { }
+    npc_gilneas_crow(Creature* creature) : ScriptedAI(creature), flying(false) { }
 
     EventMap _events;
     uint8 pointId;
@@ -1880,11 +1880,14 @@ public:
 class npc_worgen_runt_35188 : public CreatureScript
 {
 public:
-    npc_worgen_runt_35188() : CreatureScript("npc_worgen_runt_35188") {}
+    npc_worgen_runt_35188() : CreatureScript("npc_worgen_runt_35188") { }
 
     struct npc_worgen_runt_35188AI : public ScriptedAI
     {
-        npc_worgen_runt_35188AI(Creature* creature) : ScriptedAI(creature) { Init(); }
+        npc_worgen_runt_35188AI(Creature* creature) : ScriptedAI(creature)
+        {
+            Init();
+        }
 
         ObjectGuid m_playerGUID;
         EventMap m_events;
@@ -2022,7 +2025,10 @@ public:
 
     struct npc_worgen_runt_35456AI : public ScriptedAI
     {
-        npc_worgen_runt_35456AI(Creature* creature) : ScriptedAI(creature) { Init(); }
+        npc_worgen_runt_35456AI(Creature* creature) : ScriptedAI(creature)
+        {
+            Init();
+        }
 
         ObjectGuid m_playerGUID;
         EventMap m_events;
@@ -2077,12 +2083,12 @@ public:
             uint32 eventId = m_events.ExecuteEvent();
             switch (eventId)
             {
-            case 1:
-            {
-                m_events.ScheduleEvent(1, 500);
-                DoWalk();
-                break;
-            }
+                case 1:
+                {
+                    m_events.ScheduleEvent(1, 500);
+                    DoWalk();
+                    break;
+                }
             }
 
             if (!UpdateVictim())
@@ -2156,11 +2162,14 @@ public:
 class npc_worgen_alpha_35170 : public CreatureScript
 {
 public:
-    npc_worgen_alpha_35170() : CreatureScript("npc_worgen_alpha_35170") {}
+    npc_worgen_alpha_35170() : CreatureScript("npc_worgen_alpha_35170") { }
 
     struct npc_worgen_alpha_35170AI : public ScriptedAI
     {
-        npc_worgen_alpha_35170AI(Creature* creature) : ScriptedAI(creature) { Init(); }
+        npc_worgen_alpha_35170AI(Creature* creature) : ScriptedAI(creature)
+        {
+            Init();
+        }
 
         ObjectGuid m_playerGUID;
         EventMap m_events;
@@ -2294,11 +2303,14 @@ public:
 class npc_worgen_alpha_35167 : public CreatureScript
 {
 public:
-    npc_worgen_alpha_35167() : CreatureScript("npc_worgen_alpha_35167") {}
+    npc_worgen_alpha_35167() : CreatureScript("npc_worgen_alpha_35167") { }
 
     struct npc_worgen_alpha_35167AI : public ScriptedAI
     {
-        npc_worgen_alpha_35167AI(Creature* creature) : ScriptedAI(creature) { Init(); }
+        npc_worgen_alpha_35167AI(Creature* creature) : ScriptedAI(creature)
+        {
+            Init();
+        }
 
         ObjectGuid m_playerGUID;
         EventMap m_events;
@@ -2517,6 +2529,7 @@ public:
     }
 };
 
+/// alexkulya: ToDo aggro & attack many targets + normal sparring fix.
 class npc_bloodfang_worgen_35118 : public CreatureScript
 {
 public:
@@ -2580,9 +2593,7 @@ public:
                 }
             }
 
-            if (!UpdateVictim())
-                return;
-            else
+            if (UpdateVictim())
                 DoMeleeAttackIfReady();
         }
     };
@@ -4633,7 +4644,7 @@ public:
 void AddSC_zone_gilneas_city1()
 {
     new player_zone_gilneas_city1();
-    RegisterCreatureAI(npc_gilnean_crow);
+    RegisterCreatureAI(npc_gilneas_crow);
     new npc_gilneas_city_guard_gate_34864();
     new npc_prince_liam_greymane_34850();
     new npc_rampaging_worgen_35660();
