@@ -783,6 +783,14 @@ UPDATE creature SET spawndist = 2, MovementType = 1 WHERE guid IN (20556460, 205
 UPDATE creature_template SET npcflag = 2, unit_flags = 33538, AIName = "SmartAI", ScriptName = "" WHERE entry = 35112;
 UPDATE creature_template SET npcflag = 2, unit_flags = 33538, AIName = "SmartAI", ScriptName = "" WHERE entry = 35115;
 
+UPDATE creature_template SET unit_flags = 33282 WHERE entry = 35233;
+UPDATE creature SET PhaseId = 170 WHERE guid IN (20556539, 20556527, 20556467);
+DELETE FROM creature_addon WHERE guid = 20556540;
+DELETE FROM creature_template_addon WHERE entry IN (35124, 35077);
+INSERT INTO creature_template_addon (entry, bytes1, bytes2, emote, auras) VALUES
+(35124, 0, 4097, 333, 0),
+(35077, 0, 4097, 27, "67503");
+
 DELETE FROM `smart_scripts` WHERE `entryorguid` = 35112 AND `source_type` = 0;
 DELETE FROM `smart_scripts` WHERE `entryorguid` = 35112*100 AND `source_type` = 9;
 INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
@@ -792,3 +800,8 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 (35112*100, 9, 1, 0, 0, 0, 100, 0, 1000, 1000, 0, 0, 1, 0, 0, 0, 0, 0, 0, 19, 35115, 30, 0, 0, 0, 0, 0, "King Genn Greymane - On Script - Say Text Line 0 (Creature ID: 35115, 30 Yards)"),
 (35112*100, 9, 2, 0, 0, 0, 100, 0, 5000, 5000, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "King Genn Greymane - On Script - Say Text Line 0"),
 (35112*100, 9, 3, 0, 0, 0, 100, 0, 2000, 2000, 0, 0, 81, 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "King Genn Greymane - On Script - Add Npc Flag Quest Giver");
+
+UPDATE creature SET position_x = -1666.399, position_y = 1399.894, position_z = 52.74, orientation = 1.5462 WHERE guid = 20556612;
+UPDATE creature SET spawndist = 5, MovementType = 1 WHERE guid IN (20556468, 20556613, 20556612, 20556533);
+
+UPDATE creature_template SET flags_extra = 64 WHERE entry IN (35188, 35456, 35170, 35167);

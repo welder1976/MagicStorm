@@ -84,6 +84,7 @@ enum eZoneGilneas
     NPC_JOSAIH_AVERY_TRIGGER                     = 50415,
 
     QUEST_LOCKDOWN                               = 14078,
+    QUEST_BY_THE_SKIN_OF_HIS_TEETH               = 14154,
     QUEST_THE_REBEL_LORDS_ARSENAL                = 14159,
     QUEST_FROM_THE_SHADOWS                       = 14204,
     QUEST_SACRIFICES                             = 14212,
@@ -554,7 +555,7 @@ public:
 
         void JustDied(Unit* /*killer*/) override
         {
-            me->DespawnOrUnsummon(1000);
+            me->DespawnOrUnsummon(1s);
         }
 
         void MovementInform(uint32 type, uint32 id) override
@@ -1695,7 +1696,6 @@ public:
     }
 };
 
-/* 35077 - QUEST: 14154 - By The Skin of His Teeth - START */
 class npc_lord_darius_crowley_35077 : public CreatureScript
 {
 public:
@@ -1703,41 +1703,54 @@ public:
 
     enum eNpc
     {
-        ACTION_START_EVENT = 101,
+        SPELL_DEMORALIZING_SHOUT            = 61044,
+        SPELL_LEFT_HOOK                     = 67825,
+        SPELL_SNAP_KICK                     = 67827,
+
+        ACTION_START_EVENT                  = 101
     };
 
     bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest) override
     {
-        if (quest->GetQuestId() == 14154)
+        if (quest->GetQuestId() == QUEST_BY_THE_SKIN_OF_HIS_TEETH)
             if (CAST_AI(npc_lord_darius_crowley_35077AI, creature->AI())->m_playerGUID.IsEmpty())
             {
                 creature->AI()->SetGUID(player->GetGUID());
                 creature->AI()->DoAction(ACTION_START_EVENT);
                 creature->CastSpell(player, SPELL_BY_THE_SKIN, true);
             }
+
         return true;
     }
 
     struct npc_lord_darius_crowley_35077AI : public ScriptedAI
     {
-        npc_lord_darius_crowley_35077AI(Creature* creature) : ScriptedAI(creature), m_summons(me) { Init(); }
-
-        enum eQ14154
+        npc_lord_darius_crowley_35077AI(Creature* creature) : ScriptedAI(creature), m_summons(me)
         {
-            Event120Secounds = 1,
-            EventCheckPlayerIsAlive,
-            EventSummonNextWave,
-            EventHelpPlayer,
+            Init();
+        }
+
+        enum eEvents
+        {
+            EVENT_120_SECONDS               = 1,
+            EVENT_CHECK_PLAYER_IS_ALIVE     = 2,
+            EVENT_SUMMON_NEXT_WAVE          = 3,
+            EVENT_HELP_PLAYER               = 4,
+
+            EVENT_DEMORALIZING_SHOUT        = 5,
+            EVENT_LEFT_HOOK                 = 6,
+            EVENT_SNAP_KICK                 = 7
         };
 
         ObjectGuid m_playerGUID;
-        EventMap m_events;
+        EventMap m_events, c_events;
         SummonList m_summons;
         uint32 m_phase;
 
         void Init()
         {
             m_events.Reset();
+            c_events.Reset();
             m_summons.DespawnAll();
         }
 
@@ -1754,10 +1767,10 @@ public:
         void DoAction(int32 /*action*/) override
         {
             m_phase = 1;
-            m_events.ScheduleEvent(EventCheckPlayerIsAlive, 1000);
-            m_events.ScheduleEvent(EventSummonNextWave, 1000);
-            m_events.ScheduleEvent(Event120Secounds, 120000);
-            m_events.ScheduleEvent(EventHelpPlayer, 250);
+            m_events.ScheduleEvent(EVENT_CHECK_PLAYER_IS_ALIVE, 1s);
+            m_events.ScheduleEvent(EVENT_SUMMON_NEXT_WAVE, 1s);
+            m_events.ScheduleEvent(EVENT_120_SECONDS, 2min);
+            m_events.ScheduleEvent(EVENT_HELP_PLAYER, 250ms);
         }
 
         void SetGUID(ObjectGuid guid, int32 /*type = 0*/) override
@@ -1765,13 +1778,13 @@ public:
             m_playerGUID = guid;
         }
 
-        void DamageTaken(Unit* attacker, uint32& /*damage*/) override
+        void EnterCombat(Unit* /*who*/) override
         {
-            if (/*Creature* worgen = */attacker->ToCreature())
-                if (!me->IsInCombat())
-                {
-                    //me->Attack(worgen, true);
-                }
+            DoCastSelf(SPELL_DEMORALIZING_SHOUT);
+
+            c_events.ScheduleEvent(EVENT_DEMORALIZING_SHOUT, 20s, 25s);
+            c_events.ScheduleEvent(EVENT_LEFT_HOOK, 6s, 9s);
+            c_events.ScheduleEvent(EVENT_SNAP_KICK, 15s, 18s);
         }
 
         void UpdateAI(uint32 diff) override
@@ -1782,18 +1795,18 @@ public:
             {
                 switch (eventId)
                 {
-                    case Event120Secounds:
+                    case EVENT_120_SECONDS:
                         Init();
                         break;
-                    case EventCheckPlayerIsAlive: // check every sec player is alive
+                    case EVENT_CHECK_PLAYER_IS_ALIVE:
                         if (!m_playerGUID.IsEmpty() && m_phase)
                             if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                                 if (!player->IsInWorld() || !player->IsAlive())
                                     Init();
 
-                        m_events.ScheduleEvent(EventCheckPlayerIsAlive, 1000);
+                        m_events.ScheduleEvent(EVENT_CHECK_PLAYER_IS_ALIVE, 1s);
                         break;
-                    case EventSummonNextWave:
+                    case EVENT_SUMMON_NEXT_WAVE:
                     {
                         for (int i = 0; i < 4; i++)
                         {
@@ -1809,10 +1822,10 @@ public:
                             creature2->AI()->DoAction(2);
                         }
 
-                        m_events.ScheduleEvent(EventSummonNextWave, 30000); // every 30 secounds one wave
+                        m_events.ScheduleEvent(EVENT_SUMMON_NEXT_WAVE, 30s);
                         break;
                     }
-                    case EventHelpPlayer:
+                    case EVENT_HELP_PLAYER:
                     {
                         if (!me->IsInCombat())
                         {
@@ -1825,13 +1838,10 @@ public:
                             if (!creature)
                                 creature = me->FindNearestCreature(NPC_WORGEN_ALPHA_C2, 5.0f);
                             if (creature)
-                            {
                                 me->Attack(creature, true);
-                                // creature->Attack(me, true);
-                            }
                         }
 
-                        m_events.ScheduleEvent(EventHelpPlayer, 250);
+                        m_events.ScheduleEvent(EVENT_HELP_PLAYER, 250ms);
                         break;
                     }
                 }
@@ -1840,9 +1850,29 @@ public:
             if (!UpdateVictim())
                 return;
 
+            c_events.Update(diff);
+
+            while (uint32 eventId = c_events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                    case EVENT_DEMORALIZING_SHOUT:
+                        DoCastSelf(SPELL_DEMORALIZING_SHOUT);
+                        c_events.ScheduleEvent(EVENT_DEMORALIZING_SHOUT, 20s, 25s);
+                        break;
+                    case EVENT_LEFT_HOOK:
+                        DoCastRandom(SPELL_LEFT_HOOK, 20.f);
+                        c_events.ScheduleEvent(EVENT_LEFT_HOOK, 6s, 9s);
+                        break;
+                    case EVENT_SNAP_KICK:
+                        DoCastRandom(SPELL_SNAP_KICK, 20.f);
+                        c_events.ScheduleEvent(EVENT_SNAP_KICK, 15s, 18s);
+                        break;
+                }
+            }
+
             DoMeleeAttackIfReady();
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -1851,7 +1881,6 @@ public:
     }
 };
 
-// 35124
 class npc_tobias_mistmantle_35124 : public CreatureScript
 {
 public:
@@ -1876,7 +1905,6 @@ public:
     }
 };
 
-// 35188
 class npc_worgen_runt_35188 : public CreatureScript
 {
 public:
@@ -1920,7 +1948,6 @@ public:
             {
                 m_events.ScheduleEvent(1, 500);
                 m_phase = action;
-                me->SetSpeed(MOVE_RUN, frand(1.2f, 1.6f));
             }
         }
 
@@ -1940,6 +1967,7 @@ public:
             m_events.Update(diff);
 
             uint32 eventId = m_events.ExecuteEvent();
+
             switch (eventId)
             {
                 case 1:
@@ -1995,6 +2023,7 @@ public:
                 }
                 case 25:
                     m_phase = 6;
+
                     if (!m_playerGUID.IsEmpty())
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                             if (player->IsInWorld() || player->IsAlive())
@@ -2017,7 +2046,6 @@ public:
     }
 };
 
-// 35456
 class npc_worgen_runt_35456 : public CreatureScript
 {
 public:
@@ -2061,7 +2089,6 @@ public:
             {
                 m_events.ScheduleEvent(1, 500);
                 m_phase = action;
-                me->SetSpeed(MOVE_RUN, frand(1.2f, 1.6f));
             }
         }
 
@@ -2081,6 +2108,7 @@ public:
             m_events.Update(diff);
 
             uint32 eventId = m_events.ExecuteEvent();
+
             switch (eventId)
             {
                 case 1:
@@ -2136,6 +2164,7 @@ public:
                 }
                 case 25:
                     m_phase = 6;
+
                     if (!m_playerGUID.IsEmpty())
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                             if (player->IsInWorld() || player->IsAlive())
@@ -2158,7 +2187,6 @@ public:
     }
 };
 
-// 35170
 class npc_worgen_alpha_35170 : public CreatureScript
 {
 public:
@@ -2202,7 +2230,6 @@ public:
             {
                 m_events.ScheduleEvent(1, 500);
                 m_phase = action;
-                me->SetSpeed(MOVE_RUN, frand(1.2f, 1.6f));
             }
         }
 
@@ -2222,6 +2249,7 @@ public:
             m_events.Update(diff);
 
             uint32 eventId = m_events.ExecuteEvent();
+
             switch (eventId)
             {
                 case 1:
@@ -2277,6 +2305,7 @@ public:
                 }
                 case 25:
                     m_phase = 6;
+
                     if (!m_playerGUID.IsEmpty())
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                             if (player->IsInWorld() || player->IsAlive())
@@ -2299,7 +2328,6 @@ public:
     }
 };
 
-// 35167
 class npc_worgen_alpha_35167 : public CreatureScript
 {
 public:
@@ -2343,7 +2371,6 @@ public:
             {
                 m_events.ScheduleEvent(1, 500);
                 m_phase = action;
-                me->SetSpeed(MOVE_RUN, frand(1.2f, 1.6f));
             }
         }
 
@@ -2363,14 +2390,15 @@ public:
             m_events.Update(diff);
 
             uint32 eventId = m_events.ExecuteEvent();
+
             switch (eventId)
             {
-            case 1:
-            {
-                m_events.ScheduleEvent(1, 500);
-                DoWalk();
-                break;
-            }
+                case 1:
+                {
+                    m_events.ScheduleEvent(1, 500);
+                    DoWalk();
+                    break;
+                }
             }
 
             if (!UpdateVictim())
@@ -2418,6 +2446,7 @@ public:
                 }
                 case 25:
                     m_phase = 6;
+
                     if (!m_playerGUID.IsEmpty())
                         if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                             if (player->IsInWorld() || player->IsAlive())
