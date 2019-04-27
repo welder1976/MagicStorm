@@ -2440,95 +2440,6 @@ public:
     }
 };
 
-class npc_king_genn_greymane_35112 : public CreatureScript
-{
-public:
-    npc_king_genn_greymane_35112() : CreatureScript("npc_king_genn_greymane_35112") { }
-
-    enum eNpc
-    {
-        EVENT_SAY_GENN_GREYMANE = 101,
-
-        NPC_LORD_GODFREY        = 35115,
-        NPC_KING_GENN_GREYMANE  = 35112,
-
-        LORD_GODFREY_TEXT       = 0,
-        KING_GENN_GREYMANE_TEXT = 0,
-
-        QUEST_OLD_DIVISIONS     = 14157
-    };
-    /// alexkulya: ToDo text event. Maybe port to SAI later.
-    /*bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest) override
-    {
-        if (quest->GetQuestId() == QUEST_OLD_DIVISIONS)
-        {
-            if (Creature* godfrey = creature->FindNearestCreature(NPC_LORD_GODFREY, 20.0f))
-                godfrey->AI()->Talk(LORD_GODFREY_TEXT);
-
-            _events.ScheduleEvent(EVENT_SAY_GENN_GREYMANE, 5s);
-        }
-
-        return true;
-    }*/
-
-    struct npc_king_genn_greymane_35112AI : public ScriptedAI
-    {
-        npc_king_genn_greymane_35112AI(Creature* creature) : ScriptedAI(creature) { }
-
-        void Reset() override
-        {
-            //_events.Reset();
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_NPC);
-        }
-
-        /*void UpdateAI(uint32 diff) override
-        {
-            _events.Update(diff);
-
-            while (uint32 eventId = _events.ExecuteEvent())
-            {
-                switch (eventId)
-                {
-                    case EVENT_SAY_GENN_GREYMANE:
-                        me->AI()->Talk(KING_GENN_GREYMANE_TEXT);
-                    break;
-                }
-            }
-        }*/
-
-    /*private:
-        EventMap _events;*/
-    };
-
-    CreatureAI* GetAI(Creature* creature) const override
-    {
-        return new npc_king_genn_greymane_35112AI(creature);
-    }
-};
-
-class npc_lord_godfrey_35115 : public CreatureScript
-{
-public:
-    npc_lord_godfrey_35115() : CreatureScript("npc_lord_godfrey_35115") { }
-
-    struct npc_lord_godfrey_35115AI : public ScriptedAI
-    {
-        npc_lord_godfrey_35115AI(Creature* creature) : ScriptedAI(creature) { }
-
-        void Reset() override
-        {
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_NPC);
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const override
-    {
-        return new npc_lord_godfrey_35115AI(creature);
-    }
-};
-
 /// alexkulya: ToDo aggro & attack many targets + normal sparring fix.
 class npc_bloodfang_worgen_35118 : public CreatureScript
 {
@@ -4659,7 +4570,6 @@ void AddSC_zone_gilneas_city1()
     new npc_gilnean_royal_guard_35232();
     new npc_wounded_guard_47091();
     new npc_mariam_spellwalker_35872();
-    new npc_king_genn_greymane_35112();
     new npc_bloodfang_worgen_35118();
     new npc_tobias_mistmantle_35124();
     new npc_lord_darius_crowley_35077();
@@ -4667,7 +4577,6 @@ void AddSC_zone_gilneas_city1()
     new npc_worgen_alpha_35170();
     new npc_worgen_runt_35456();
     new npc_worgen_alpha_35167();
-    new npc_lord_godfrey_35115();
     new npc_josiah_avery_35369();
     new npc_josiah_avery_trigger_50415();
     new npc_lorna_crowley_35378();

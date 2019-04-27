@@ -779,3 +779,16 @@ UPDATE creature SET spawndist = 5, MovementType = 1 WHERE guid IN (20556522, 205
 UPDATE creature SET spawndist = 5, MovementType = 1 WHERE guid IN (20556616, 20556484, 20556551, 20556604, 20556543, 20556473, 20556617, 20556550) AND id = 35118;
 UPDATE creature SET spawndist = 5, MovementType = 1 WHERE guid IN (20556475, 20556545, 20556521, 20556518, 20556519) AND id = 35118;
 UPDATE creature SET spawndist = 2, MovementType = 1 WHERE guid IN (20556460, 20556458, 20556462, 20556454) AND id = 35118;
+
+UPDATE creature_template SET npcflag = 2, unit_flags = 33538, AIName = "SmartAI", ScriptName = "" WHERE entry = 35112;
+UPDATE creature_template SET npcflag = 2, unit_flags = 33538, AIName = "SmartAI", ScriptName = "" WHERE entry = 35115;
+
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 35112 AND `source_type` = 0;
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 35112*100 AND `source_type` = 9;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(35112, 0, 0, 0, 19, 0, 100, 0, 14157, 0, 0, 0, 80, 35112*100, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "King Genn Greymane - On Quest (14157) Accept - Start Script (OOC)"),
+
+(35112*100, 9, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 81, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "King Genn Greymane - On Script - Remove Npc Flag Quest Giver"),
+(35112*100, 9, 1, 0, 0, 0, 100, 0, 1000, 1000, 0, 0, 1, 0, 0, 0, 0, 0, 0, 19, 35115, 30, 0, 0, 0, 0, 0, "King Genn Greymane - On Script - Say Text Line 0 (Creature ID: 35115, 30 Yards)"),
+(35112*100, 9, 2, 0, 0, 0, 100, 0, 5000, 5000, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "King Genn Greymane - On Script - Say Text Line 0"),
+(35112*100, 9, 3, 0, 0, 0, 100, 0, 2000, 2000, 0, 0, 81, 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "King Genn Greymane - On Script - Add Npc Flag Quest Giver");
