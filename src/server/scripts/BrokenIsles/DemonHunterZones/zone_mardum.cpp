@@ -1152,7 +1152,7 @@ void AddSC_zone_mardum()
     new go_mardum_cage("go_mardum_cage_cyana",      94377);
     new go_mardum_cage("go_mardum_cage_izal",       93117);
     new go_mardum_cage("go_mardum_cage_mannethrel", 93230);
-    RegisterCreatureAI(npc_mardum_inquisitor_pernissius);
+    RegisterCreatureAI(npc_inquisitor_baleful);
     RegisterSpellScript(spell_mardum_infernal_smash);
     new npc_mardum_ashtongue_mystic();
     new go_mardum_portal_coilskar();
@@ -1168,10 +1168,14 @@ void AddSC_zone_mardum()
     new go_mardum_illidari_banner();
     new go_mardum_tome_of_fel_secrets();
     new PlayerScript_mardum_spec_choice();
-    new npc_mardum_dh_learn_spec();
     new npc_mardum_izal_whitemoon();
     RegisterCreatureAI(npc_mardum_tyranna);
     new npc_mardum_kayn_sunfury_end();
     new go_mardum_the_keystone();
+    new npc_kayn_sunfury();
+    new npc_allari();
+    new npc_cyana();
+    new npc_korvas();
+    new npc_mannethrel();
     RegisterSpellScript(spell_mardum_back_to_black_temple);
 }
