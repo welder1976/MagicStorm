@@ -36,12 +36,21 @@ enum LazyPeonYells
     SAY_SPELL_HIT                                 = 0
 };
 
+enum eQuest
+{
+    QUEST_DEMONS_AMONG_THEM = 40983,
+};
 enum LazyPeon
 {
     QUEST_LAZY_PEONS    = 37446,
     GO_LUMBERPILE       = 175784,
     SPELL_BUFF_SLEEP    = 17743,
     SPELL_AWAKEN_PEON   = 19938
+};
+
+enum eScene
+{
+    SCENE_DEMONS_AMONG_THEM_HORDE  = 1453,
 };
 
 class npc_lazy_peon : public CreatureScript
