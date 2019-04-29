@@ -2551,9 +2551,8 @@ public:
 
     enum eNpc
     {
-        DELAY_SAY_JOSIAH_AVERY = 20000,
-        EVENT_SAY_JOSIAH_AVERY = 101,
-        ACTION_START_ANIM      = 102,
+        EVENT_SAY_JOSIAH_AVERY              = 101,
+        ACTION_START_ANIM                   = 102
     };
 
     bool OnQuestReward(Player* player, Creature* creature, Quest const* quest, uint32 /*opt*/) override
@@ -2564,6 +2563,7 @@ public:
             creature->GetAI()->SetGUID(player->GetGUID(), PLAYER_GUID);
             creature->AI()->DoAction(ACTION_START_ANIM);
         }
+
         return true;
     }
 
@@ -2572,19 +2572,18 @@ public:
         npc_josiah_avery_35369AI(Creature* creature) : ScriptedAI(creature) { }
 
         EventMap m_events;
-        uint32 m_currentSayCounter; // Current Say
+        uint32 m_currentSayCounter;
         ObjectGuid m_playerGUID;
         ObjectGuid m_badAveryGUID;
         ObjectGuid m_triggerGUID;
 
-        // Evade or Respawn
         void Reset() override
         {
             m_playerGUID = ObjectGuid::Empty;
             m_badAveryGUID = ObjectGuid::Empty;
             m_triggerGUID = ObjectGuid::Empty;
             m_events.Reset();
-            m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY, DELAY_SAY_JOSIAH_AVERY);
+            m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY, 20s);
             m_currentSayCounter = 0;
         }
 
@@ -2612,7 +2611,6 @@ public:
             }
         }
 
-        //Timed events
         void UpdateAI(uint32 diff) override
         {
             m_events.Update(diff);
@@ -2630,7 +2628,7 @@ public:
                         std::list<Player*> pList = GetListOfPlayersNearAndIndoorsAndWithQuest();
                         TalkToGroup(pList, m_currentSayCounter);
 
-                        m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY, DELAY_SAY_JOSIAH_AVERY);
+                        m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY, 20s);
                         break;
                     }
                     case EVENT_START_ANIM:
