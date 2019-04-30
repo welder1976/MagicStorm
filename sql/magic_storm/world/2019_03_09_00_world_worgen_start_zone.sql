@@ -777,7 +777,7 @@ UPDATE creature SET position_x = -1724.389, position_y = 1368.983, position_z = 
 
 UPDATE creature SET spawndist = 5, MovementType = 1 WHERE guid IN (20556522, 20556445, 20556457, 20556444, 20556446, 20556619, 20556611, 20556477) AND id = 35118;
 UPDATE creature SET spawndist = 5, MovementType = 1 WHERE guid IN (20556616, 20556484, 20556551, 20556604, 20556543, 20556473, 20556617, 20556550) AND id = 35118;
-UPDATE creature SET spawndist = 5, MovementType = 1 WHERE guid IN (20556475, 20556545, 20556521, 20556518, 20556519) AND id = 35118;
+UPDATE creature SET spawndist = 5, MovementType = 1 WHERE guid IN (20556475, 20556545, 20556521, 20556518, 20556519, 20556538, 20556532) AND id = 35118;
 UPDATE creature SET spawndist = 2, MovementType = 1 WHERE guid IN (20556460, 20556458, 20556462, 20556454) AND id = 35118;
 
 UPDATE creature_template SET npcflag = 2, unit_flags = 33538, AIName = "SmartAI", ScriptName = "" WHERE entry = 35112;
@@ -805,3 +805,12 @@ UPDATE creature SET position_x = -1666.399, position_y = 1399.894, position_z = 
 UPDATE creature SET spawndist = 5, MovementType = 1 WHERE guid IN (20556468, 20556613, 20556612, 20556533);
 
 UPDATE creature_template SET flags_extra = 64 WHERE entry IN (35188, 35456, 35170, 35167);
+
+DELETE FROM creature_text WHERE CreatureID = 35369;
+INSERT INTO creature_text (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `comment`, `BroadcastTextID`) VALUES
+(35369, 0, 0, "What's wrong with me??!", 14, 0, 100, 0, 0, 0, "Josiah Avery", 38736),
+(35369, 1, 0, "My face! What's wrong with my face!", 14, 0, 100, 0, 0, 0, "Josiah Avery", 38737),
+(35369, 2, 0, "My hands... don't look at my hands!", 14, 0, 100, 0, 0, 0, "Josiah Avery", 38738),
+(35369, 3, 0, "The pain is unbearable!", 14, 0, 100, 0, 0, 0, "Josiah Avery", 38739),
+(35369, 4, 0, "Make it stop!", 14, 0, 100, 0, 0, 0, "Josiah Avery", 38740),
+(35369, 5, 0, "I can't fight it!", 14, 0, 100, 0, 0, 0, "Josiah Avery", 38741);
