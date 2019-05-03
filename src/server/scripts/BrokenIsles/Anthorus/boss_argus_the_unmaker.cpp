@@ -1,5 +1,5 @@
 /*
-ANTORUS_THE_BURNING_THRONE LYOSKY
+ANTORUS_THE_BURNING_THRONE
 */
 #include "AreaTrigger.h"
 #include "AreaTriggerAI.h"
