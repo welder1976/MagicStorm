@@ -1,7 +1,9 @@
 UPDATE quest_objectives SET ObjectID = 98486 WHERE QuestID = 40077 AND ID = 280276;
 UPDATE creature SET spawndist = 10, MovementType = 1 WHERE id = 94655;
 DELETE FROM creature_sparring_template WHERE AttackerEntry IN (98486, 98484, 94704, 93112, 93115, 94654, 101597, 96931, 96278, 102724, 98158, 96277, 108408, 98160, 97034, 96504, 96564, 96402, 98165);
+DELETE FROM creature_sparring_template WHERE AttackerEntry IN (96656, 97225, 92782);
 INSERT INTO creature_sparring_template (AttackerEntry, VictimEntry, HealthLimitPct) VALUES
+-- 1 ch.
 (98486, 98458, 99),
 (98486, 98460, 99),
 (98484, 98460, 99),
@@ -38,7 +40,12 @@ INSERT INTO creature_sparring_template (AttackerEntry, VictimEntry, HealthLimitP
 (96504, 96277, 85),
 (96504, 97034, 85),
 (96277, 96504, 75),
-(97034, 96504, 75);
+(97034, 96504, 75),
+-- 2 ch.
+(96656, 97225, 99),
+(96656, 92782, 99),
+(97225, 96656, 75),
+(92782, 96656, 75);
 
 UPDATE creature_template SET AIName = "SmartAI" WHERE entry IN (98158, 98165);
 DELETE FROM `smart_scripts` WHERE `entryorguid` IN (98158, 98165) AND `source_type` = 0;
@@ -1118,3 +1125,10 @@ DELETE FROM `spell_area` WHERE `area` IN (5390, 6292);
 INSERT INTO `spell_area` (`spell`, `area`, `quest_start`, `quest_end`, `quest_start_status`, `quest_end_status`) VALUES
 (57569, 5390, 39689, 39691, 64, 64), -- Phase 175 on Stormwind Canals starting when quest 39691 rewarded until 39691 rewarded
 (57569, 6292, 39689, 44463, 64, 2); -- Phase 175 on Stormwind Keep starting when quest 39691 rewarded until 44463 completed
+
+UPDATE creature_template SET AIName = "SmartAI" WHERE entry = 96656;
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 96656 AND `source_type` = 0;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(96656, 0, 0, 2, 25, 0, 100, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 0, 19, 97225, 15, 0, 0, 0, 0, 0, "Freed Illidari - On Reset - Start Attack (Creature ID: 97225, 15 Yards)"),
+(96656, 0, 1, 2, 1, 0, 100, 0, 10000, 10000, 10000, 10000, 49, 0, 0, 0, 0, 0, 0, 19, 97225, 15, 0, 0, 0, 0, 0, "Freed Illidari - OOC (10000 - 10000) - Start Attack (Creature ID: 97225, 15 Yards)"),
+(96656, 0, 2, 0, 61, 0, 100, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 0, 19, 92782, 15, 0, 0, 0, 0, 0, "Freed Illidari - Link - Start Attack (Creature ID: 92782, 15 Yards)");
