@@ -626,16 +626,11 @@ public:
             switch (param)
             {
                 case ACTION_START_ANIM_MERCANT:
-                {
                     m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 1s);
                     break;
-                }
                 case ACTION_START_ANIM_LIAM:
-                {
-                    me->SetSpeed(MOVE_RUN, 1.8f);
                     me->GetMotionMaster()->MovePoint(MOVE_TO_START_POSITION, -1482.9f, 1394.6f, 35.55f);
                     break;
-                }
             }
         }
 
@@ -2543,7 +2538,7 @@ public:
         return new npc_bloodfang_worgen_35118AI(creature);
     }
 };
-
+// 14159
 class npc_josiah_avery_35369 : public CreatureScript
 {
 public:
@@ -2551,7 +2546,20 @@ public:
 
     enum eNpc
     {
-        EVENT_SAY_JOSIAH_AVERY              = 101,
+        JOSIAH_AVERY_TEXT_00                = 0,
+        JOSIAH_AVERY_TEXT_01                = 1,
+        JOSIAH_AVERY_TEXT_02                = 2,
+        JOSIAH_AVERY_TEXT_03                = 3,
+        JOSIAH_AVERY_TEXT_04                = 4,
+        JOSIAH_AVERY_TEXT_05                = 5,
+
+        EVENT_SAY_JOSIAH_AVERY_TEXT_00      = 0,
+        EVENT_SAY_JOSIAH_AVERY_TEXT_01      = 1,
+        EVENT_SAY_JOSIAH_AVERY_TEXT_02      = 2,
+        EVENT_SAY_JOSIAH_AVERY_TEXT_03      = 3,
+        EVENT_SAY_JOSIAH_AVERY_TEXT_04      = 4,
+        EVENT_SAY_JOSIAH_AVERY_TEXT_05      = 5,
+
         ACTION_START_ANIM                   = 102
     };
 
@@ -2572,19 +2580,18 @@ public:
         npc_josiah_avery_35369AI(Creature* creature) : ScriptedAI(creature) { }
 
         EventMap m_events;
-        uint32 m_currentSayCounter;
         ObjectGuid m_playerGUID;
         ObjectGuid m_badAveryGUID;
         ObjectGuid m_triggerGUID;
+        bool talkStarted;
 
         void Reset() override
         {
+            talkStarted = false;
+            m_events.Reset();
             m_playerGUID = ObjectGuid::Empty;
             m_badAveryGUID = ObjectGuid::Empty;
             m_triggerGUID = ObjectGuid::Empty;
-            m_events.Reset();
-            m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY, 20s);
-            m_currentSayCounter = 0;
         }
 
         void SetGUID(ObjectGuid guid, int32 id) override
@@ -2611,6 +2618,15 @@ public:
             }
         }
 
+        void MoveInLineOfSight(Unit* who) override
+        {
+            if (me->IsWithinDistInMap(who, 40.0f) && who->GetTypeId() == TYPEID_PLAYER && !talkStarted)
+            {
+                talkStarted = true;
+                m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY_TEXT_00, 10s);
+            }
+        }
+
         void UpdateAI(uint32 diff) override
         {
             m_events.Update(diff);
@@ -2619,16 +2635,10 @@ public:
             {
                 switch (eventId)
                 {
-                    case EVENT_SAY_JOSIAH_AVERY:
+                    case EVENT_SAY_JOSIAH_AVERY_TEXT_00:
                     {
-                        m_currentSayCounter += 1;
-                        if (m_currentSayCounter > 5)
-                            m_currentSayCounter = 1;
-
-                        std::list<Player*> pList = GetListOfPlayersNearAndIndoorsAndWithQuest();
-                        TalkToGroup(pList, m_currentSayCounter);
-
-                        m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY, 20s);
+                        Talk(JOSIAH_AVERY_TEXT_00);
+                        m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY_TEXT_01, 30s);
                         break;
                     }
                     case EVENT_START_ANIM:
@@ -2637,48 +2647,28 @@ public:
                             me->CastSpell(player, SPELL_FORCE_CAST_SUMMON_JOSIAH, true);
                         break;
                     }
+                    case EVENT_SAY_JOSIAH_AVERY_TEXT_01:
+                        Talk(JOSIAH_AVERY_TEXT_01);
+                        m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY_TEXT_02, 25s);
+                        break;
+                    case EVENT_SAY_JOSIAH_AVERY_TEXT_02:
+                        Talk(JOSIAH_AVERY_TEXT_02);
+                        m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY_TEXT_03, 30s);
+                        break;
+                    case EVENT_SAY_JOSIAH_AVERY_TEXT_03:
+                        Talk(JOSIAH_AVERY_TEXT_03);
+                        m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY_TEXT_04, 25s);
+                        break;
+                    case EVENT_SAY_JOSIAH_AVERY_TEXT_04:
+                        Talk(JOSIAH_AVERY_TEXT_04);
+                        m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY_TEXT_05, 30s);
+                        break;
+                    case EVENT_SAY_JOSIAH_AVERY_TEXT_05:
+                        Talk(JOSIAH_AVERY_TEXT_05);
+                        m_events.ScheduleEvent(EVENT_SAY_JOSIAH_AVERY_TEXT_00, 25s);
+                        break;
                 }
             }
-        }
-
-        std::list<Player*> GetListOfPlayersNearAndIndoorsAndWithQuest()
-        {
-            std::list<Player*> pList = me->SelectNearestPlayers(20.0f);
-            while (DeleteWrongPlayer(pList)) { }
-            return pList;
-        }
-
-        bool DeleteWrongPlayer(std::list<Player*> &pList)
-        {
-            if (pList.empty())
-                return false;
-
-            for (std::list<Player*>::const_iterator itr = pList.begin(); itr != pList.end(); itr++)
-            {
-                Player* player = (*itr);
-                bool isOutdoor;
-                player->GetMap()->GetAreaId(player->GetPhaseShift(), player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), &isOutdoor);
-                if (isOutdoor)
-                {
-                    pList.remove(player);
-                    return true;
-                }
-                if (player->GetQuestStatus(QUEST_THE_REBEL_LORDS_ARSENAL) != QUEST_STATUS_COMPLETE)
-                {
-                    pList.remove(player);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        void TalkToGroup(std::list<Player*> pList, uint8 groupId)
-        {
-            if (pList.empty())
-                return;
-
-            for (std::list<Player*>::const_iterator itr = pList.begin(); itr != pList.end(); itr++)
-                Talk(groupId, (*itr));
         }
     };
 
@@ -2788,8 +2778,8 @@ public:
                                 badAvery->CastSpell(badAvery, SPELL_GET_SHOT, true);
                                 badAvery->setDeathState(JUST_DIED);
                             player->SaveToDB();
-                            badAvery->DespawnOrUnsummon(1000);
-                            me->DespawnOrUnsummon(1000);
+                            badAvery->DespawnOrUnsummon(1s);
+                            me->DespawnOrUnsummon(1s);
                         }
 
                         m_events.ScheduleEvent(EVENTS_ANIM_5, 5s);
@@ -2797,7 +2787,7 @@ public:
                     }
                     case EVENTS_ANIM_5:
                     {
-                        me->DespawnOrUnsummon(10);
+                        me->DespawnOrUnsummon(10ms);
                         break;
                     }
                 }
