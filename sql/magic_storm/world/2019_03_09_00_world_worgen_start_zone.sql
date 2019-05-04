@@ -3,6 +3,8 @@ UPDATE creature_text SET BroadcastTextId = 36125 WHERE CreatureID = 34850 AND Gr
 UPDATE creature_text SET BroadcastTextId = 36126 WHERE CreatureID = 34850 AND GroupID = 2 AND ID = 0;
 
 UPDATE creature_template SET flags_extra = 128 WHERE entry IN (35006, 35010, 35011);
+UPDATE creature_template SET DamageModifier = 6 WHERE entry = 34913;
+UPDATE creature_template SET faction = 14 WHERE entry = 35660;
 
 UPDATE gameobject_template_addon SET flags = 36 WHERE entry = 195581;
 UPDATE gameobject SET state = 1 WHERE guid = 51003233 AND id = 195581;
@@ -683,7 +685,7 @@ DELETE FROM `smart_scripts` WHERE `entryorguid` = 35660 AND `source_type` = 0;
 UPDATE creature_template SET AIName = "" WHERE entry = 34884;
 DELETE FROM `smart_scripts` WHERE `entryorguid` = 34884 AND `source_type` = 0;
 
-UPDATE creature SET spawndist = 0, MovementType = 0 WHERE guid IN (20556349, 20556355, 20556568, 20556344, 20556337, 20556567, 20556571, 20556367, 20556371, 20556420, 20556418, 20556415, 20556423, 20556558);
+UPDATE creature SET spawndist = 0, MovementType = 0 WHERE guid IN (20556349, 20556355, 20556568, 20556344, 20556337, 20556567, 20556571, 20556367, 20556371, 20556420, 20556418, 20556415, 20556423, 20556558, 20556556);
 UPDATE creature SET position_x = -1465.02, position_y = 1428.99, position_z = 35.5567, orientation = 0.2218 WHERE guid = 20556344;
 UPDATE creature SET position_x = -1409.55, position_y = 1377.07, position_z = 35.5563, orientation = 2.307 WHERE guid = 20556571;
 UPDATE creature SET position_x = -1553.504, position_y = 1408.68, position_z = 35.5564, orientation = 4.141 WHERE guid = 20556399;
@@ -725,9 +727,15 @@ UPDATE creature SET position_x = -1426.504, position_y = 1355.671, position_z = 
 UPDATE creature SET position_x = -1541.059, position_y = 1356.517, position_z = 35.836, orientation = 2.719 WHERE guid = 20556555;
 UPDATE creature SET position_x = -1566.428, position_y = 1360.484, position_z = 35.573, orientation = 2.837 WHERE guid = 20556366;
 UPDATE creature SET position_x = -1573.517, position_y = 1362.005, position_z = 36.000, orientation = 0.449 WHERE guid = 20556408;
+UPDATE creature SET position_x = -1519.141, position_y = 1383.194, position_z = 36.001, orientation = 4.661 WHERE guid = 20556556;
+
+DELETE FROM creature_addon WHERE guid IN (20556556, 20556567);
+INSERT INTO creature_addon (guid, bytes1, bytes2, emote) VALUES
+(20556556, 0, 4097, 438),
+(20556567, 0, 4097, 438);
 
 UPDATE creature SET spawndist = 3, MovementType = 1 WHERE guid IN (20556569, 20556570, 20556416, 20556414, 20556377, 20556350, 20556368, 20556357, 20556356, 20556339, 20556353);
-UPDATE creature SET spawndist = 3, MovementType = 1 WHERE guid IN (20556380, 20556343, 20556605, 20556556, 20556379, 20556566, 20556346, 20556417, 20556381, 20556336, 20556557);
+UPDATE creature SET spawndist = 3, MovementType = 1 WHERE guid IN (20556380, 20556343, 20556605, 20556379, 20556566, 20556346, 20556417, 20556381, 20556336, 20556557);
 UPDATE creature SET spawndist = 3, MovementType = 1 WHERE guid IN (20556422, 20556419, 20556421, 20556555);
 
 UPDATE creature_text SET BroadcastTextId = 7798 WHERE CreatureID = 34884 AND GroupID = 0 AND ID = 0;
