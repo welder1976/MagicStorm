@@ -477,22 +477,6 @@ void BossAI::_Reset()
         instance->SetBossState(_bossId, NOT_STARTED);
 }
 
-TalkData const talkData[] =
-{
-    { EVENT_ON_ENTERCOMBAT,             EVENT_TYPE_TALK,            0 },
-    { SPELL_REVERBERATING_STRIKE,       EVENT_TYPE_TALK,            1 },
-    { SPELL_RUINER,                     EVENT_TYPE_TALK,            2 },
-    { SPELL_APOCALYPSE_PROTOCOL,        EVENT_TYPE_TALK,            3 },
-    { SPELL_APOCALYPSE_PROTOCOL,        EVENT_TYPE_TALK,            4 },
-    { SPELL_PURGING_PROTOCOL,           EVENT_TYPE_TALK,            5 },
-    { EVENT_ON_JUSTDIED,                EVENT_TYPE_TALK,            14 },
-};
-
-void Initialize()
-    {
-        LoadTalkData(talkData);
-    }
-
 void BossAI::_JustDied()
 {
     events.Reset();
