@@ -290,6 +290,15 @@ class TC_GAME_API InstanceScript : public ZoneScript
 	// Add phase on all players in instance
         void DoAddPhaseOnPlayers(uint32 phase);
 
+        // Add item by class on all players in instance
+        void DoAddItemByClassOnPlayers(uint8 classId, uint32 itemId, uint32 count);
+
+        // Add item on all players in instance
+        void DoAddItemOnPlayers(uint32 itemId, uint32 count);
+
+        // Remove item by class on all players in instance
+        void DoDestroyItemCountByClassOnPlayers(uint8 classId, uint32 item, uint32 count);
+
         // Remove phase on all players in instance
         void DoRemovePhaseOnPlayers(uint32 phase);
 

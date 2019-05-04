@@ -178,9 +178,23 @@ struct TC_GAME_API ScriptedAI : public CreatureAI
     // Called when AI is temporarily replaced or put back when possess is applied or removed
     void OnPossess(bool /*apply*/) { }
 
+    // Called when load evnetlist
+    void LoadEventData(EventData const* data);
+
+    void GetEventData(uint16 group);
+
+    void LoadTalkData(TalkData const* data);
+
+    void GetTalkData(uint32 eventId);
+
     // *************
     // Variables
     // *************
+
+    EventData const* eventslist;
+    TalkData const* talkslist;
+    bool haseventdata;
+    bool hastalkdata;
 
     //For fleeing
     bool IsFleeing;
@@ -449,6 +463,58 @@ class TC_GAME_API WorldBossAI : public ScriptedAI
         SummonList summons;
 };
 
+struct TC_GAME_API EventData
+{
+    //Has to be between 1 and 8
+    uint16 group = 0; uint16 phase = 0;
+    uint32 eventId; uint32 time;       
+};
+
+struct TC_GAME_API TalkData
+{
+    uint32 eventId, eventType, eventData;
+};
+
+enum TC_GAME_API Phase_Data
+{
+    PHASE_00,
+    PHASE_01,
+    PHASE_02,
+    PHASE_03,
+    PHASE_04,
+    PHASE_05,
+    PHASE_06,
+    PHASE_07,
+    PHASE_08,
+};
+
+enum TC_GAME_API Event_Types
+{
+    EVENT_TYPE_TALK,
+    EVENT_TYPE_CONVERSATION,
+    EVENT_TYPE_ACHIEVEMENT,
+    EVENT_TYPE_SPELL,
+    EVENT_TYPE_YELL,
+    EVENT_TYPE_SAY,
+};
+
+enum TC_GAME_API On_Events
+{
+    EVENT_ON_JUSTDIED = 2000,
+    EVENT_ON_KILLEDUNIT,
+    EVENT_ON_JUSTSUMMON,
+    EVENT_ON_ENTERCOMBAT,
+    EVENT_ON_MOVEINLINEOFSIGHT,
+    EVENT_ON_HP90,
+    EVENT_ON_HP80,
+    EVENT_ON_HP70,
+    EVENT_ON_HP60,
+    EVENT_ON_HP50,
+    EVENT_ON_HP40,
+    EVENT_ON_HP30,
+    EVENT_ON_HP20,
+    EVENT_ON_HP10,
+};
 // SD2 grid searchers.
 inline Creature* GetClosestCreatureWithEntry(WorldObject* source, uint32 entry, float maxSearchRange, bool alive = true)
 {

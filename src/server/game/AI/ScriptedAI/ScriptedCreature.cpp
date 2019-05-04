@@ -477,6 +477,22 @@ void BossAI::_Reset()
         instance->SetBossState(_bossId, NOT_STARTED);
 }
 
+TalkData const talkData[] =
+{
+    { EVENT_ON_ENTERCOMBAT,             EVENT_TYPE_TALK,            0 },
+    { SPELL_REVERBERATING_STRIKE,       EVENT_TYPE_TALK,            1 },
+    { SPELL_RUINER,                     EVENT_TYPE_TALK,            2 },
+    { SPELL_APOCALYPSE_PROTOCOL,        EVENT_TYPE_TALK,            3 },
+    { SPELL_APOCALYPSE_PROTOCOL,        EVENT_TYPE_TALK,            4 },
+    { SPELL_PURGING_PROTOCOL,           EVENT_TYPE_TALK,            5 },
+    { EVENT_ON_JUSTDIED,                EVENT_TYPE_TALK,            14 },
+};
+
+void Initialize()
+    {
+        LoadTalkData(talkData);
+    }
+
 void BossAI::_JustDied()
 {
     events.Reset();
@@ -488,6 +504,7 @@ void BossAI::_JustDied()
         instance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, me);
     }
     Talk(BOSS_TALK_JUST_DIED);
+    GetTalkData(EVENT_ON_JUSTDIED);/////here
 }
 
 void BossAI::_JustReachedHome()
@@ -531,6 +548,7 @@ void BossAI::_EnterCombat(bool showFrameEngage /*= true*/)
     DoZoneInCombat();
     ScheduleTasks();
     Talk(BOSS_TALK_ENTER_COMBAT);
+    GetTalkData(EVENT_ON_ENTERCOMBAT);/////here
 }
 
 void BossAI::TeleportCheaters()
@@ -753,4 +771,85 @@ void GetRandPosFromCenterInDist(Position* centerPos, float dist, Position& moveP
 void GetPositionWithDistInFront(Position* centerPos, float dist, Position& movePosition)
 {
     GetPositionWithDistInOrientation(centerPos, dist, centerPos->GetOrientation(), movePosition);
+}
+
+void ScriptedAI::LoadEventData(EventData const * data)
+{
+    if (data)
+    {
+        eventslist = data;
+        haseventdata = true;
+    }        
+}
+
+void ScriptedAI::GetEventData(uint16 group)
+{
+    if (!eventslist)
+        return;
+    if (!haseventdata)
+        return;
+
+    EventData const* list = eventslist;
+    while (list->eventId)
+    {
+        if (list->group == group)
+            events.ScheduleEvent(list->eventId, list->time, list->group, list->phase);
+        ++list;
+    }
+}
+
+void ScriptedAI::LoadTalkData(TalkData const * data)
+{
+    if (data)
+    {
+        talkslist = data;
+        hastalkdata = true;
+    }      
+}
+
+void ScriptedAI::GetTalkData(uint32 eventId)
+{
+    if (!talkslist)
+        return;
+    if (!hastalkdata)
+        return;
+
+    TalkData const* list = talkslist;
+    while (list->eventId)
+    {
+        if (list->eventId == eventId)
+        {
+            switch (list->eventType)
+            {
+            case EVENT_TYPE_TALK:
+                me->AI()->Talk(list->eventData);
+                break;
+            case EVENT_TYPE_CONVERSATION:
+                if (list->eventData > 0)
+                    if (instance)
+                        instance->DoConversation(list->eventData);
+                break;
+            case EVENT_TYPE_ACHIEVEMENT:
+                if (list->eventData > 0)
+                    if (instance)
+                        instance->DoCompleteAchievement(list->eventData);
+                break;
+            case EVENT_TYPE_SPELL:
+                if (list->eventData > 0)
+                    if (instance)
+                        instance->DoCastSpellOnPlayers(list->eventData);
+                break;
+            case EVENT_TYPE_YELL:
+                if (list->eventData > 0)
+                    me->Yell(list->eventData);
+                break;
+            case EVENT_TYPE_SAY:
+                if (list->eventData > 0)
+                    me->Say(list->eventData);
+                break;
+            }
+        }
+        ++list;
+    }
+    
 }

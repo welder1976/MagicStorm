@@ -923,6 +923,38 @@ void InstanceScript::DoDelayedConversation(uint32 delay, uint32 conversationId)
                 player->AddDelayedConversation(delay, conversationId);
 }
 
+// Add item on all players in instance
+void InstanceScript::DoAddItemOnPlayers(uint32 itemId, uint32 count)
+{
+    Map::PlayerList const& playerList = instance->GetPlayers();
+    if (!playerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                player->AddItem(itemId, count);
+}
+
+// Remove item by class on all players in instance
+void InstanceScript::DoDestroyItemCountByClassOnPlayers(uint8 classId, uint32 item, uint32 count)
+{
+    Map::PlayerList const& playerList = instance->GetPlayers();
+    if (!playerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                if (player->getClass() == classId)
+                    player->DestroyItemCount(item, count, true);
+}
+
+// Add item by class on all players in instance
+void InstanceScript::DoAddItemByClassOnPlayers(uint8 classId, uint32 itemId, uint32 count)
+{
+    Map::PlayerList const& playerList = instance->GetPlayers();
+    if (!playerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                if(player->getClass()== classId)
+                    player->AddItem(itemId, count);
+}
+
 // Update Achievement Criteria for all players in instance
 void InstanceScript::DoUpdateAchievementCriteria(CriteriaTypes type, uint32 miscValue1 /*= 0*/, uint32 miscValue2 /*= 0*/, Unit* unit /*= NULL*/)
 {
