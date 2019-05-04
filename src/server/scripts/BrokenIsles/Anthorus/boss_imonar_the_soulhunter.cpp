@@ -59,13 +59,6 @@ enum Spells
     SPELL_PULSE_GRENADE_DMG = 247388,
 };
 
-enum Phases
-{
-    PHASE_01,
-    PHASE_02,
-    PHASE_03,
-};
-
 TalkData const talkData[] =
 {
     { EVENT_ON_MOVEINLINEOFSIGHT,       EVENT_TYPE_TALK,            0 },

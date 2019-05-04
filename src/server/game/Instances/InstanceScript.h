@@ -97,6 +97,8 @@ enum DoorType
 enum ChallengeMode
 {
     GOB_CHALLENGER_DOOR     = 239408,
+    GOB_CHALLENGER_DOOR_LINE235 = 239323,
+    GO_FONT_OF_POWER        = 246779,
 
     SPELL_CHALLENGER_MIGHT  = 206150,
     SPELL_CHALLENGER_BURDEN = 206151
@@ -242,6 +244,9 @@ class TC_GAME_API InstanceScript : public ZoneScript
 
         // Complete Achievement for all players in instance
         void DoCompletedAchievement(AchievementEntry const* entry);
+		
+		// Send Event For Scenario
+        void DoSendEventScenario(uint32 eventId);
 
         // Start/Stop Timed Achievement Criteria for all players in instance
         void DoStartCriteriaTimer(CriteriaTimedTypes type, uint32 entry);
@@ -267,6 +272,8 @@ class TC_GAME_API InstanceScript : public ZoneScript
         void DoModifyPlayerCurrencies(uint32 id, int32 value);
 
         void DoNearTeleportPlayers(const Position pos, bool casting = false);
+
+        void DoTeleportPlayers(uint32 mapId, const Position pos);
 
         void DoKilledMonsterKredit(uint32 questId, uint32 entry, ObjectGuid guid = ObjectGuid::Empty);
 

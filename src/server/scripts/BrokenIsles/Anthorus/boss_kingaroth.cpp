@@ -48,12 +48,6 @@ enum Spells
     SPELL_APOCALYPSE_BLAST = 246634,
 };
 
-enum Phases
-{
-    PHASE_01,
-    PHASE_02,
-};
-
 enum Events
 {
     EVENT_1 = 1,

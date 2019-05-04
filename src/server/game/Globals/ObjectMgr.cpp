@@ -5742,7 +5742,7 @@ InstanceTemplate const* ObjectMgr::GetInstanceTemplate(uint32 mapID) const
 void ObjectMgr::LoadInstanceEncounters()
 {
     uint32 oldMSTime = getMSTime();
-
+    _DungeonCreditEncounters.clear();
     //                                                 0         1            2                3
     QueryResult result = WorldDatabase.Query("SELECT entry, creditType, creditEntry, lastEncounterDungeon FROM instance_encounters");
     if (!result)
@@ -5760,6 +5760,13 @@ void ObjectMgr::LoadInstanceEncounters()
         uint8 creditType = fields[1].GetUInt8();
         uint32 creditEntry = fields[2].GetUInt32();
         uint32 lastEncounterDungeon = fields[3].GetUInt16();
+
+        if (creditType == ENCOUNTER_CREDIT_KILL_CREATURE)
+        {
+            DungeonCreditEncounter* dungenCreditEncounter = new DungeonCreditEncounter(entry, creditEntry);
+            _DungeonCreditEncounters[creditEntry] = dungenCreditEncounter;
+        }
+
         DungeonEncounterEntry const* dungeonEncounter = sDungeonEncounterStore.LookupEntry(entry);
         if (!dungeonEncounter)
         {
@@ -5836,6 +5843,14 @@ void ObjectMgr::LoadInstanceEncounters()
     } while (result->NextRow());
 
     TC_LOG_INFO("server.loading", ">> Loaded %u instance encounters in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
+}
+
+uint32 ObjectMgr::GetDungeonEncounterID(uint32 creatureEntry)
+{
+    if (_DungeonCreditEncounters.find(creatureEntry) == _DungeonCreditEncounters.end())
+        return 0;
+    DungeonCreditEncounter* dce = _DungeonCreditEncounters.find(creatureEntry)->second;
+    return (dce) ? dce->dbcEntry : 0;
 }
 
 NpcText const* ObjectMgr::GetNpcText(uint32 Text_ID) const

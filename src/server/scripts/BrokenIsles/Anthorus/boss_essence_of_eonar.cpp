@@ -67,14 +67,6 @@ enum Events
     EVENT_CHECK                             = 3000
 };
 
-enum TC_GAME_API Event_Types
-{
-    EVENT_TYPE_TALK,
-    EVENT_TYPE_CONVERSATION,
-    EVENT_TYPE_YELL,
-    EVENT_TYPE_SAY,
-};
-
 enum Talk
 {
     TALK_EOE_START                          = 0,
@@ -82,18 +74,6 @@ enum Talk
     TALK_EOE_POWER_01                       = 2,
     TALK_EOE_POWER_02                       = 3,
     TALK_EOE_FINISH                         = 4
-};
-
-enum Phases
-{
-    PHASE_01                                = 1,
-    PHASE_02                                = 2,
-    PHASE_03                                = 3,
-    PHASE_04                                = 4,
-    PHASE_05                                = 5,
-    PHASE_06                                = 6,
-    PHASE_07                                = 7,
-    PHASE_08                                = 8
 };
 
 class playerscript_surge_of_life_trigger : public PlayerScript

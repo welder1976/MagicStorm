@@ -130,31 +130,6 @@ enum Events
     EVENT_5 = 5,
 };
 
-enum TC_GAME_API Event_Types
-{
-    EVENT_TYPE_TALK,
-    EVENT_TYPE_CONVERSATION,
-    EVENT_TYPE_SPELL,
-    EVENT_ON_HP60
-};
-
-struct GetTalkData
-{
-    uint32 Phases, eventId;
-};
-
-struct LoadTalkData
-{
-    uint32 Phases, talkData;
-};
-
-enum Talk
-{
-    TALK_1 = 1,
-    TALK_2 = 2,
-    TALK_3 = 3,
-};
-
 /*const TalkData talkData[] =
 {
     { TALK_1,                    EVENT_TYPE_TALK,            0 },
@@ -225,14 +200,6 @@ SpawnData const spawnData[] =
     { EVENT_4, NPC_REORIGINATION_MODULE, 2906.68f, -4566.02f, 297.089f, 1.85005f, 0 },
     { EVENT_4, NPC_REORIGINATION_MODULE, 2856.67f, -4606.57f, 297.114f, 1.01229f, 0 },
     { EVENT_5, NPC_GIFT_OF_THE_LIFEBINDER, 2893.73f, -4545.36f, 292.028f, 3.77829f, 0 },
-};
-
-enum Phases
-{
-    PHASE_01          = 1,
-    PHASE_02          = 2,
-    PHASE_03          = 3,
-    PHASE_04          = 4
 };
 
 ///.go creature id 

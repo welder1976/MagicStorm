@@ -55,7 +55,5 @@ enum GameObjectIds
     GO_BOSS3_POST_BOSS_DOOR = 245104,
     GO_BOSS3_DOOR = 247402,
     GO_BOSS4_DOOR = 247498,
-
-    GO_FONT_OF_POWER = 246779
 };
 #endif

@@ -16,6 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "ObjectMgr.h"
 #include "ScriptedCreature.h"
 #include "AreaBoundary.h"
 #include "DB2Stores.h"
@@ -128,7 +129,9 @@ ScriptedAI::ScriptedAI(Creature* creature) : CreatureAI(creature),
     summons(creature),
     damageEvents(creature),
     instance(creature->GetInstanceScript()),
-    _isCombatMovementAllowed(true)
+    _isCombatMovementAllowed(true),
+	haseventdata(false),
+    hastalkdata(false)
 {
     _isHeroic = me->GetMap()->IsHeroic();
     _difficulty = me->GetMap()->GetDifficultyID();
@@ -460,6 +463,7 @@ BossAI::BossAI(Creature* creature, uint32 bossId) : ScriptedAI(creature),
 {
     if (instance)
         SetBoundary(instance->GetBossBoundary(bossId));
+ 	_dungeonEncounterId = sObjectMgr->GetDungeonEncounterID(creature->GetEntry());
 }
 
 void BossAI::_Reset()
@@ -486,6 +490,8 @@ void BossAI::_JustDied()
     {
         instance->SetBossState(_bossId, DONE);
         instance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, me);
+ 		if(_dungeonEncounterId>0)
+            instance->SendBossKillCredit(_dungeonEncounterId);
     }
     Talk(BOSS_TALK_JUST_DIED);
     GetTalkData(EVENT_ON_JUSTDIED);/////here
@@ -503,6 +509,8 @@ void BossAI::_KilledUnit(Unit* victim)
 {
     if (victim->IsPlayer() && urand(0, 1))
         Talk(BOSS_TALK_KILL_PLAYER);
+    if (victim->IsPlayer() && urand(0, 1))
+        GetTalkData(EVENT_ON_KILLEDUNIT);
 }
 
 void BossAI::_DamageTaken(Unit* /*attacker*/, uint32& damage)
@@ -532,7 +540,7 @@ void BossAI::_EnterCombat(bool showFrameEngage /*= true*/)
     DoZoneInCombat();
     ScheduleTasks();
     Talk(BOSS_TALK_ENTER_COMBAT);
-    GetTalkData(EVENT_ON_ENTERCOMBAT);/////here
+    GetTalkData(EVENT_ON_ENTERCOMBAT);
 }
 
 void BossAI::TeleportCheaters()
@@ -552,6 +560,7 @@ void BossAI::JustSummoned(Creature* summon)
     summons.Summon(summon);
     if (me->IsInCombat())
         DoZoneInCombat(summon);
+    GetTalkData(EVENT_ON_JUSTSUMMON);
 }
 
 void BossAI::SummonedCreatureDespawn(Creature* summon)

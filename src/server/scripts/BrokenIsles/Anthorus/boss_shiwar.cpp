@@ -36,7 +36,7 @@ struct boss_shiwar : public BossAI
     }
 };
 
-void AddSC_boss_goroth()
+void AddSC_boss_shiwar()
 {
   RegisterCreatureAI(boss_shiwar); 
 }

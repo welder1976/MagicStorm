@@ -128,22 +128,6 @@ SpawnData const spawnData[] =
 
 };
 
-enum EventType
-{
-    EVENT_ON_ENTERCOMBAT,
-    EVENT_ON_JUSTDIED,
-    EVENT_TYPE_TALK,
-};
-
-struct TalkData
-{
-    uint32 event, eventtype;
-    float X;
-    float Y;
-    float Z;
-    uint8 type;
-};
-
 TalkData const talkData[] =
 {
     { EVENT_ON_ENTERCOMBAT,       EVENT_TYPE_TALK,            0 },

@@ -50,7 +50,7 @@
 
 #include "GridNotifiers.h"
 #include "CELLIMPL.h"
-
+#include "ScriptedCreature.h"
 
 inline uint32 secsToTimeBitFields(time_t secs)
 {
@@ -725,6 +725,11 @@ void InstanceScript::DoUpdateCriteria(CriteriaTypes type, uint32 miscValue1 /*= 
                 player->UpdateCriteria(type, miscValue1, miscValue2, 0, unit);
 }
 
+void InstanceScript::DoSendEventScenario(uint32 eventId /*= 0*/)
+{
+    DoUpdateCriteria(CRITERIA_TYPE_SEND_EVENT_SCENARIO, eventId, 0, nullptr);
+}
+
 // Start timed achievement for all players in instance
 void InstanceScript::DoStartCriteriaTimer(CriteriaTimedTypes type, uint32 entry)
 {
@@ -846,6 +851,16 @@ void InstanceScript::DoNearTeleportPlayers(const Position pos, bool casting /*=f
         for (Map::PlayerList::const_iterator i = plrList.begin(); i != plrList.end(); ++i)
             if (Player* pPlayer = i->GetSource())
                 pPlayer->NearTeleportTo(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation(), casting);
+}
+
+void InstanceScript::DoTeleportPlayers(uint32 mapId, const Position pos)
+{
+    Map::PlayerList const &plrList = instance->GetPlayers();
+
+    if (!plrList.isEmpty())
+        for (Map::PlayerList::const_iterator i = plrList.begin(); i != plrList.end(); ++i)
+            if (Player* pPlayer = i->GetSource())
+                pPlayer->TeleportTo(mapId, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation());
 }
 
 void InstanceScript::DoKilledMonsterKredit(uint32 questId, uint32 entry, ObjectGuid guid/* =0*/)

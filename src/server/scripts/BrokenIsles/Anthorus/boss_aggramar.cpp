@@ -95,14 +95,6 @@ enum Phases
     PHASE_4,
 };
 
-enum TC_GAME_API Event_Types
-{
-    EVENT_TYPE_TALK,
-    EVENT_TYPE_CONVERSATION,
-    EVENT_TYPE_YELL,
-    EVENT_TYPE_SAY,
-};
-
 struct SpawnData
 {
     uint32 event, npcId;
