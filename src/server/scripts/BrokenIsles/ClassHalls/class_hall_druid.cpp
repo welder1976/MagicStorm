@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2018+ MagicStormProject <https://github.com/MagicStormTeam>
  * Copyright (C) 2017-2018 AshamaneProject <https://github.com/AshamaneProject>
  * Copyright (C) 2008-2017 TrinityCore <http://www.trinitycore.org/>
  *
@@ -28,68 +29,79 @@
 #include "ObjectMgr.h"
 #include "Spell.h"
 
-enum
+enum ClassHallDruid
 {
-    SPELL_TELEPORT_MOONGLADE = 18960,
-    SPELL_WEAPONS_OF_LEGEND_PLAYER_CHOICE = 199653,
-    PLAYER_CHOICE_DRUID_SELECTION = 247,
-    PLAYER_CHOICE_DRUID_BALANCE = 529,
-    PLAYER_CHOICE_DRUID_FERAL   = 530,
-    PLAYER_CHOICE_DRUID_GUARDIAN = 531,
-    PLAYER_CHOICE_DRUID_RESTORATION = 545,
-    KILLED_MONSTER_CREDIT_40643 = 103346,
-    QUEST_A_SUMMONS_FROM_MOONGLADE = 40643,
-    QUEST_CALL_OF_THE_WILDS = 41106,
-    QUEST_THE_DREAMWAY = 40644,
-    QUEST_TO_THE_DREAMGROVE = 40645,
-    QUEST_WEAPONS_OF_LEGEND = 40646,
-    QUEST_ANOTHER_WEAPON_OF_OLD = 43980,
-    QUEST_MORE_WEAPONS_OF_OLD = 44431,
-    QUEST_WEAPONS_OF_THE_ANCIENTS = 44443,
-    QUEST_SOWING_THE_SEED = 41255,
-    QUEST_SOWING_THE_SEED_PHASE = 5685,
-    QUEST_ASCENDING_THE_CIRCLE = 41332,
-    QUEST_A_HEROS_WEAPON = 43409,
-    ///GUARDIAN
-    QUEST_MISTRESS_OF_THE_CLAW = 41468,
-    QUEST_TO_THE_HILLS = 41782,
-    QUEST_FALLEN_OFFERINGS = 41783,
-    ///FERAL
-    QUEST_THE_SHRINE_OF_ASHAMANE = 42428,
-    NPC_DELANDROS_SHIMMERMOON_107392 = 107392,
-    NPC_VERSTOK_DARKBOUGH_107520 = 107520,
-    QUEST_AID_FOR_THE_ASHEN = 42439,
-    QUEST_THE_SHRINE_IN_PERIL = 42440,
-    NPC_ALGROMON_107593 = 107593,
-    ///BALANCE
-    QUEST_THE_SCYTHE_OF_ELUNE = 40783,
-    QUEST_ITS_RIGHTFUL_PLACE = 40784,
-    QUEST_A_FOE_OF_THE_DARK = 40785,
-    QUEST_FOLLOWING_THE_CURSE = 40834,
-    QUEST_DISTURBING_THE_PAST = 40835,
-    QUEST_THE_DEADWIND_HUNT = 40837,
-    QUEST_THE_DARK_RIDERS = 40838,
-    NPC_NARALEX_103778 = 103778,
-    ///RESTORATION
-    QUEST_MEET_WITH_MYLUNE = 40649,
-    QUEST_NECESSARY_PREPARATIONS = 41422,
-    QUEST_JOIN_THE_DREAMER = 41449,
-    QUEST_IN_DEEP_SLUMBER = 41436,
-    PHASE_IN_DEEP_SLUMBER = 7541,
-    QUEST_RECONVENE = 41690,
-    QUEST_CLEANSING_THE_MOTHER_TREE = 41689,
-    NPC_NARALEX_104349 = 104349,
+    SPELL_TELEPORT_MOONGLADE                = 18960,
+    SPELL_WEAPONS_OF_LEGEND_PLAYER_CHOICE   = 199653,
 
-    NPC_ARCHDRUID_HAMUUL_RUNETOTEM_101064 = 101064,
-    NPC_KEEPER_REMULOS_101065 = 101065,
+    PLAYER_CHOICE_DRUID_SELECTION           = 247,
+    PLAYER_CHOICE_DRUID_BALANCE             = 529,
+    PLAYER_CHOICE_DRUID_FERAL               = 530,
+    PLAYER_CHOICE_DRUID_GUARDIAN            = 531,
+    PLAYER_CHOICE_DRUID_RESTORATION         = 545,
 
-    NPC_KEEPER_REMULOS_103488 = 103488,
-    NPC_KEEPER_REMULOS_103832 = 103832,
+    KILLED_MONSTER_CREDIT_40643             = 103346,
 
-    SPELL_FADE = 206809,
+    QUEST_A_SUMMONS_FROM_MOONGLADE          = 40643,
+    QUEST_CALL_OF_THE_WILDS                 = 41106,
+    QUEST_THE_DREAMWAY                      = 40644,
+    QUEST_TO_THE_DREAMGROVE                 = 40645,
+    QUEST_WEAPONS_OF_LEGEND                 = 40646,
+    QUEST_ANOTHER_WEAPON_OF_OLD             = 43980,
+    QUEST_MORE_WEAPONS_OF_OLD               = 44431,
+    QUEST_WEAPONS_OF_THE_ANCIENTS           = 44443,
+    QUEST_SOWING_THE_SEED                   = 41255,
+    QUEST_SOWING_THE_SEED_PHASE             = 5685,
+    QUEST_ASCENDING_THE_CIRCLE              = 41332,
+    QUEST_A_HEROS_WEAPON                    = 43409,
+
+    /// Guardian
+    QUEST_MISTRESS_OF_THE_CLAW              = 41468,
+    QUEST_TO_THE_HILLS                      = 41782,
+    QUEST_FALLEN_OFFERINGS                  = 41783,
+
+    /// Feral
+    QUEST_THE_SHRINE_OF_ASHAMANE            = 42428,
+    QUEST_AID_FOR_THE_ASHEN                 = 42439,
+    QUEST_THE_SHRINE_IN_PERIL               = 42440,
+
+    NPC_DELANDROS_SHIMMERMOON_107392        = 107392,
+    NPC_VERSTOK_DARKBOUGH_107520            = 107520,
+    NPC_ALGROMON_107593                     = 107593,
+
+    /// Balance
+    QUEST_THE_SCYTHE_OF_ELUNE               = 40783,
+    QUEST_ITS_RIGHTFUL_PLACE                = 40784,
+    QUEST_A_FOE_OF_THE_DARK                 = 40785,
+    QUEST_FOLLOWING_THE_CURSE               = 40834,
+    QUEST_DISTURBING_THE_PAST               = 40835,
+    QUEST_THE_DEADWIND_HUNT                 = 40837,
+    QUEST_THE_DARK_RIDERS                   = 40838,
+
+    NPC_NARALEX_103778                      = 103778,
+
+    /// Restoration
+    QUEST_MEET_WITH_MYLUNE                  = 40649,
+    QUEST_NECESSARY_PREPARATIONS            = 41422,
+    QUEST_JOIN_THE_DREAMER                  = 41449,
+    QUEST_IN_DEEP_SLUMBER                   = 41436,
+    QUEST_RECONVENE                         = 41690,
+    QUEST_CLEANSING_THE_MOTHER_TREE         = 41689,
+
+    PHASE_IN_DEEP_SLUMBER                   = 7541,
+
+    NPC_NARALEX_104349                      = 104349,
+    NPC_ARCHDRUID_HAMUUL_RUNETOTEM_101064   = 101064,
+    NPC_KEEPER_REMULOS_101065               = 101065,
+    NPC_KEEPER_REMULOS_103488               = 103488,
+    NPC_KEEPER_REMULOS_103832               = 103832,
+    NPC_DUSKWOOD_GATEWARDEN                 = 107260,
+    NPC_HYJAL_GATEWARDEN                    = 107262,
+    NPC_GRIZZLY_HILLS_GATEWARDEN            = 107263,
+    NPC_DREAMGROVE_GATEWARDEN               = 107265,
+
+    SPELL_FADE                              = 206809,
 };
-
-
 
 class npc_class_hall_druid_gatewarden : public CreatureScript
 {
@@ -98,9 +110,7 @@ public:
 
     struct npc_class_hall_druid_gatewardenAI : public ScriptedAI
     {
-        npc_class_hall_druid_gatewardenAI(Creature* creature, uint32 teleportSpell) : ScriptedAI(creature), _teleportSpell(teleportSpell)
-        {
-        }
+        npc_class_hall_druid_gatewardenAI(Creature* creature, uint32 teleportSpell) : ScriptedAI(creature), _teleportSpell(teleportSpell) { }
 
         void MoveInLineOfSight(Unit* who) override
         {
@@ -109,7 +119,7 @@ public:
 
             if (me->isInBackInMap(who, 12.0f))   // In my line of sight, "outdoors", and behind me
             {
-                if (who->ToPlayer()->HasQuest(QUEST_TO_THE_DREAMGROVE)&& me->GetEntry()==107265)
+                if (who->ToPlayer()->HasQuest(QUEST_TO_THE_DREAMGROVE)&& me->GetEntry() == NPC_DREAMGROVE_GATEWARDEN)
                 {
                     if (!who->ToPlayer()->GetQuestObjectiveData(QUEST_TO_THE_DREAMGROVE, 1))
                     {
@@ -117,7 +127,7 @@ public:
                         who->ToPlayer()->TeleportTo(1220,3756.379395f, 7132.707520f, 23.856869f, 0.401426f);
                     }                      
                 }
-                else if (who->ToPlayer()->HasQuest(QUEST_TO_THE_HILLS) && me->GetEntry() == 107263)
+                else if (who->ToPlayer()->HasQuest(QUEST_TO_THE_HILLS) && me->GetEntry() == NPC_GRIZZLY_HILLS_GATEWARDEN)
                 {
                     if (!who->ToPlayer()->GetQuestObjectiveData(QUEST_TO_THE_HILLS, 1))
                     {
@@ -126,11 +136,11 @@ public:
                         who->ToPlayer()->TeleportTo(571, 4475.52f, -3757.94f, 217.14f, 3.56309f);
                     }
                 }
-                else if (who->ToPlayer()->HasQuest(QUEST_CLEANSING_THE_MOTHER_TREE) && me->GetEntry() == 107262)
+                else if (who->ToPlayer()->HasQuest(QUEST_CLEANSING_THE_MOTHER_TREE) && me->GetEntry() == NPC_HYJAL_GATEWARDEN)
                 {
                         who->ToPlayer()->TeleportTo(1599, 5465.67f, -3447.32f, 1559.12f, 4.987278f);
                 }
-                else if (who->ToPlayer()->HasQuest(QUEST_THE_SCYTHE_OF_ELUNE) && me->GetEntry() == 107260)
+                else if (who->ToPlayer()->HasQuest(QUEST_THE_SCYTHE_OF_ELUNE) && me->GetEntry() == NPC_DUSKWOOD_GATEWARDEN)
                 {
                     if (!who->ToPlayer()->GetQuestObjectiveData(QUEST_THE_SCYTHE_OF_ELUNE, 0))
                     {
@@ -156,8 +166,6 @@ public:
     uint32 _teleportSpell;
 };
 
-
-
 enum
 {///ID - 204544 ????????
     SPELL_DRUID_ORDER_FORMATION = 204538,
@@ -168,12 +176,16 @@ enum
 // 101061 NPC_ARCHDRUID_HAMUUL_RUNETOTEM 
 struct npc_archdruid_hamuul_runetotem_101061 : public ScriptedAI
 {
-    npc_archdruid_hamuul_runetotem_101061(Creature* creature) : ScriptedAI(creature) { SayHi = false; }
+    npc_archdruid_hamuul_runetotem_101061(Creature* creature) : ScriptedAI(creature)
+    {
+        SayHi = false;
+    }
 
     void MoveInLineOfSight(Unit* who) override
     {
         if (!who || !who->IsInWorld())
             return;
+
         if (!me->IsWithinDist(who, 25.0f, false))
             return;
 
@@ -181,7 +193,9 @@ struct npc_archdruid_hamuul_runetotem_101061 : public ScriptedAI
 
         if (!player)
             return;
-        me->GetMotionMaster()->MoveFollow(player, PET_FOLLOW_DIST, me->GetFollowAngle());        
+
+        me->GetMotionMaster()->MoveFollow(player, PET_FOLLOW_DIST, me->GetFollowAngle());
+
         if (!SayHi)
         {
             SayHi = true;
@@ -195,14 +209,13 @@ struct npc_archdruid_hamuul_runetotem_101061 : public ScriptedAI
         {
             Talk(1, player);
             player->CastSpell(player, SPELL_TELEPORT_MOONGLADE, true);
-            me->DespawnOrUnsummon(5000);
+            me->DespawnOrUnsummon(5s);
         }
     }
     bool SayHi;
 };
+
 ///ID - 210908 Create Garrison and Confirm Solo Experience Package QUEST_A_SUMMONS_FROM_MOONGLADE reward
-
-
 struct npc_archdruid_hamuul_runetotem_101064 : public ScriptedAI
 {
     npc_archdruid_hamuul_runetotem_101064(Creature* creature) : ScriptedAI(creature) {  }
@@ -245,7 +258,7 @@ struct npc_archdruid_hamuul_runetotem_101064 : public ScriptedAI
                 player->KilledMonsterCredit(101064);
                 _scheduler.Schedule(Milliseconds(18000), [this, player](TaskContext context)
                 {
-                    me->DespawnOrUnsummon(1000);
+                    me->DespawnOrUnsummon(1s);
                 });
             }
             break;
@@ -261,14 +274,14 @@ struct npc_archdruid_hamuul_runetotem_101064 : public ScriptedAI
     {
         switch (id)
         {
-        case 1:
-            DoAction(1);
-            break;
-        case 2:
-            DoAction(2);
-            break;
-        default:
-            break;
+            case 1:
+                DoAction(1);
+                break;
+            case 2:
+                DoAction(2);
+                break;
+            default:
+                break;
         }
     }
 
@@ -285,17 +298,16 @@ struct npc_archdruid_hamuul_runetotem_101064 : public ScriptedAI
             Talk(1, player);
             me->SetCanFly(true);
             m_playerGUID = player->GetGUID();
-            me->GetMotionMaster()->MovePoint(1, Position(8001.76f, -2680.266f, 516.2501f), true);///reched point cast 199439 ->conversation 927
+            me->GetMotionMaster()->MovePoint(1, Position(8001.76f, -2680.266f, 516.2501f), true); ///reched point cast 199439 ->conversation 927
 
             _scheduler.Schedule(Milliseconds(15000), [this](TaskContext context)
             {
                 me->GetMotionMaster()->MovePoint(2, Position(7558.831f, -2879.167f, 460.8212f), true);
             });
-            
             ///185506 ? 192190 ?
         }
     }
- 
+
     void sQuestReward(Player* player, Quest const* quest, uint32 /*opt*/)  override
     {
         if (quest->GetQuestId() == QUEST_CALL_OF_THE_WILDS)
@@ -308,22 +320,21 @@ struct npc_archdruid_hamuul_runetotem_101064 : public ScriptedAI
     {
         if (!who || !who->IsInWorld())
             return;
+
         if (!me->IsWithinDist(who, 15.0f, false))
         {
             return;
         }
         Player* player = who->GetCharmerOrOwnerPlayerOrPlayerItself();
+
         if (!player)
             return;
-
-
-
     }
+
 private:
     TaskScheduler _scheduler;
     ObjectGuid   m_playerGUID;
 };
-
 
 enum
 {
@@ -341,18 +352,21 @@ enum
 ///ID - 203984 ????? Triggered by spell: (203987) ??????? Triggered by spell : (204250) ??????
 struct npc_zentabra_103135 : public ScriptedAI
 {
-    npc_zentabra_103135(Creature* creature) : ScriptedAI(creature) { Initialize(); }
+    npc_zentabra_103135(Creature* creature) : ScriptedAI(creature)
+    {
+        Initialize();
+    }
 
     void DoAction(int32 param)
     {
         switch (param)
         {
-        case POINT_1:
-            me->GetMotionMaster()->MovePoint(POINT_1, Position(7673.544f, -2387.757f, 456.4582f, 4.519598f), true);
-            break;
-        case POINT_HOME:
-            me->GetMotionMaster()->MovePoint(POINT_HOME, Position(7683.905f, -2410.326f, 455.3737f, 2.185425f), true);
-            break;
+            case POINT_1:
+                me->GetMotionMaster()->MovePoint(POINT_1, Position(7673.544f, -2387.757f, 456.4582f, 4.519598f), true);
+                break;
+            case POINT_HOME:
+                me->GetMotionMaster()->MovePoint(POINT_HOME, Position(7683.905f, -2410.326f, 455.3737f, 2.185425f), true);
+                break;
 
         }
     }
@@ -365,6 +379,7 @@ struct npc_zentabra_103135 : public ScriptedAI
     void sGossipSelect(Player* player, uint32 /*menuId*/, uint32 gossipListId)
     {
         CloseGossipMenuFor(player);
+
         if (player->HasQuest(QUEST_CALL_OF_THE_WILDS))
         {
             player->KilledMonsterCredit(103136);
@@ -446,14 +461,17 @@ struct npc_zentabra_103135 : public ScriptedAI
     {
         if (!who || !who->IsInWorld())
             return;
+
         if (!me->IsWithinDist(who, 25.0f, false))
         {
             //RemovePlayer();
             return;
         }
         Player* player = who->GetCharmerOrOwnerPlayerOrPlayerItself();
+
         if (!player)
             return;
+
         if (!HasPlayer(player->GetGUID()) && player->HasQuest(QUEST_CALL_OF_THE_WILDS) && !player->GetQuestObjectiveData(QUEST_CALL_OF_THE_WILDS,0) )
         {
             m_playerGUID = player->GetGUID();
@@ -461,6 +479,7 @@ struct npc_zentabra_103135 : public ScriptedAI
             DoAction(POINT_1); ///Move to
         }
     }
+
 private:
     TaskScheduler _scheduler;
     std::set<ObjectGuid> pList;
@@ -469,13 +488,15 @@ private:
 
 struct npc_zentabra_103136 : public ScriptedAI
 {
-    npc_zentabra_103136(Creature* creature) : ScriptedAI(creature) { Initialize(); }
+    npc_zentabra_103136(Creature* creature) : ScriptedAI(creature)
+    {
+        Initialize();
+    }
 
     void UpdateAI(uint32 diff) override
     {
         _scheduler.Update(diff);
     }
-
 
     void sGossipSelect(Player* player, uint32 /*menuId*/, uint32 gossipListId)
     {
@@ -486,10 +507,8 @@ struct npc_zentabra_103136 : public ScriptedAI
             Talk(0, player);
         }
     }
-    void Initialize()
-    {
 
-    }
+    void Initialize() { }
 
     void AddPlayer()
     {
@@ -513,14 +532,17 @@ struct npc_zentabra_103136 : public ScriptedAI
     {
         if (!who || !who->IsInWorld())
             return;
+
         if (!me->IsWithinDist(who, 15.0f, false))
         {
             RemovePlayer();
             return;
         }
         Player* player = who->GetCharmerOrOwnerPlayerOrPlayerItself();
+
         if (!player)
             return;
+
         /*
         if (!HasPlayer(player->GetGUID()) && (player->HasQuest(QUEST_CALL_OF_THE_WILDS)) )
         {
@@ -530,6 +552,7 @@ struct npc_zentabra_103136 : public ScriptedAI
             m_playerGUID = ObjectGuid::Empty;
         }*/
     }
+
 private:
 
     TaskScheduler _scheduler;
@@ -539,8 +562,10 @@ private:
 //204250 spell
 struct npc_naralex_103133 : public ScriptedAI
 {
-    npc_naralex_103133(Creature* creature) : ScriptedAI(creature) { Initialize(); }
-
+    npc_naralex_103133(Creature* creature) : ScriptedAI(creature)
+    {
+        Initialize();
+    }
 
     void UpdateAI(uint32 diff) override
     {
@@ -557,7 +582,8 @@ struct npc_naralex_103133 : public ScriptedAI
     {
         player->CastSpell(player, 204250, true);
         CloseGossipMenuFor(player);
-        if (player->HasQuest(QUEST_CALL_OF_THE_WILDS) && gossipListId==1)
+
+        if (player->HasQuest(QUEST_CALL_OF_THE_WILDS) && gossipListId == 1)
         {
             me->RemoveAurasDueToSpell(204637);
             player->KilledMonsterCredit(me->GetEntry());
@@ -582,6 +608,7 @@ struct npc_naralex_103133 : public ScriptedAI
             {
                 me->GetMotionMaster()->MovePoint(3, Position(7385.798f, -2327.387f, 486.7766f), true);                   
             });
+
             _scheduler.Schedule(Milliseconds(9000), [this, player](TaskContext context)
             {
                 me->GetMotionMaster()->MovePoint(4, Position(7388.854f, -2331.33f, 484.655f), true);
@@ -591,6 +618,7 @@ struct npc_naralex_103133 : public ScriptedAI
             {
                 me->GetMotionMaster()->MovePoint(5, Position(7391.678f, -2343.4f, 478.5645f), true);
             });
+
             _scheduler.Schedule(Milliseconds(14000), [this, player](TaskContext context)
             { 
                 me->GetMotionMaster()->MovePoint(6, Position(7391.092f, -2353.993f, 476.7569f), true);  
@@ -600,6 +628,7 @@ struct npc_naralex_103133 : public ScriptedAI
             {
                 me->GetMotionMaster()->MovePoint(7, Position(7387.592f, -2364.859f, 475.9466f), true);
             });
+
             _scheduler.Schedule(Milliseconds(18000), [this, player](TaskContext context)
             {
                 me->GetMotionMaster()->MovePoint(8, Position(7388.452f, -2371.531f, 474.5436f), true);
@@ -617,23 +646,25 @@ struct npc_naralex_103133 : public ScriptedAI
     {
         if (!who || !who->IsInWorld())
             return;
+
         if (!me->IsWithinDist(who, 15.0f, false))
         {
             return;
         }
         Player* player = who->GetCharmerOrOwnerPlayerOrPlayerItself();
+
         if (!player)
             return;
+
         if (player->HasQuest(QUEST_CALL_OF_THE_WILDS))
         {
-
             //player->KilledMonsterCredit(me->GetEntry());
-
         }
     }
 private:
     TaskScheduler _scheduler;
 };
+
 ///GO Entry: 247052 (Pillow) SPELL 204230
 /*
 ServerToClient: SMSG_PLAY_SCENE (0x264F) Length: 34 ConnIdx: 1 Time: 09/07/2016 13:35:54.977 Number: 22831
@@ -649,7 +680,6 @@ Facing: 4.793286
 
 ///40644 SMSG_QUEST_UPDATE_ADD_CREDIT 101064
 
-
 // 103875 Malfurion Stormrage
     struct npc_malfurion_stormrage_103875 : public ScriptedAI
     {
@@ -659,6 +689,7 @@ Facing: 4.793286
         {
             if (!who || !who->IsInWorld())
                 return;
+
             if (!me->IsWithinDist(who, 15.0f, false))
                 return;
 
@@ -684,9 +715,9 @@ Facing: 4.793286
                     player->KilledMonsterCredit(KILLED_MONSTER_CREDIT_40644); // QUEST_THE_DREAMWAY storageIndex 2 KillCredit
                 }
             }
+
             if(player->GetQuestStatus(QUEST_THE_DREAMWAY) == QUEST_STATUS_COMPLETE || player->GetQuestStatus(QUEST_THE_DREAMWAY)== QUEST_STATUS_REWARDED)
                 player->RemoveAurasDueToSpell(SPELL_ASSIGN_DRUID_SPELL_BAR);
-
         }
 
         void UpdateAI(uint32 diff) override
@@ -706,24 +737,28 @@ Facing: 4.793286
             if (quest->GetQuestId() == QUEST_THE_DREAMWAY)
                 player->RemoveAurasDueToSpell(SPELL_ASSIGN_DRUID_SPELL_BAR);
         }
+
     private:
         TaskScheduler _scheduler;
     };
     ///GUID 448291
     struct npc_generic_bunny_quest_to_the_dreamgrove_59115 : public ScriptedAI
     {
-        npc_generic_bunny_quest_to_the_dreamgrove_59115(Creature* creature) : ScriptedAI(creature) {  }
+        npc_generic_bunny_quest_to_the_dreamgrove_59115(Creature* creature) : ScriptedAI(creature) { }
 
         void MoveInLineOfSight(Unit* who) override
         {
             if (!who || !who->IsInWorld())
                 return;
+
             if (!me->IsWithinDist(who, 5.0f, false))
                 return;
 
             Player* player = who->GetCharmerOrOwnerPlayerOrPlayerItself();
+
             if (!player)
                 return;
+
             if (player->HasQuest(QUEST_TO_THE_DREAMGROVE) )
             {
                 player->CastSpell(player, 200083, true);
@@ -744,58 +779,63 @@ Facing: 4.793286
     cast ID - 204836 ??????  => Entry: 103488 (Keeper Remulos) spell 204842
     */
     
-    class quest_to_the_dreamgrove : public PlayerScript {
-    public:
-        quest_to_the_dreamgrove() : PlayerScript("quest_to_the_dreamgrove") {}
+class quest_to_the_dreamgrove : public PlayerScript
+{
+public:
+    quest_to_the_dreamgrove() : PlayerScript("quest_to_the_dreamgrove") { }
 
-        void OnMapChanged(Player *player) override {
-            if (player->HasQuest(QUEST_TO_THE_DREAMGROVE)&& player->GetMapId()==1540)
+    void OnMapChanged(Player *player) override
+    {
+        if (player->HasQuest(QUEST_TO_THE_DREAMGROVE)&& player->GetMapId()==1540)
+        {
+            PhasingHandler::AddPhase(player, 6122, true);
+            ///summon keeper_remulos_103489
+            if (!player->GetQuestObjectiveData(QUEST_TO_THE_DREAMGROVE, 4))
             {
+                player->CastSpell(player, 204836, true);
                 PhasingHandler::AddPhase(player, 6122, true);
-                ///summon keeper_remulos_103489
-                if (!player->GetQuestObjectiveData(QUEST_TO_THE_DREAMGROVE, 4))
-                {                  
-                    player->CastSpell(player, 204836, true);
-                    PhasingHandler::AddPhase(player, 6122, true);
-                }
-                else if (!player->GetQuestObjectiveData(QUEST_TO_THE_DREAMGROVE, 3))
-                {
-                    PhasingHandler::AddPhase(player, 5953, true);
-                    PhasingHandler::AddPhase(player, 6122, true);
-                }
-                    
-                if (player->GetQuestObjectiveData(QUEST_TO_THE_DREAMGROVE, 3)|| player->GetQuestStatus(QUEST_TO_THE_DREAMGROVE)== QUEST_STATUS_COMPLETE || player->GetQuestStatus(QUEST_TO_THE_DREAMGROVE) == QUEST_STATUS_REWARDED)
-                {
-                    PhasingHandler::RemovePhase(player, 6122, true);
-                }
+            }
+            else if (!player->GetQuestObjectiveData(QUEST_TO_THE_DREAMGROVE, 3))
+            {
+                PhasingHandler::AddPhase(player, 5953, true);
+                PhasingHandler::AddPhase(player, 6122, true);
+            }
+
+            if (player->GetQuestObjectiveData(QUEST_TO_THE_DREAMGROVE, 3)|| player->GetQuestStatus(QUEST_TO_THE_DREAMGROVE)== QUEST_STATUS_COMPLETE || player->GetQuestStatus(QUEST_TO_THE_DREAMGROVE) == QUEST_STATUS_REWARDED)
+            {
+                PhasingHandler::RemovePhase(player, 6122, true);
             }
         }
-    };
+    }
+};
 
-    ///phase 5924 - 5953 - 6122
-    ///ID - 204836 ??????
-    struct npc_keeper_remulos_103489 : public ScriptedAI
+///phase 5924 - 5953 - 6122
+///ID - 204836 ??????
+struct npc_keeper_remulos_103489 : public ScriptedAI
+{
+    npc_keeper_remulos_103489(Creature* creature) : ScriptedAI(creature)
     {
-        npc_keeper_remulos_103489(Creature* creature) : ScriptedAI(creature) { Initialize(); }
+        Initialize();
+    }
 
-        void DoAction(int32 param)
+    void DoAction(int32 param)
+    {
+        switch (param)
         {
-            switch (param)
-            {
             case 1:
                 break;
-            }
         }
+    }
 
-        void UpdateAI(uint32 diff) override
-        {
-            _scheduler.Update(diff);
-        }
+    void UpdateAI(uint32 diff) override
+    {
+        _scheduler.Update(diff);
+    }
 
-        void MovementInform(uint32 /*type*/, uint32 id) override
+    void MovementInform(uint32 /*type*/, uint32 id) override
+    {
+        switch (id)
         {
-            switch (id)
-            {
             case 3:
                 if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
                 {
@@ -806,65 +846,74 @@ Facing: 4.793286
                     //PhasingHandler::RemovePhase(player, 5954, true);
                 }
             case 4:
-                me->DespawnOrUnsummon(2000);
+                me->DespawnOrUnsummon(2s);
                 break;
             default:
                 break;
-            }
         }
-        void Initialize()
+    }
+
+    void Initialize()
+    {
+        m_playerGUID = ObjectGuid::Empty;
+        SayFirst = false;
+    }
+
+    void MoveInLineOfSight(Unit* who) override
+    {
+        if (!who || !who->IsInWorld())
+            return;
+
+        if (!me->IsWithinDist(who, 15.0f, false))
         {
-            m_playerGUID = ObjectGuid::Empty;
-            SayFirst = false;
+            //RemovePlayer();
+            return;
         }
 
-        void MoveInLineOfSight(Unit* who) override
+        Player* player = who->GetCharmerOrOwnerPlayerOrPlayerItself();
+
+        if (!player)
+            return;
+
+        if (!SayFirst && (player->HasQuest(QUEST_TO_THE_DREAMGROVE)) )// to do
         {
-            if (!who || !who->IsInWorld())
-                return;
-            if (!me->IsWithinDist(who, 15.0f, false))
+            player->KilledMonsterCredit(73451);
+            m_playerGUID = player->GetGUID();
+            SayFirst = true;
+            Talk(0);
+            me->SetWalk(false);
+            me->GetMotionMaster()->MovePoint(1, Position(7391.678f, -2343.4f, 478.5645f), true);
+            DoAction(1);
+
+            _scheduler.Schedule(Milliseconds(1000), [this, player](TaskContext context)
             {
-                //RemovePlayer();
-                return;
-            }
-            Player* player = who->GetCharmerOrOwnerPlayerOrPlayerItself();
-            if (!player)
-                return;
-            if (!SayFirst && (player->HasQuest(QUEST_TO_THE_DREAMGROVE)) )// to do
+                me->GetMotionMaster()->MovePoint(1, Position(1536.2015f, 1622.9069f, 25.22f, 6.209f), true);
+            });
+
+            _scheduler.Schedule(Milliseconds(6000), [this, player](TaskContext context)
             {
-                player->KilledMonsterCredit(73451);
-                m_playerGUID = player->GetGUID();
-                SayFirst = true;
-                Talk(0);
-                me->SetWalk(false);
-                me->GetMotionMaster()->MovePoint(1, Position(7391.678f, -2343.4f, 478.5645f), true);
-                DoAction(1);
-                _scheduler.Schedule(Milliseconds(1000), [this, player](TaskContext context)
-                {
-                    me->GetMotionMaster()->MovePoint(1, Position(1536.2015f, 1622.9069f, 25.22f, 6.209f), true);
-                });
-                _scheduler.Schedule(Milliseconds(6000), [this, player](TaskContext context)
-                {
-                    Talk(1);
-                    me->GetMotionMaster()->MovePoint(2, Position(1582.712646f, 1618.0842f, 15.145f, 5.721f), true);
-                });
-                _scheduler.Schedule(Milliseconds(11000), [this, player](TaskContext context)
-                {
-                    Talk(2);
-                });
-                _scheduler.Schedule(Milliseconds(20000), [this, player](TaskContext context)
-                {   
-                    me->GetMotionMaster()->MovePoint(3, Position(1700.725f, 1547.835f, 2.549316f, 5.72f), true);
-                });
-            }
+                Talk(1);
+                me->GetMotionMaster()->MovePoint(2, Position(1582.712646f, 1618.0842f, 15.145f, 5.721f), true);
+            });
+
+            _scheduler.Schedule(Milliseconds(11000), [this, player](TaskContext context)
+            {
+                Talk(2);
+            });
+
+            _scheduler.Schedule(Milliseconds(20000), [this, player](TaskContext context)
+            {
+                me->GetMotionMaster()->MovePoint(3, Position(1700.725f, 1547.835f, 2.549316f, 5.72f), true);
+            });
         }
-    private:
-   
-        TaskScheduler _scheduler;
-        std::set<ObjectGuid> pList;
-        ObjectGuid   m_playerGUID;
-        bool SayFirst;
-    };
+    }
+
+private:
+    TaskScheduler _scheduler;
+    std::set<ObjectGuid> pList;
+    ObjectGuid   m_playerGUID;
+    bool SayFirst;
+};
 
     struct npc_keeper_remulos_103488 : public ScriptedAI
     {

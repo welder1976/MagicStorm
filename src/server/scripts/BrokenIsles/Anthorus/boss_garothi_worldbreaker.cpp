@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 AshamaneProject <https://github.com/AshamaneProject>
+ * Copyright (C) 2018+ MagicStormProject <https://github.com/MagicStormTeam>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -23,7 +23,7 @@
 #include "SpellAuras.h"
 #include "SpellMgr.h"
 #include "SpellScript.h"
-#include "antorus.h"
+#include "antorus_the_burning_throne.h"
 #include "Log.h"
  
 enum Spells
@@ -232,7 +232,7 @@ class spell_annihilation : public SpellScript
  
     void HandleHit(SpellEffIndex /*effIndex*/)
     {
-        if (Unit* caster = GetCaster())
+        /*if (Unit* caster = GetCaster())
         {
             if (Creature* annihilator = caster->FindNearestCreature({ NPC_CANNON_ANNIHILATOR }, 200.f))
             {
@@ -249,7 +249,7 @@ class spell_annihilation : public SpellScript
                     caster->ToCreature()->DespawnOrUnsummon();
                 }
             }
-         }
+        }*/
     }
  
     void Register() override

@@ -1,6 +1,20 @@
 /*
-ANTORUS_THE_BURNING_THRONE
-*/
+ * Copyright (C) 2018+ MagicStormProject <https://github.com/MagicStormTeam>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "AreaTrigger.h"
 #include "AreaTriggerAI.h"
 #include "ScriptedCreature.h"
@@ -121,6 +135,7 @@ enum TC_GAME_API Event_Types
     EVENT_TYPE_TALK,
     EVENT_TYPE_CONVERSATION,
     EVENT_TYPE_SPELL,
+    EVENT_ON_HP60
 };
 
 struct GetTalkData
@@ -140,12 +155,12 @@ enum Talk
     TALK_3 = 3,
 };
 
-TalkData const talkData[] =
+/*const TalkData talkData[] =
 {
     { TALK_1,                    EVENT_TYPE_TALK,            0 },
     { TALK_2,                    EVENT_TYPE_TALK,            EVENT_ON_HP60 },
     { TALK_3,                    EVENT_TYPE_SPELL,           SPELL_PANTHEON_INTRO_MOVIE },
-};
+};*/
 
 struct SpawnData
 {
@@ -212,6 +227,14 @@ SpawnData const spawnData[] =
     { EVENT_5, NPC_GIFT_OF_THE_LIFEBINDER, 2893.73f, -4545.36f, 292.028f, 3.77829f, 0 },
 };
 
+enum Phases
+{
+    PHASE_01          = 1,
+    PHASE_02          = 2,
+    PHASE_03          = 3,
+    PHASE_04          = 4
+};
+
 ///.go creature id 
 struct boss_argus_the_unmaker : public BossAI
 {
@@ -246,13 +269,13 @@ struct boss_argus_the_unmaker : public BossAI
         if (IsMythic())
         {
             instance->DoCompleteAchievement(12002);
-            instance->DoAddItemOnPlayers(152789, 1);// loot shackled-urzul
+            //instance->DoAddItemOnPlayers(152789, 1); // loot shackled-urzul
         }
 
         instance->DoCompleteAchievement(11991);
         instance->DoCompleteAchievement(12266);
-        if(IsMythic() || IsHeroic())
-            instance->DoAddItemOnPlayers(152900, 1);// loot blood-of-the-unmaker
+        if (IsMythic() || IsHeroic())
+            //instance->DoAddItemOnPlayers(152900, 1); // loot blood-of-the-unmaker
         instance->AddTimedDelayedOperation(5000, [this]() -> void
         {
             instance->DoStartMovie(688);
