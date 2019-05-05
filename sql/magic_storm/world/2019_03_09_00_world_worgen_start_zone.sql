@@ -249,7 +249,7 @@ DELETE FROM creature_addon WHERE guid IN (20556430, 20556565, 20556427, 20556429
 UPDATE `creature_template` SET `ScriptName` = "npc_gilneas_crow", `InhabitType` = 4 WHERE `entry` = 50260;
 UPDATE creature SET PhaseId = 169 WHERE guid = 20556373;
 
-DELETE FROM `creature_text` WHERE `CreatureID` IN (44086, 34864, 34851);
+DELETE FROM `creature_text` WHERE `CreatureID` IN (44086, 34864, 34851, 34981, 35836);
 INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `comment`, `BroadcastTextID`) VALUES
 (44086, 0, 0, "You can't do this to us!", 12, 0, 33, 5, 0, 0, 'Panicked Citizen OOC', 44377),
 (44086, 0, 1, "My children are in Stormglen alone! I have to get to them!", 12, 0, 33, 5, 0, 0, 'Panicked Citizen OOC', 44378),
@@ -273,7 +273,19 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 (34851, 2, 2, "Is this the best the Scourge can do?", 12, 0, 50, 0, 0, 0, 'Panicked Citizen Aggro', 28791),
 (34851, 2, 3, "You may take my life, but you won't take my freedom!", 12, 0, 50, 0, 0, 0, 'Panicked Citizen Aggro', 28792),
 (34851, 2, 4, "DIE!", 12, 0, 50, 0, 0, 0, 'Panicked Citizen Aggro', 28793),
-(34851, 2, 5, "You're not taking me without a fight!", 12, 0, 50, 0, 0, 0, 'Panicked Citizen Aggro', 28787);
+(34851, 2, 5, "You're not taking me without a fight!", 12, 0, 50, 0, 0, 0, 'Panicked Citizen Aggro', 28787),
+(34981, 0, 0, "Protect me, please!", 12, 0, 100, 1, 0, 0, 'Frightened Citizen', 35234),
+(34981, 0, 1, "What in the world?  Let's get out of here!", 12, 0, 100, 1, 0, 0, 'Frightened Citizen', 35235),
+(34981, 0, 2, "Let's go!", 12, 0, 100, 1, 0, 0, 'Frightened Citizen', 35236),
+(34981, 0, 3, "No time to waste!", 12, 0, 100, 1, 0, 0, 'Frightened Citizen', 35237),
+(34981, 0, 4, "Worgen! Worgen everywhere!", 12, 0, 100, 1, 0, 0, 'Frightened Citizen', 35238),
+(34981, 0, 5, "This place isn't safe. Let's leave!", 12, 0, 100, 1, 0, 0, 'Frightened Citizen', 35239),
+(34981, 0, 6, "Flee! They're everywhere!", 12, 0, 100, 1, 0, 0, 'Frightened Citizen', 35240),
+(35836, 0, 0, "It's coming right for me!", 12, 0, 100, 430, 0, 0, 'Frightened Citizen', 36037),
+(35836, 0, 1, "Help me, please!", 12, 0, 100, 430, 0, 0, 'Frightened Citizen', 36038),
+(35836, 0, 2, "There's one after me!", 12, 0, 100, 430, 0, 0, 'Frightened Citizen', 36039),
+(35836, 0, 3, "Help!", 12, 0, 100, 430, 0, 0, 'Frightened Citizen', 36040),
+(35836, 0, 4, "I don't want to die!", 12, 0, 100, 430, 0, 0, 'Frightened Citizen', 36041);
 
 UPDATE `creature` SET `position_x` = -1559.391602, `position_y` = 1409.633057, `position_z` = 35.955856, `orientation` = 0.015523, `spawndist` = 0, `MovementType` = 0 WHERE `guid` = 20556313 AND `id` = 34851;
 UPDATE `creature` SET `position_x` = -1397.222900, `position_y` = 1402.700439, `position_z` = 35.960724, `orientation` = 1.985302, `spawndist` = 0, `MovementType` = 0 WHERE `guid` = 20556332 AND `id` = 34851;

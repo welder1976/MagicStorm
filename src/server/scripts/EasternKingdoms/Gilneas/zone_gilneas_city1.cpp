@@ -137,16 +137,22 @@ enum eZoneGilneas
     MOVE_TO_PRINCE_LIAM                          = 2,
     MOVE_TO_DOOR                                 = 3,
     MOVE_TO_HOMEPOSITION                         = 4,
+    MOVE_TO_PLAYER                               = 5,
+    MOVE_TO_MARKER                               = 6,
+    MOVE_TO_END                                  = 7,
 
     ACTION_START_ANIM_MERCANT                    = 1,
     ACTION_START_ANIM_LIAM                       = 2,
+    ACTION_START_ANIM_CITIZEN                    = 3,
 
     PANICKED_CITIZEN_TEXT_00                     = 0,
     PRINCE_LIAM_GREYMANE_TEXT_00                 = 0,
     PRINCE_LIAM_GREYMANE_TEXT_01                 = 1,
     PRINCE_LIAM_GREYMANE_TEXT_02                 = 2,
     WORGEN_ENRAGE_TEXT_EMOTE                     = 0,
-    LIAM_ATTACK_WORGEN_TEXT                      = 0
+    LIAM_ATTACK_WORGEN_TEXT                      = 0,
+    FRIGHTENED_CITIZEN_01_FLEE_TEXT              = 0,
+    FRIGHTENED_CITIZEN_02_FLEE_TEXT              = 0
 };
 
 struct Coord final
@@ -874,275 +880,227 @@ struct npc_rampaging_worgen_34884 : public ScriptedAI
 };
 
 /// alexkulya: ToDo citizens running out after help text.
-class npc_frightened_citizen_34981 : public CreatureScript
+struct npc_frightened_citizen_34981 : public ScriptedAI
 {
-public:
-    npc_frightened_citizen_34981() : CreatureScript("npc_frightened_citizen_34981") { }
+    npc_frightened_citizen_34981(Creature* creature) : ScriptedAI(creature) { }
 
-    enum eNpc
+    EventMap m_events;
+    ObjectGuid m_playerGUID;
+    ObjectGuid m_doorGUID;
+
+    void Reset() override
     {
-        ACTION_START_ANIM_CITIZEN = 103,
+        m_playerGUID = ObjectGuid::Empty;
+        m_doorGUID = ObjectGuid::Empty;
+        //me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
+        me->SetReactState(REACT_PASSIVE);
+    }
 
-        EVENT_MOVE_TO_DOOR        = 101,
-        EVENT_MOVE_TO_PLAYER,
-        EVENT_MOVE_TO_MARKER,
-        EVENT_MOVE_TO_END,
-
-        MOVE_TO_DOOR              = 101,
-        MOVE_TO_PLAYER,
-        MOVE_TO_MARKER,
-        MOVE_TO_END,
-    };
-
-    struct npc_frightened_citizen_34981AI : public ScriptedAI
+    void MovementInform(uint32 type, uint32 point) override
     {
-        npc_frightened_citizen_34981AI(Creature* creature) : ScriptedAI(creature) { }
-
-        EventMap m_events;
-        ObjectGuid m_playerGUID;
-        ObjectGuid m_doorGUID;
-
-        void Reset() override
+        if (type == POINT_MOTION_TYPE)
         {
-            m_playerGUID = ObjectGuid::Empty;
-            m_doorGUID = ObjectGuid::Empty;
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
-        }
-
-        void MovementInform(uint32 type, uint32 point) override
-        {
-            if (type == POINT_MOTION_TYPE)
-                switch (point)
-                {
-                    case MOVE_TO_DOOR:
-                    {
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_PLAYER, 25ms);
-                        break;
-                    }
-                    case MOVE_TO_PLAYER:
-                    {
-                        Talk(1);
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_MARKER, 4s);
-                        break;
-                    }
-                    case MOVE_TO_MARKER:
-                    {
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_END, 25ms);
-                        break;
-                    }
-                    case MOVE_TO_END:
-                    {
-                        me->DespawnOrUnsummon();
-                        break;
-                    }
-                }
-        }
-
-        void SetGUID(ObjectGuid guid, int32 id = 0) override
-        {
-            switch (id)
+            switch (point)
             {
-                case PLAYER_GUID:
+                case MOVE_TO_DOOR:
                 {
-                    m_playerGUID = guid;
+                    m_events.ScheduleEvent(EVENT_MOVE_TO_PLAYER, 25ms);
                     break;
                 }
-                case GO_MERCHANT_DOOR:
+                case MOVE_TO_PLAYER:
                 {
-                    m_doorGUID = guid;
+                    Talk(FRIGHTENED_CITIZEN_01_FLEE_TEXT);
+                    m_events.ScheduleEvent(EVENT_MOVE_TO_MARKER, 4s);
+                    break;
+                }
+                case MOVE_TO_MARKER:
+                {
+                    m_events.ScheduleEvent(EVENT_MOVE_TO_END, 25ms);
+                    break;
+                }
+                case MOVE_TO_END:
+                {
+                    me->DespawnOrUnsummon();
                     break;
                 }
             }
         }
+    }
 
-        void DoAction(int32 param) override
+    void SetGUID(ObjectGuid guid, int32 id = 0) override
+    {
+        switch (id)
         {
-            switch (param)
+            case PLAYER_GUID:
             {
-                case ACTION_START_ANIM_CITIZEN:
+                m_playerGUID = guid;
+                break;
+            }
+            case GO_MERCHANT_DOOR:
+            {
+                m_doorGUID = guid;
+                break;
+            }
+        }
+    }
+
+    void DoAction(int32 param) override
+    {
+        switch (param)
+        {
+            case ACTION_START_ANIM_CITIZEN:
+            {
+                m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 2s);
+                break;
+            }
+        }
+    }
+
+    void UpdateAI(uint32 diff) override
+    {
+        m_events.Update(diff);
+
+        while (uint32 eventId = m_events.ExecuteEvent())
+        {
+            switch (eventId)
+            {
+                case EVENT_MOVE_TO_DOOR:
                 {
-                    m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 2s);
+                    if (GameObject* go = ObjectAccessor::GetGameObject(*me, m_doorGUID))
+                        me->GetMotionMaster()->MovePoint(MOVE_TO_DOOR, go->GetPosition());
+                    break;
+                }
+                case EVENT_MOVE_TO_PLAYER:
+                {
+                    if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
+                        me->GetMotionMaster()->MovePoint(MOVE_TO_PLAYER, player->GetNearPosition(2.0, player->GetOrientation()));
+                    break;
+                }
+                case EVENT_MOVE_TO_MARKER:
+                {
+                    if (Creature* marker = me->FindNearestCreature(NPC_GILNEAS_EVACUATION_FACING_MARKER_35830, 100.0f))
+                        me->GetMotionMaster()->MovePoint(MOVE_TO_MARKER, marker->GetPosition());
+                    break;
+                }
+                case EVENT_MOVE_TO_END:
+                {
+                    me->GetMotionMaster()->MovePoint(MOVE_TO_END, me->GetNearPosition(25.0f, 0.0f));
                     break;
                 }
             }
         }
-
-        void UpdateAI(uint32 diff) override
-        {
-            m_events.Update(diff);
-
-            while (uint32 eventId = m_events.ExecuteEvent())
-            {
-                switch (eventId)
-                {
-                    case EVENT_MOVE_TO_DOOR:
-                    {
-                        if (GameObject* go = ObjectAccessor::GetGameObject(*me, m_doorGUID))
-                            me->GetMotionMaster()->MovePoint(MOVE_TO_DOOR, go->GetPosition());
-                        break;
-                    }
-                    case EVENT_MOVE_TO_PLAYER:
-                    {
-                        if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
-                            me->GetMotionMaster()->MovePoint(MOVE_TO_PLAYER, player->GetNearPosition(2.0, player->GetOrientation()));
-                        break;
-                    }
-                    case EVENT_MOVE_TO_MARKER:
-                    {
-                        if (Creature* marker = me->FindNearestCreature(NPC_GILNEAS_EVACUATION_FACING_MARKER_35830, 100.0f))
-                            me->GetMotionMaster()->MovePoint(MOVE_TO_MARKER, marker->GetPosition());
-                        break;
-                    }
-                    case EVENT_MOVE_TO_END:
-                    {
-                        me->GetMotionMaster()->MovePoint(MOVE_TO_END, me->GetNearPosition(25.0f, 0.0f));
-                        break;
-                    }
-                }
-            }
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const override
-    {
-        return new npc_frightened_citizen_34981AI(creature);
     }
 };
 
-class npc_frightened_citizen_35836 : public CreatureScript
+struct npc_frightened_citizen_35836 : public ScriptedAI
 {
-public:
-    npc_frightened_citizen_35836() : CreatureScript("npc_frightened_citizen_35836") { }
+    npc_frightened_citizen_35836(Creature* creature) : ScriptedAI(creature) { }
 
-    enum eNpc
+    EventMap m_events;
+    ObjectGuid m_playerGUID;
+    ObjectGuid m_doorGUID;
+
+    void Reset() override
     {
-        ACTION_START_ANIM_CITIZEN = 103,
+        m_playerGUID = ObjectGuid::Empty;
+        m_doorGUID = ObjectGuid::Empty;
+        //me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
+        me->SetReactState(REACT_PASSIVE);
+    }
 
-        EVENT_MOVE_TO_DOOR        = 101,
-        EVENT_MOVE_TO_PLAYER,
-        EVENT_MOVE_TO_MARKER,
-        EVENT_MOVE_TO_END,
-
-        MOVE_TO_DOOR              = 101,
-        MOVE_TO_PLAYER,
-        MOVE_TO_MARKER,
-        MOVE_TO_END,
-    };
-
-    struct npc_frightened_citizen_35836AI : public ScriptedAI
+    void MovementInform(uint32 type, uint32 point) override
     {
-        npc_frightened_citizen_35836AI(Creature* creature) : ScriptedAI(creature) { }
-
-        EventMap m_events;
-        ObjectGuid m_playerGUID;
-        ObjectGuid m_doorGUID;
-
-        void Reset() override
+        if (type == POINT_MOTION_TYPE)
         {
-            m_playerGUID = ObjectGuid::Empty;
-            m_doorGUID = ObjectGuid::Empty;
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
-        }
-
-        void MovementInform(uint32 type, uint32 point) override
-        {
-            if (type == POINT_MOTION_TYPE)
-                switch (point)
-                {
-                    case MOVE_TO_DOOR:
-                    {
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_PLAYER, 25ms);
-                        break;
-                    }
-                    case MOVE_TO_PLAYER:
-                    {
-                        Talk(0);
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_MARKER, 2s);
-                        break;
-                    }
-                    case MOVE_TO_MARKER:
-                    {
-                        m_events.ScheduleEvent(EVENT_MOVE_TO_END, 25ms);
-                        break;
-                    }
-                    case MOVE_TO_END:
-                    {
-                        me->DespawnOrUnsummon();
-                        break;
-                    }
-                }
-        }
-
-        void SetGUID(ObjectGuid guid, int32 id = 0) override
-        {
-            switch (id)
+            switch (point)
             {
-                case PLAYER_GUID:
+                case MOVE_TO_DOOR:
                 {
-                    m_playerGUID = guid;
+                    m_events.ScheduleEvent(EVENT_MOVE_TO_PLAYER, 25ms);
                     break;
                 }
-                case GO_MERCHANT_DOOR:
+                case MOVE_TO_PLAYER:
                 {
-                    m_doorGUID = guid;
+                    Talk(FRIGHTENED_CITIZEN_02_FLEE_TEXT);
+                    m_events.ScheduleEvent(EVENT_MOVE_TO_MARKER, 2s);
+                    break;
+                }
+                case MOVE_TO_MARKER:
+                {
+                    m_events.ScheduleEvent(EVENT_MOVE_TO_END, 25ms);
+                    break;
+                }
+                case MOVE_TO_END:
+                {
+                    me->DespawnOrUnsummon();
                     break;
                 }
             }
         }
+    }
 
-        void DoAction(int32 param) override
+    void SetGUID(ObjectGuid guid, int32 id = 0) override
+    {
+        switch (id)
         {
-            switch (param)
+            case PLAYER_GUID:
             {
-                case ACTION_START_ANIM_CITIZEN:
+                m_playerGUID = guid;
+                break;
+            }
+            case GO_MERCHANT_DOOR:
+            {
+                m_doorGUID = guid;
+                break;
+            }
+        }
+    }
+
+    void DoAction(int32 param) override
+    {
+        switch (param)
+        {
+            case ACTION_START_ANIM_CITIZEN:
+            {
+                m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 1s);
+                break;
+            }
+        }
+    }
+
+    void UpdateAI(uint32 diff) override
+    {
+        m_events.Update(diff);
+
+        while (uint32 eventId = m_events.ExecuteEvent())
+        {
+            switch (eventId)
+            {
+                case EVENT_MOVE_TO_DOOR:
                 {
-                    m_events.ScheduleEvent(EVENT_MOVE_TO_DOOR, 1s);
+                    if (GameObject* go = ObjectAccessor::GetGameObject(*me, m_doorGUID))
+                        me->GetMotionMaster()->MovePoint(MOVE_TO_DOOR, go->GetPosition());
+                    break;
+                }
+                case EVENT_MOVE_TO_PLAYER:
+                {
+                    if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
+                        me->GetMotionMaster()->MovePoint(MOVE_TO_PLAYER, player->GetNearPosition(2.0, player->GetOrientation()));
+                    break;
+                }
+                case EVENT_MOVE_TO_MARKER:
+                {
+                    if (Creature* marker = me->FindNearestCreature(NPC_GILNEAS_EVACUATION_FACING_MARKER_35830, 100.0f))
+                        me->GetMotionMaster()->MovePoint(MOVE_TO_MARKER, marker->GetPosition());
+                    break;
+                }
+                case EVENT_MOVE_TO_END:
+                {
+                    me->GetMotionMaster()->MovePoint(MOVE_TO_END, me->GetNearPosition(10.0f, 0.0f));
                     break;
                 }
             }
         }
-
-        void UpdateAI(uint32 diff) override
-        {
-            m_events.Update(diff);
-
-            while (uint32 eventId = m_events.ExecuteEvent())
-            {
-                switch (eventId)
-                {
-                    case EVENT_MOVE_TO_DOOR:
-                    {
-                        if (GameObject* go = ObjectAccessor::GetGameObject(*me, m_doorGUID))
-                            me->GetMotionMaster()->MovePoint(MOVE_TO_DOOR, go->GetPosition());
-                        break;
-                    }
-                    case EVENT_MOVE_TO_PLAYER:
-                    {
-                        if (Player* player = ObjectAccessor::GetPlayer(*me, m_playerGUID))
-                        {
-                            me->GetMotionMaster()->MovePoint(MOVE_TO_PLAYER, player->GetNearPosition(2.0, player->GetOrientation()));
-                        }
-                        break;
-                    }
-                    case EVENT_MOVE_TO_MARKER:
-                    {
-                        if (Creature* marker = me->FindNearestCreature(NPC_GILNEAS_EVACUATION_FACING_MARKER_35830, 100.0f))
-                            me->GetMotionMaster()->MovePoint(MOVE_TO_MARKER, marker->GetPosition());
-                        break;
-                    }
-                    case EVENT_MOVE_TO_END:
-                    {
-                        me->GetMotionMaster()->MovePoint(MOVE_TO_END, me->GetNearPosition(10.0f, 0.0f));
-                        break;
-                    }
-                }
-            }
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const override
-    {
-        return new npc_frightened_citizen_35836AI(creature);
     }
 };
 
@@ -1151,12 +1109,6 @@ class go_merchant_square_door_195327 : public GameObjectScript
 {
 public:
     go_merchant_square_door_195327() : GameObjectScript("go_merchant_square_door_195327") { }
-
-    enum eDoor
-    {
-        ACTION_START_ANIM_MERCANT = 101,
-        ACTION_START_ANIM_CITIZEN = 103,
-    };
 
     ObjectGuid m_playerGUID;
     ObjectGuid m_doorGUID;
@@ -1203,6 +1155,7 @@ private:
     {
         Position posC = GetCitizenPosition(go);
         Position posW = GetWorgenPosition(go);
+
         if (Creature* citizen = player->SummonCreature(NPC_FRIGHTENED_CITIZEN_WORGEN, posC, TEMPSUMMON_TIMED_DESPAWN, 30000))
             if (Creature* worgen = player->SummonCreature(NPC_RAMPAGING_WORGEN_35660, posW, TEMPSUMMON_TIMED_DESPAWN, 30000))
             {
@@ -4492,9 +4445,9 @@ void AddSC_zone_gilneas_city1()
     RegisterCreatureAI(npc_prince_liam_greymane_34913);
     RegisterCreatureAI(npc_gilneas_city_guard_34916);
     RegisterCreatureAI(npc_rampaging_worgen_34884);
+    RegisterCreatureAI(npc_frightened_citizen_34981);
+    RegisterCreatureAI(npc_frightened_citizen_35836);
     new go_merchant_square_door_195327();
-    new npc_frightened_citizen_34981();
-    new npc_frightened_citizen_35836();
     new npc_gwen_armstead_35840();
     new npc_sergeant_cleese_35839();
     new npc_gilnean_royal_guard_35232();
