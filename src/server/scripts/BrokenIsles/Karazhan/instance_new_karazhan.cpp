@@ -1,5 +1,7 @@
 #include "ScriptMgr.h"
 #include "InstanceScript.h"
+#include "Creature.h"
+#include "GameObject.h"
 #include "World.h"
 #include "WorldSession.h"
 #include "new_karazhan.h"
@@ -29,6 +31,7 @@ DoorData const doorData[] =
     { GO_MEDIVH_BOOK_DOOR,  DATA_SHADE_OF_MEDIVH,   DOOR_TYPE_PASSAGE },
     { GO_MEDIVH_DOOR,       DATA_SHADE_OF_MEDIVH,   DOOR_TYPE_ROOM    },
     { GO_STRANGE_WALL,      DATA_CURATOR,           DOOR_TYPE_PASSAGE },
+    { GO_DOOR_BIBLIOTEK,    DATA_CURATOR,           DOOR_TYPE_PASSAGE },
     { 0, 0, DOOR_TYPE_ROOM},
 };
 
@@ -105,6 +108,18 @@ class instance_new_karazhan : public InstanceMapScript
                         _firstShip = creature->GetGUID();
                     else
                         _secondShip = creature->GetGUID();
+                }
+            }
+
+            void OnGameObjectCreate(GameObject* go) override
+            {
+                switch (go->GetEntry())
+                {
+                case GO_DOOR_BIBLIOTEK:
+                    AddDoor(go, true);
+                    break;
+                default:
+                    break;
                 }
             }
 

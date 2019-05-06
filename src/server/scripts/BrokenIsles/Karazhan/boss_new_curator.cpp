@@ -1,4 +1,5 @@
 #include "ScriptMgr.h"
+#include "GameObject.h"
 #include "ScriptedCreature.h"
 #include "SpellAuras.h"
 #include "AreaTrigger.h"
@@ -65,6 +66,17 @@ class boss_new_curator : public CreatureScript
                 _JustDied();
                 me->SummonCreature(NPC_SOUL_FRAGMENT_KARA, me->GetPosition(), TEMPSUMMON_TIMED_DESPAWN, 480 * IN_MILLISECONDS);
             }
+
+		void DamageTaken(Unit* /*attacker*/, uint32& damage) override
+    {
+        if (uint64(damage) > me->GetHealth())
+        {
+            _JustDied();
+
+            if (GameObject* go = instance->GetGameObject(GO_DOOR_BIBLIOTEK))
+                go->GetPhaseShift().AddPhase(169, PhaseFlags::None, nullptr);
+        }
+    }
 
             void EnterCombat(Unit* /**/) override
             {

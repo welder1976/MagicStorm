@@ -72,6 +72,7 @@ enum NKARAGameObjectsIds
     GO_MEDIVH_DOOR      = 266846,
     GO_MEDIVH_BOOK_DOOR = 266510,
     GO_STRANGE_WALL     = 266508,
+    GO_DOOR_BIBLIOTEK   = 255455,
 };
 
 // Opera Events
