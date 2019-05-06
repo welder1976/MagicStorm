@@ -27,6 +27,7 @@
 
 enum Spells
 {
+    // Goroth
     SPELL_BURNING_ARMOR                 = 231363,
     SPELL_BURNING_ERUPTION              = 231395, // Casted at SPELL_BURNING_ARMOR end
 
@@ -43,7 +44,10 @@ enum Spells
     SPELL_SHATTERING_STAR_FINAL_DAMAGE  = 233283,
 
     SPELL_INFERNAL_BURNING              = 233062,
-    SPELL_INFERNAL_BURNING_REMOVE_SPIKES= 233078,
+    SPELL_INFERNAL_BURNING_REMOVE_SPIKES = 233078,
+
+    // Infernal chaosbringer
+    SPELL_MASSIVE_ERUPTION = 242909,
 };
 
 enum Misc
@@ -55,6 +59,22 @@ enum Misc
     AT_SHATTERING_STAR                  = 13412,
 };
 
+enum Texts
+{
+    SAY_AGGRO = 1,
+    SAY_KILL = 2,
+    SAY_WIPE = 3,
+    SAY_DEATH = 4,
+    SAY_INFERNAL_BURNING = 5,
+    SAY_SHATTERING_STAR = 6,
+    SAY_INFERNAL_SPIKE = 7,
+};
+
+enum Events
+{
+    EVENT_MASSIVE_ERUPTION = 1,
+};
+
 struct boss_goroth : public BossAI
 {
     boss_goroth(Creature* creature) : BossAI(creature, DATA_GOROTH) { }
@@ -63,11 +83,31 @@ struct boss_goroth : public BossAI
     {
         _EnterCombat();
 
+        Talk(SAY_AGGRO);
+        instance->SetBossState(DATA_GOROTH, IN_PROGRESS);
         events.ScheduleEvent(SPELL_BURNING_ARMOR, 16s);
         events.ScheduleEvent(SPELL_CRASHING_COMET, 10s, 20s);
         events.ScheduleEvent(SPELL_INFERNAL_SPIKE_SUMMON, 12s);
         events.ScheduleEvent(SPELL_SHATTERING_STAR, 10s, 20s);
         events.ScheduleEvent(SPELL_INFERNAL_BURNING, 55s);
+    }
+
+    void KilledUnit(Unit* victim) override
+    {
+        if (victim->GetTypeId() == TYPEID_PLAYER)
+            Talk(SAY_KILL);
+    }
+
+    void JustDied(Unit* /*killer*/) override
+    {
+        Talk(SAY_DEATH);
+        instance->SetBossState(DATA_GOROTH, DONE);
+    }
+
+    void JustReachedHome() override
+    {
+        Talk(SAY_WIPE);
+        instance->SetBossState(DATA_GOROTH, FAIL);
     }
 
     void ExecuteEvent(uint32 eventId) override
@@ -95,6 +135,7 @@ struct boss_goroth : public BossAI
             }
             case SPELL_INFERNAL_SPIKE_SUMMON:
             {
+                Talk(SAY_INFERNAL_SPIKE);
                 UnitList targetList;
                 SelectTargetList(targetList, 3, SELECT_TARGET_RANDOM, 200.0f, true);
 
@@ -108,6 +149,7 @@ struct boss_goroth : public BossAI
             {
                 if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 2))
                 {
+                    Talk(SAY_SHATTERING_STAR);
                     _shatteringStarTargetGUID = target->GetGUID();
                     DoCast(target, SPELL_SHATTERING_STAR);
                 }
@@ -117,6 +159,7 @@ struct boss_goroth : public BossAI
             }
             case SPELL_INFERNAL_BURNING:
             {
+                Talk(SAY_INFERNAL_BURNING);
                 DoCast(SPELL_INFERNAL_BURNING);
                 events.Repeat(55s);
                 break;
@@ -322,9 +365,70 @@ struct at_goroth_shattering_star : AreaTriggerAI
     uint8 _infernalSpikeTouched = 0;
 };
 
+class infernal_chaosbringer : public CreatureScript
+{
+public:
+    infernal_chaosbringer() : CreatureScript("infernal_chaosbringer") { }
+
+    struct infernal_chaosbringerAI : public ScriptedAI
+    {
+        infernal_chaosbringerAI(Creature* creature) : ScriptedAI(creature), Summons(me) { }
+
+        void Reset() override
+        {
+            _events.Reset();
+            me->CombatStop(true);
+        }
+
+        void EnterCombat(Unit* /*who*/) override
+
+        {
+            _events.ScheduleEvent(EVENT_MASSIVE_ERUPTION, 15s);
+        }
+
+        void UpdateAI(uint32 diff) override
+        {
+            if (!UpdateVictim())
+                return;
+
+            _events.Update(diff);
+
+            while (uint32 eventId = _events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                case EVENT_MASSIVE_ERUPTION:
+
+                    DoCastAOE(SPELL_MASSIVE_ERUPTION);
+                    _events.Repeat(15s);
+
+                    break;
+
+                default:
+
+                    break;
+                }
+            }
+
+            DoMeleeAttackIfReady();
+
+        }       
+
+    private:
+        EventMap _events;
+        SummonList Summons;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new infernal_chaosbringerAI(creature);
+    }
+};
+
 void AddSC_boss_goroth()
 {
     RegisterCreatureAI(boss_goroth);
+    new infernal_chaosbringer();
 
     RegisterAuraScript(spell_burning_armor);
     RegisterAuraScript(aura_crashing_comet);
