@@ -20,7 +20,34 @@
 
 enum DataTypes
 {
-    DATA_SHIWAR                 = 0,
+    // Bosses
+    DATA_GAROTHI_WORLDBREAKER     = 0,
+    DATA_FELHOUNDS                = 1,
+    DATA_ANTORAN                  = 2,
+    DATA_HASABEL                  = 3,
+    DATA_EONAR                    = 4,
+    DATA_IMONAR                   = 5,
+    DATA_KINGAROTH                = 6,
+    DATA_VARIMATHRAS              = 7,
+    DATA_COVEN_OF_SHIMARRA        = 8,
+    DATA_AGGRAMAR                 = 9,
+    DATA_ARGUS                    = 10,
+
+    DATA_MAX_ENCOUNTERS,
+
+    // Additional data
+    DATA_CANNON_ANNIHILATOR,
+    DATA_CANNON_DECIMATOR,
+};
+
+enum Creatures
+{
+    // Garothi Worldbreaker
+    NPC_GAROTHI_WORLDBREAKER      = 123371,
+    NPC_GAROTHI_ANNIHILATOR       = 123398,
+    NPC_CANNON_ANNIHILATOR        = 122778,
+    NPC_CANNON_DECIMATOR          = 122773,
+
 };
 
 enum Gameobjects

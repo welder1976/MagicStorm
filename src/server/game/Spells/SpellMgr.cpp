@@ -3650,6 +3650,18 @@ void SpellMgr::LoadSpellInfoCorrections()
         const_cast<SpellEffectInfo*>(spellInfo->GetEffect(EFFECT_4))->Effect = 0;
     });
 
+    // Garothi Worldbreaker - Annihilation - No players in area
+    ApplySpellFix({ 244762 }, [](SpellInfo* spellInfo) {
+        const_cast<SpellEffectInfo*>(spellInfo->GetEffect(EFFECT_0))->RadiusEntry = sSpellRadiusStore.LookupEntry(EFFECT_RADIUS_500_YARDS); // Not the right value.
+    });
+
+    // Garothi Worldbreaker - Fel Bombardment
+    ApplySpellFix({ 244532 }, [](SpellInfo* spellInfo)
+    {
+        const_cast<SpellEffectInfo*>(spellInfo->GetEffect(EFFECT_0))->RadiusEntry = sSpellRadiusStore.LookupEntry(EFFECT_RADIUS_7_YARDS);
+        const_cast<SpellEffectInfo*>(spellInfo->GetEffect(EFFECT_1))->RadiusEntry = sSpellRadiusStore.LookupEntry(EFFECT_RADIUS_7_YARDS);
+    });
+
     // Ray of Frost
     ApplySpellFix({ 205021 }, [](SpellInfo* spellInfo)
     {
