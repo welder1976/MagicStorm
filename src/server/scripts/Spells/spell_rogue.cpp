@@ -885,6 +885,31 @@ class spell_rog_stealth : public SpellScriptLoader
     public:
         spell_rog_stealth() : SpellScriptLoader("spell_rog_stealth") { }
 
+
+        class spell_rog_stealth_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_rog_stealth_SpellScript);
+
+
+            void HandleAfterHit()
+            {
+
+                if (!GetCaster()) // check null
+                    return;
+                if (GetCaster()->HasAura(ROUGE_SPELL_MASTER_ASSASSIN_TALLENT))
+                {
+                    GetCaster()->CastSpell(GetCaster(), ROUGE_SPELL_MASTER_ASSASSIN, true);
+                }
+            }
+
+            void Register()
+            {
+                AfterHit += SpellHitFn(spell_rog_stealth_SpellScript::HandleAfterHit);
+            }
+        };
+
+
+
         class spell_rog_stealth_AuraScript : public AuraScript
         {
             PrepareAuraScript(spell_rog_stealth_AuraScript);
@@ -903,8 +928,14 @@ class spell_rog_stealth : public SpellScriptLoader
                 });
             }
 
+
             void HandleEffectApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
             {
+                if (!GetTarget())
+                    return;
+                if (!GetCaster())
+                    return;
+
                 Unit* target = GetTarget();
 
                 // Master of Subtlety
@@ -915,17 +946,13 @@ class spell_rog_stealth : public SpellScriptLoader
                 if (target->HasAura(SPELL_ROGUE_SHADOW_FOCUS))
                     target->CastSpell(target, SPELL_ROGUE_SHADOW_FOCUS_EFFECT, TRIGGERED_FULL_MASK);
 
-                target->RemoveAurasDueToSpell(SPELL_ROGUE_VANISH);
-                target->RemoveAurasDueToSpell(SPELL_ROGUE_VANISH_AURA);
-                target->RemoveAurasDueToSpell(SPELL_ROGUE_STEALTH_STEALTH_AURA);
-                target->RemoveAurasDueToSpell(SPELL_ROGUE_STEALTH_SHAPESHIFT_AURA);
-
                 target->CastSpell(target, SPELL_ROGUE_SANCTUARY, TRIGGERED_FULL_MASK);
                 target->CastSpell(target, SPELL_ROGUE_STEALTH_STEALTH_AURA, TRIGGERED_FULL_MASK);
                 target->CastSpell(target, SPELL_ROGUE_STEALTH_SHAPESHIFT_AURA, TRIGGERED_FULL_MASK);
-
-                if(target->HasAura(SPELL_ROGUE_MASTER_OF_SHADOWS))
-                    target->ModifyPower(POWER_ENERGY, +30);
+                
+                if (GetCaster()->HasAura(ROUGE_SPELL_NIGHTSTALKER_TALLENT))
+                    GetCaster()->CastSpell(GetCaster(), ROUGE_SPELL_NIGHTSTALKER_DAMAGE, true);
+               
             }
 
             void HandleEffectRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
@@ -942,24 +969,38 @@ class spell_rog_stealth : public SpellScriptLoader
                     }
                 }
 
+                if (GetCaster()->HasAura(ROUGE_SPELL_MASTER_ASSASSIN))
+                {
+                    if (Aura* masterassassin = GetCaster()->GetAura(ROUGE_SPELL_MASTER_ASSASSIN))
+                    {
+                        masterassassin->SetDuration(3000);
+                    }
+                }
+
+                if (GetCaster()->HasAura(ROUGE_SPELL_NIGHTSTALKER_DAMAGE))
+                {
+                    if (Aura* masterassassin = GetCaster()->GetAura(ROUGE_SPELL_NIGHTSTALKER_DAMAGE))
+                    {
+                        masterassassin->SetDuration(150);
+                    }
+                }
+
                 target->RemoveAurasDueToSpell(SPELL_ROGUE_SHADOW_FOCUS_EFFECT);
                 target->RemoveAurasDueToSpell(SPELL_ROGUE_STEALTH_STEALTH_AURA);
                 target->RemoveAurasDueToSpell(SPELL_ROGUE_STEALTH_SHAPESHIFT_AURA);
-                if (target->HasAura(SPELL_ROGUE_SUBTERFUGE))
-                    target->CastSpell(target, SPELL_ROGUE_SUBTERFUGE_AURA, true);
-                if (Aura* aur = target->GetAura(SPELL_ROGUE_MASTER_OF_SUBTLETY_DAMAGE_PERCENT))
-                {
-                    aur->SetMaxDuration(6000);
-                    aur->SetDuration(6000);
-                }
             }
 
             void Register() override
             {
-                AfterEffectApply += AuraEffectApplyFn(spell_rog_stealth_AuraScript::HandleEffectApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
+                AfterEffectApply += AuraEffectApplyFn(spell_rog_stealth_AuraScript::HandleEffectApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
                 AfterEffectRemove += AuraEffectRemoveFn(spell_rog_stealth_AuraScript::HandleEffectRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
             }
         };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_rog_stealth_SpellScript();
+        }
 
         AuraScript* GetAuraScript() const override
         {
