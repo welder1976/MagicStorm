@@ -32,6 +32,7 @@ enum DataTypes
     DATA_COVEN_OF_SHIMARRA        = 8,
     DATA_AGGRAMAR                 = 9,
     DATA_ARGUS                    = 10,
+    DATA_SHIWAR                   = 11,
 
     DATA_MAX_ENCOUNTERS,
 
