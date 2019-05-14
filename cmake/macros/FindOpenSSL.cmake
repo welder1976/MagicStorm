@@ -31,19 +31,20 @@ set(OPENSSL_MAX_VERSION "1.2")
 SET(_OPENSSL_ROOT_HINTS
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OpenSSL (32-bit)_is1;Inno Setup: App Path]"
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OpenSSL (64-bit)_is1;Inno Setup: App Path]"
+  "C:/Program Files/OpenSSL"
   )
 
 IF(PLATFORM EQUAL 64)
   SET(_OPENSSL_ROOT_PATHS
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OpenSSL (64-bit)_is1;InstallLocation]"
     "C:/OpenSSL-Win64/"
-    "C:/OpenSSL/"
+    "C:/Program Files/OpenSSL"
   )
 ELSE()
   SET(_OPENSSL_ROOT_PATHS
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OpenSSL (32-bit)_is1;InstallLocation]"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OpenSSL (32-bit)_is1;InstallLocation]"
-    "C:/OpenSSL/"
+    "C:/Program Files/OpenSSL"
   )
 ENDIF()
 
