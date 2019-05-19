@@ -18,6 +18,8 @@
 
 #include "Creature.h"
 #include "GameObject.h"
+#include "Map.h"
+#include "ScriptedCreature.h"
 #include "ScriptMgr.h"
 #include "InstanceScript.h"
 #include "cathedral_of_eternal_night.h"
@@ -44,6 +46,8 @@ DoorData const doorData[] =
 { GO_BOSS4_DOOR,            DATA_MEPHISTROTH,         DOOR_TYPE_ROOM }
 };
 
+Position const pos1 = { -518.0295f, 2525.428f, 534.6553f, 3.235034f }; ///summon NPC_MEPHISTROTH
+
 class instance_cathedral_of_eternal_night : public InstanceMapScript
 {
     public:
@@ -55,6 +59,7 @@ class instance_cathedral_of_eternal_night : public InstanceMapScript
 
             void Initialize() override
             {
+	     	SetHeaders(DataHeader);
                 SetBossNumber(DATA_MAX_ENCOUNTERS);
                 //LoadDoorData(doorData);
             }

@@ -143,6 +143,14 @@ void AddSC_boss_advisor_melandrus();
 void AddSC_court_of_stars();
 void AddSC_instance_court_of_stars();
 
+// Cathedral Of Eternal Night
+void AddSC_boss_agronox();
+void AddSC_boss_thrashbite_the_scornful();
+void AddSC_boss_domatrax();
+void AddSC_boss_mephistroth();
+void AddSC_cathedral_of_eternal_night();
+void AddSC_instance_cathedral_of_eternal_night();
+
 // TheArcway
 void AddSC_instance_the_arcway();
 void AddSC_boss_general_xakal();
@@ -341,6 +349,14 @@ void AddBrokenIslesScripts()
     AddSC_boss_advisor_melandrus();
     AddSC_court_of_stars();
     AddSC_instance_court_of_stars();
+
+    // Cathedral Of Eternal Night
+    AddSC_boss_agronox();
+    AddSC_boss_thrashbite_the_scornful();
+    AddSC_boss_domatrax();
+    AddSC_boss_mephistroth();
+    AddSC_cathedral_of_eternal_night();
+    AddSC_instance_cathedral_of_eternal_night();
 
     // Seat of Triumvirate
     AddSC_boss_zuraal_the_ascended();
