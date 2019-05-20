@@ -20,13 +20,24 @@
 #include "InstanceScript.h"
 #include "vault_of_the_wardens.h"
 
+DoorData const doorData[] =
+{
+    { GO_BOSS01_FIRWALL_1,          DATA_TIRATHON,   DOOR_TYPE_PASSAGE },
+    { GO_BOSS01_FIRWALL_2,          DATA_TIRATHON,   DOOR_TYPE_PASSAGE },
+    { GO_BOSS01_DOOR_1,             DATA_TIRATHON,   DOOR_TYPE_PASSAGE },
+    { GO_BOSS01_DOOR_2,             DATA_TIRATHON,   DOOR_TYPE_PASSAGE },
+    //{ GO_AFTER_BOSS01_DOOR,         DATA_TIRATHON,   DOOR_TYPE_PASSAGE },
+    { GO_DOOR_1,                    DATA_INQUISITOR,   DOOR_TYPE_PASSAGE },
+};
+
 struct instance_vault_of_the_wardens : public InstanceScript
 {
     instance_vault_of_the_wardens(InstanceMap* map) : InstanceScript(map)
     {
         SetHeaders(DataHeader);
         SetBossNumber(EncounterCount);
-        ///SetChallengeDoorPos({ -3895.260742f, 4523.655273f, 84.528175f, 5.613298f });
+        LoadDoorData(doorData);
+        SetFontOfPowerPos({ 4184.534f, -756.3125f, 269.6668f, 4.67393f });
     }
 
     void OnCreatureCreate(Creature* creature) override

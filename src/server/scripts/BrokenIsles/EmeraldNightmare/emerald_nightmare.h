@@ -28,11 +28,13 @@
 #include "CreatureTextMgr.h"
 #include "MiscPackets.h"
 #include "GameObjectAI.h"
+#include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "Player.h"
 #include "ObjectMgr.h"
 #include "Creature.h"
 #include "ObjectAccessor.h"
+#include "ObjectMgr.h"
 #include "ScriptedGossip.h"
 #include "Vehicle.h"
 #include "MotionMaster.h"
@@ -44,11 +46,16 @@
 #include "PhasingHandler.h"
 #include "SpellScript.h"
 #include "Chat.h"
+#include "GameObjectAI.h"
 #include "Map.h"
 #include "Transport.h"
 #include "InstanceScript.h"
 #include "DBCEnums.h"
 #include "SceneMgr.h"
+#include "MotionMaster.h"
+#include "InstanceScript.h"
+#include "GameObject.h"
+#include "Creature.h"
 #include "Unit.h"
 #include "SpellAuras.h"
 
@@ -112,8 +119,18 @@ enum Creatures
 
 enum GameObjects
 {
-    GOB_NYTHENDRA_ENTRANCE_1    = 251535,
-    GOB_NYTHENDRA_ENTRANCE_2    = 251536,
+    GOB_NYTHENDRA_ENTRANCE_1    = 251533,
+    GOB_NYTHENDRA_ENTRANCE_2    = 251534,
+    GOB_NYTHENDRA_ENTRANCE_3    = 251535,
+    GOB_NYTHENDRA_ENTRANCE_4    = 251536,
+    GOB_NYTHENDRA_ENTRANCE_5    = 260550,
+    GOB_NYTHENDRA_ENTRANCE_6    = 260551,
+    GOB_NYTHENDRA_ENTRANCE_7    = 260552,
+    GOB_URSOC_DOOR              = 252042,
+    GOB_ILGYNOTH_DOOR_1         = 248848,
+    GOB_ILGYNOTH_DOOR_2         = 248849,
+    GOB_ILGYNOTH_DOOR_3         = 248850,
+    GOB_ILGYNOTH_DOOR           = 251555,
 };
 
 enum SpellVisualKit

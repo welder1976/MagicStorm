@@ -15,7 +15,13 @@
 * with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "AreaTrigger.h"
+#include "AreaTriggerAI.h"
+#include "ScriptedCreature.h"
 #include "ScriptMgr.h"
+#include "SpellAuras.h"
+#include "SpellScript.h"
+#include "GameObject.h"
 #include "cathedral_of_eternal_night.h"
 
 enum Spells
@@ -48,7 +54,89 @@ enum Events
     EVENT_OUTRO_3
 };
 
+
+enum NalashaSpells
+{
+    SPELL_SPIDER_CALL = 239052,
+    SPELL_VANISH = 237395,
+    SPELL_VENOM_STORM = 239266,
+};
+struct npc_nalasha_118705 : public ScriptedAI
+{
+    npc_nalasha_118705(Creature* creature) : ScriptedAI(creature) { Initialize(); }
+
+    void UpdateAI(uint32 diff) override
+    {
+        if (!UpdateVictim())
+            return;
+
+        events.Update(diff);
+
+        while (uint32 eventId = events.ExecuteEvent())
+        {
+            switch (eventId)
+            {
+            case SPELL_SPIDER_CALL:
+            {
+                DoCast(SPELL_SPIDER_CALL);
+                events.Repeat(5s, 10s);
+                break;
+            }
+            case SPELL_VANISH:
+            {
+                DoCast(SPELL_VANISH);
+                events.Repeat(5s, 10s);
+                break;
+            }
+            case SPELL_VENOM_STORM:
+            {
+                DoCast(SPELL_VENOM_STORM);
+                events.Repeat(5s, 10s);
+                break;
+            }
+            default:
+                break;
+            }
+        }
+
+        DoMeleeAttackIfReady();
+    }
+
+    void EnterCombat(Unit* /*victim*/) override
+    {
+        events.ScheduleEvent(SPELL_SPIDER_CALL, 5000);
+        events.ScheduleEvent(SPELL_VANISH, 5000);
+        events.ScheduleEvent(SPELL_VENOM_STORM, 5000);
+    }
+
+    void JustDied(Unit* /*killer*/) override
+    {
+        //open door
+        if (GameObject* target = instance->GetGameObject(GO_BOSS1_DOOR_4))
+            target->DestroyForNearbyPlayers();
+    }
+
+    void Initialize()
+    {
+        instance = me->GetInstanceScript();  
+    }
+
+    void MoveInLineOfSight(Unit* who) override
+    {
+        if (!who || !who->IsInWorld())
+            return;
+        if (!me->IsWithinDist(who, 15.0f, false))
+            return;
+
+        Player* player = who->GetCharmerOrOwnerPlayerOrPlayerItself();
+        if (!player)
+            return;
+    }
+private:
+    InstanceScript * instance;
+};
+
 void AddSC_cathedral_of_eternal_night()
 {
-    // NPC Scripts
+    RegisterCreatureAI(npc_nalasha_118705);
 }
