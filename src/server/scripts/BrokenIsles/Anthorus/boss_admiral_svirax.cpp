@@ -118,8 +118,8 @@ struct boss_admiral_svirax : public BossAI
         Talk(2);
         instance->SetBossState(DATA_ADMIRAL_SVIRAX, DONE);
         me->SummonCreature(129449, Position(-3098.5f, 10474.6298f, -112.6252f, 4.157f), TEMPSUMMON_MANUAL_DESPAWN);
-        //if (instance)
-            //instance->DoDelayedConversation(2000, 5525);
+        if (instance)
+            instance->DoDelayedConversation(2000, 5525);
     }
 
     void ScheduleTasks() override

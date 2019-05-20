@@ -150,7 +150,7 @@ struct boss_aggramar : public BossAI
             if (roll_chance_i(30))
                 Talk(TALK_AGGRAMAR_DEATH);
 
-        //instance->DoDelayedConversation(2000, 6127);
+        instance->DoDelayedConversation(2000, 6127);
     }
 
     void DamageTaken(Unit* /*attacker*/, uint32& damage) override
