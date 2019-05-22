@@ -200,6 +200,11 @@ enum WarriorSpellIcons
     WARRIOR_ICON_ID_SUDDEN_DEATH                    = 1989
 };
 
+enum WarriorTalents
+{
+    TALENT_WARRIOR_BURSTING_EARTH = 275339
+};
+
 enum MiscSpells
 {
     SPELL_VISUAL_BLAZING_CHARGE                     = 26423,
@@ -2083,8 +2088,11 @@ class aura_warr_ignore_pain : public AuraScript
     void CalcAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& /*canBeRecalculated*/)
     {
         if (Unit* caster = GetCaster())
-        {
-            amount = (float)(22.3f * caster->GetTotalAttackPowerValue(BASE_ATTACK)) * (float(m_ExtraSpellCost+200) / 600.0f);
+        {           
+            //amount = (float)(22.3f * caster->GetTotalAttackPowerValue(BASE_ATTACK)) * (float(m_ExtraSpellCost+200) / 600.0f);
+
+            //((0 + attack power * 3.5) * (1 + versality))
+            amount = (float)((0 + caster->GetTotalAttackPowerValue(BASE_ATTACK) * 3.5) * (1 + caster->ToPlayer()->GetUInt32Value(CR_VERSATILITY_DAMAGE_DONE)));
             int32 m_newRage = caster->GetPower(POWER_RAGE) - m_ExtraSpellCost;
             if (m_newRage < 0)
                 m_newRage = 0;
@@ -2099,7 +2107,7 @@ class aura_warr_ignore_pain : public AuraScript
         if (Unit* caster = GetCaster())
         {
             SpellNonMeleeDamage spell(caster, caster, SPELL_WARRIOR_IGNORE_PAIN, 0, SPELL_SCHOOL_MASK_NORMAL);
-            spell.damage = dmgInfo.GetDamage() - dmgInfo.GetDamage() * 0.9f;
+            spell.damage = dmgInfo.GetDamage() - dmgInfo.GetDamage() * 0.5f; //Fix to 0.5 because IP absorbed 50% deal damage
             spell.cleanDamage = spell.damage;
             caster->DealSpellDamage(&spell, false);
             caster->SendSpellNonMeleeDamageLog(&spell);
@@ -2142,11 +2150,17 @@ public:
                 }
             }
 
-            if (amount_of_targets >= sSpellMgr->GetSpellInfo(SPELL_WARRIOR_SHOCKWAVE)->GetEffect(EFFECT_0)->BasePoints)
+            if (amount_of_targets >= 3) //When "Shockwave" have a >= 3 targets, her time cooldown -15 sec
             {
                 if (Player* player = caster->ToPlayer())
                 {
-                    player->GetSpellHistory()->ModifyCooldown(SPELL_WARRIOR_SHOCKWAVE, -sSpellMgr->GetSpellInfo(SPELL_WARRIOR_SHOCKWAVE)->GetEffect(EFFECT_3)->BasePoints * IN_MILLISECONDS);
+                    if (player->GetSpecializationId() == TALENT_SPEC_WARRIOR_PROTECTION)
+                    {
+                        if (player->HasTalent(TALENT_WARRIOR_BURSTING_EARTH, TALENT_SPEC_WARRIOR_PROTECTION))
+                        {
+                            player->GetSpellHistory()->ModifyCooldown(SPELL_WARRIOR_SHOCKWAVE, -15000); //15 sec = 15000 ms
+                        }
+                    }
                 }
             }
         }
