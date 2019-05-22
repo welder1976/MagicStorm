@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2018+ MagicStormProject <https://github.com/MagicStormTeam>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,52 +39,76 @@ DoorData const doorData[] =
     { GO_BOSS10,        DATA_AGGRAMAR,                DOOR_TYPE_ROOM },
 };
 
-struct instance_antorus_the_burning_throne : public InstanceScript
+class instance_antorus_the_burning_throne : public InstanceMapScript
 {
-    instance_antorus_the_burning_throne(InstanceMap* map) : InstanceScript(map)
-    {
-        SetHeaders(DataHeader);
-        SetBossNumber(DATA_MAX_ENCOUNTERS);
-        LoadDoorData(doorData);
-    }
+public:
+    instance_antorus_the_burning_throne() : InstanceMapScript("instance_antorus", 1712) { }
 
-    void OnCreatureCreate(Creature* creature) override
+    struct instance_antorus_the_burning_throne_InstanceMapScript : public InstanceScript
     {
-        InstanceScript::OnCreatureCreate(creature);
-    }
+        instance_antorus_the_burning_throne_InstanceMapScript(InstanceMap* map) : InstanceScript(map) { }
 
-    bool SetBossState(uint32 type, EncounterState state) override
-    {
-        if (!InstanceScript::SetBossState(type, state))
+        // Garothi
+        ObjectGuid GarothiWorldbreakerGUID;
+        ObjectGuid GarothiWorldbreakerAnnihilatorGUID;
+        ObjectGuid GarothiWorldbreakerDecimatorGUID;
+
+        void Initialize() override
         {
-            return false;
+            SetBossNumber(DATA_MAX_ENCOUNTERS);
+            LoadDoorData(doorData);
         }
 
-        switch (type)
+        void OnCreatureCreate(Creature* creature) override
         {
-        case DATA_GAROTHI_WORLDBREAKER:
-        {
-            if (state == DONE)
+            switch (creature->GetEntry())
             {
-
+            case NPC_GAROTHI_WORLDBREAKER:
+                GarothiWorldbreakerGUID = creature->GetGUID();
+                break;
+            case NPC_CANNON_ANNIHILATOR:
+                GarothiWorldbreakerAnnihilatorGUID = creature->GetGUID();
+                break;
+            case NPC_CANNON_DECIMATOR:
+                GarothiWorldbreakerDecimatorGUID = creature->GetGUID();
+                break;
+            default:
+                break;
             }
-            break;
         }
-        case DATA_FHARG:
+
+        /*void OnGameObjectCreate(GameObject* object) override
         {
-            if (state == DONE)
+            switch (object->GetEntry())
             {
-
+                default:
+                    break;
             }
-            break;
+        }*/
+
+        ObjectGuid GetGuidData(uint32 data) const override
+        {
+            switch (data)
+            {
+            case DATA_GAROTHI_WORLDBREAKER:
+                return GarothiWorldbreakerGUID;
+            case DATA_CANNON_ANNIHILATOR:
+                return GarothiWorldbreakerAnnihilatorGUID;
+            case DATA_CANNON_DECIMATOR:
+                return GarothiWorldbreakerDecimatorGUID;
+            }
+
+            return ObjectGuid::Empty;
         }
-        default:
-            break;
-        }
+    };
+
+    InstanceScript* GetInstanceScript(InstanceMap* map) const override
+    {
+        return new instance_antorus_the_burning_throne_InstanceMapScript(map);
     }
 };
 
 void AddSC_instance_antorus_the_burning_throne()
 {
-    RegisterInstanceScript(instance_antorus_the_burning_throne, 1712);
+    new instance_antorus_the_burning_throne();
 }

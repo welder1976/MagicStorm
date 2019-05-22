@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2018+ MagicStormProject <https://github.com/MagicStormTeam>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,13 +33,17 @@ enum DataTypes
     DATA_NOURA_MOTHER_OF_FLAMES             = 8,
     DATA_AGGRAMAR                           = 9,
     DATA_ARGUS_THE_UNMAKER                  = 10,
+    DATA_CANNON_ANNIHILATOR                 = 11,
+    DATA_CANNON_DECIMATOR                   = 12,
 
     DATA_MAX_ENCOUNTERS,
-    DATA_SHATUG                             = 12
+    DATA_SHATUG                             = 13
 };
 
 enum Creatures
 {
+    NPC_CANNON_DECIMATOR                    = 122773,
+    NPC_CANNON_ANNIHILATOR                  = 122778,
     NPC_GAROTHI_WORLDBREAKER                = 122450,
     NPC_FHARG                               = 122477,
     NPC_ADMIRAL_SVIRAX                      = 122367,
@@ -84,5 +88,7 @@ enum Gameobjects
     GO_BOSS_VARIMATHRAS                     = 277180,
     GO_DOOR_PORTAL_KEEPER_HASABEL           = 277521
 };
+
+
 
 #endif // ANTORUS_THE_BURNING_THRONE_H
