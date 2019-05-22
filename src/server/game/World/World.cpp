@@ -471,7 +471,7 @@ void World::LoadConfigSettings(bool reload)
     TC_LOG_INFO("server.loading", "Using %s DBC Locale", localeNames[m_defaultDbcLocale]);
 
     ///- Read the player limit and the Message of the day from the config file
-    SetPlayerAmountLimit(sConfigMgr->GetIntDefault("PlayerLimit", 100));
+    SetPlayerAmountLimit(sConfigMgr->GetIntDefault("PlayerLimit", 4));
     SetMotd(sConfigMgr->GetStringDefault("Motd", "Welcome to a Trinity Core Server."));
 
     ///- Read support system setting from the config file

@@ -37,7 +37,7 @@ struct instance_vault_of_the_wardens : public InstanceScript
         SetHeaders(DataHeader);
         SetBossNumber(EncounterCount);
         LoadDoorData(doorData);
-        SetFontOfPowerPos({ 4184.534f, -756.3125f, 269.6668f, 4.67393f });
+        //SetFontOfPowerPos({ 4184.534f, -756.3125f, 269.6668f, 4.67393f });
     }
 
     void OnCreatureCreate(Creature* creature) override

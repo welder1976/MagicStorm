@@ -42,6 +42,7 @@
 #include "Map.h"
 #include "Transport.h"
 #include "InstanceScript.h"
+#include "PhasingHandler.h"
 #include "DBCEnums.h"
 
 #define GOSSIP_SHOW_DEMONS "This cannot wait. There are demons among your ranks. Let me show you."
