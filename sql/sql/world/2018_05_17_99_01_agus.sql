@@ -219,9 +219,8 @@ INSERT INTO `conversation_template` (`Id`, `FirstLineID`, `LastLineEndTime`, `Ve
 (5816, 13039, 10116, 26365);
 
 
-DELETE FROM `gameobject_template_addon` WHERE `entry` IN (272810 /*战旗*/, 244823 /*The Skyfire*/);
+DELETE FROM `gameobject_template_addon` WHERE `entry` IN (244823 /*The Skyfire*/);
 INSERT INTO `gameobject_template_addon` (`entry`, `faction`, `flags`) VALUES
-(272810, 0, 8192), -- 战旗
 (244823, 0, 1048608); -- The Skyfire
 
 UPDATE `gameobject_template_addon` SET `flags`=262149 WHERE `entry`=268800; -- Legion Cage
@@ -675,7 +674,6 @@ UPDATE `creature_template_addon` SET `auras`='211762' WHERE `entry`=123420; -- 1
 UPDATE `creature_template_addon` SET `bytes1`=50593792, `auras`='159474' WHERE `entry`=119604; -- 119604 (疤翼猎蝠)
 UPDATE `creature_template_addon` SET `auras`='233240' WHERE `entry`=123421; -- 123421 (邪侵厄运召唤者)
 UPDATE `creature_template_addon` SET `auras`='245688' WHERE `entry`=121263; -- 121263 (大技师罗姆尔)
-UPDATE `creature_template_addon` SET `bytes2`=0 WHERE `entry`=122131; -- 122131 (光誓学者)
 UPDATE `creature_template_addon` SET `bytes1`=1 WHERE `entry`=52806; -- 52806 (暗矛战士)
 UPDATE `creature_template_addon` SET `bytes2`=1 WHERE `entry`=42421; -- 42421 (暴风城渔夫)
 UPDATE `creature_template_addon` SET `bytes1`=0 WHERE `entry`=29144; -- 29144 (打磨一新的蒸汽坦克)
@@ -1140,7 +1138,7 @@ INSERT INTO `creature_text_locale` (`CreatureID`, `GroupID`, `ID`, `locale`, `Te
 (127942, @GROUP_ID+0, @ID+0, 'zhCN', '快，快！快去告诉军需官！');
 */
 
-DELETE FROM `npc_spellclick_spells` WHERE (`npc_entry`=107772 AND `spell_id`=234590) OR (`npc_entry`=116419 AND `spell_id`=231849) OR (`npc_entry`=116408 AND `spell_id`=231849) OR (`npc_entry`=113901 AND `spell_id`=234595) OR (`npc_entry`=116420 AND `spell_id`=231849) OR (`npc_entry`=68232 AND `spell_id`=75648) OR (`npc_entry`=68239 AND `spell_id`=75648) OR (`npc_entry`=68238 AND `spell_id`=75648) OR (`npc_entry`=119436 AND `spell_id`=237066) OR (`npc_entry`=119396 AND `spell_id`=237066) OR (`npc_entry`=119437 AND `spell_id`=237066) OR (`npc_entry`=112947 AND `spell_id`=234593) OR (`npc_entry`=119438 AND `spell_id`=237066) OR (`npc_entry`=98266 AND `spell_id`=193618) OR (`npc_entry`=29152 AND `spell_id`=83580) OR (`npc_entry`=122052 AND `spell_id`=245757) OR (`npc_entry`=122045 AND `spell_id`=250455) OR (`npc_entry`=123085 AND `spell_id`=250647) OR (`npc_entry`=123041 AND `spell_id`=246188) OR (`npc_entry`=123070 AND `spell_id`=246188) OR (`npc_entry`=123069 AND `spell_id`=246188) OR (`npc_entry`=123344 AND `spell_id`=245892) OR (`npc_entry`=122974 AND `spell_id`=245096) OR (`npc_entry`=121254 AND `spell_id`=242632) OR (`npc_entry`=123074 AND `spell_id`=245298) OR (`npc_entry`=126608 AND `spell_id`=251249) OR (`npc_entry`=125966 AND `spell_id`=251249) OR (`npc_entry`=128135 AND `spell_id`=254208) OR (`npc_entry`=126609 AND `spell_id`=251249) OR (`npc_entry`=122794 AND `spell_id`=244710) OR (`npc_entry`=122794 AND `spell_id`=255314) OR (`npc_entry`=122794 AND `spell_id`=255315) OR (`npc_entry`=123589 AND `spell_id`=248463) OR (`npc_entry`=126700 AND `spell_id`=251479);
+DELETE FROM `npc_spellclick_spells` WHERE (`npc_entry`=107772 AND `spell_id`=234590) OR (`npc_entry`=116419 AND `spell_id`=231849) OR (`npc_entry`=116408 AND `spell_id`=231849) OR (`npc_entry`=113901 AND `spell_id`=234595) OR (`npc_entry`=116420 AND `spell_id`=231849) OR (`npc_entry`=68232 AND `spell_id`=75648) OR (`npc_entry`=68239 AND `spell_id`=75648) OR (`npc_entry`=68238 AND `spell_id`=75648) OR (`npc_entry`=119436 AND `spell_id`=237066) OR (`npc_entry`=119396 AND `spell_id`=237066) OR (`npc_entry`=119437 AND `spell_id`=237066) OR (`npc_entry`=112947 AND `spell_id`=234593) OR (`npc_entry`=119438 AND `spell_id`=237066) OR (`npc_entry`=98266 AND `spell_id`=193618) OR (`npc_entry`=29152 AND `spell_id`=83580) OR (`npc_entry`=123085 AND `spell_id`=250647) OR (`npc_entry`=123041 AND `spell_id`=246188) OR (`npc_entry`=123070 AND `spell_id`=246188) OR (`npc_entry`=123069 AND `spell_id`=246188) OR (`npc_entry`=123344 AND `spell_id`=245892) OR (`npc_entry`=122974 AND `spell_id`=245096) OR (`npc_entry`=121254 AND `spell_id`=242632) OR (`npc_entry`=123074 AND `spell_id`=245298) OR (`npc_entry`=126608 AND `spell_id`=251249) OR (`npc_entry`=125966 AND `spell_id`=251249) OR (`npc_entry`=128135 AND `spell_id`=254208) OR (`npc_entry`=126609 AND `spell_id`=251249) OR (`npc_entry`=122794 AND `spell_id`=244710) OR (`npc_entry`=122794 AND `spell_id`=255314) OR (`npc_entry`=122794 AND `spell_id`=255315) OR (`npc_entry`=123589 AND `spell_id`=248463) OR (`npc_entry`=126700 AND `spell_id`=251479);
 INSERT INTO `npc_spellclick_spells` (`npc_entry`, `spell_id`, `cast_flags`, `user_type`) VALUES
 (107772, 234590, 0, 0),
 (116419, 231849, 0, 0),
@@ -1157,8 +1155,6 @@ INSERT INTO `npc_spellclick_spells` (`npc_entry`, `spell_id`, `cast_flags`, `use
 (119438, 237066, 0, 0),
 (98266, 193618, 0, 0),
 (29152, 83580, 0, 0),
-(122052, 245757, 0, 0),
-(122045, 250455, 0, 0),
 (123085, 250647, 0, 0),
 (123041, 246188, 0, 0),
 (123070, 246188, 0, 0),
@@ -1208,12 +1204,6 @@ UPDATE `creature_template` SET `VerifiedBuild`=26365 WHERE `entry`=1366; -- 亚�
 
 UPDATE `creature_template` SET `InhabitType`=4 WHERE `entry`=94114;
 UPDATE `creature_template` SET `minlevel`=110, `maxlevel`=110 WHERE `entry`=37944;
-
-SET NAMES 'utf8';
-DELETE FROM `gameobject_template` WHERE `entry`=272810;
-INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `unk1`, `size`, `Data0`, `Data1`, `Data2`, `Data3`, `Data4`, `Data5`, `Data6`, `Data7`, `Data8`, `Data9`, `Data10`, `Data11`, `Data12`, `Data13`, `Data14`, `Data15`, `Data16`, `Data17`, `Data18`, `Data19`, `Data20`, `Data21`, `Data22`, `Data23`, `Data24`, `Data25`, `Data26`, `Data27`, `Data28`, `Data29`, `Data30`, `Data31`, `Data32`, `RequiredLevel`, `VerifiedBuild`) VALUES
-(272810, 5, 36448, '战旗', '', 1.5, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26365); -- 战旗
-
 
 DELETE FROM `npc_text` WHERE `ID` IN (32773 /*32773*/, 32772 /*32772*/, 33061 /*33061*/, 33062 /*33062*/, 33063 /*33063*/, 33066 /*33066*/, 32160 /*32160*/, 32692 /*32692*/, 32673 /*32673*/);
 INSERT INTO `npc_text` (`ID`, `Probability0`, `Probability1`, `Probability2`, `Probability3`, `Probability4`, `Probability5`, `Probability6`, `Probability7`, `BroadcastTextId0`, `BroadcastTextId1`, `BroadcastTextId2`, `BroadcastTextId3`, `BroadcastTextId4`, `BroadcastTextId5`, `BroadcastTextId6`, `BroadcastTextId7`, `VerifiedBuild`) VALUES

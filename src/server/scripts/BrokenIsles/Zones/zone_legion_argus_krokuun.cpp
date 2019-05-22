@@ -20,6 +20,8 @@
 #include "Player.h"
 #include "SpellMgr.h"
 #include "ScriptedGossip.h"
+#include "ScriptedCreature.h"
+#include "ScriptedEscortAI.h"
 #include "Log.h"
 #include "Conversation.h"
 #include "CreatureTextMgr.h"
@@ -85,7 +87,6 @@ enum
     QUEST_H_TWO_IF_BY_SEA = 47867,
     KILLED_MONSTER_CREDIT_TWO_IF_BY_SEA = 121787,
 
-    QUEST_LIGHTS_EXODUS = 47223,
     QUEST_THE_VINDICAAR = 47224,
     QUEST_INTO_THE_NIGHT = 48440,
     SPELL_PLAY_MOVIE_TO_ARGUS = 243785,
@@ -108,33 +109,37 @@ enum
 
 enum
 {
-    TALK_01 = 0,
-    TALK_02 = 1,
-    TALK_03 = 2,
-    TALK_04 = 3,
-    TALK_05 = 4,
-    TALK_06 = 5,
-    TALK_07 = 6,
-    TALK_08 = 7,
+    TALK_01                                 = 0,
+    TALK_02                                 = 1,
+    TALK_03                                 = 2,
+    TALK_04                                 = 3,
+    TALK_05                                 = 4,
+    TALK_06                                 = 5,
+    TALK_07                                 = 6,
+    TALK_08                                 = 7,
 
-    EVENT_TALK_01 = 1,
-    EVENT_TALK_02 = 2,
-    EVENT_TALK_03 = 3,
-    EVENT_TALK_04 = 4,
-    EVENT_TALK_05 = 5,
-    EVENT_TALK_06 = 6,
-    EVENT_TALK_07 = 7,
-    EVENT_TALK_08 = 8,
-    EVENT_TALK_09 = 9,
+    EVENT_TALK_01                           = 1,
+    EVENT_TALK_02                           = 2,
+    EVENT_TALK_03                           = 3,
+    EVENT_TALK_04                           = 4,
+    EVENT_TALK_05                           = 5,
+    EVENT_TALK_06                           = 6,
+    EVENT_TALK_07                           = 7,
+    EVENT_TALK_08                           = 8,
+    EVENT_TALK_09                           = 9
 };
 
-enum Talks
+enum
 {
-    SAY_EVENT = 0,
-    SAY_EVENT_2 = 1,
-    SAY_EVENT_3 = 2,
+    SAY_EVENT                               = 0,
+    SAY_EVENT_2                             = 1,
+    SAY_EVENT_3                             = 2
 };
-// npc_vereesa_windrunner_121754
+
+/*********************************\
+ ** ARGUS INTRO - ALLIANCE SIDE **
+\*********************************/
+
 class npc_vereesa_windrunner_121754 : public CreatureScript
 {
 public:
@@ -146,24 +151,33 @@ public:
             return false;
 
         CloseGossipMenuFor(player);
+
         if (player->HasQuest(QUEST_A_TWO_IF_BY_SEA))
         {
             player->KilledMonsterCredit(KILLED_MONSTER_CREDIT_TWO_IF_BY_SEA);
             player->TeleportTo(1750 ,-4235.34f, -11335.4f, 8.85f, 4.432787f);
         }
+
         return true;
     }
 
     struct npc_vereesa_windrunner_121754AI : public ScriptedAI
     {
-        npc_vereesa_windrunner_121754AI(Creature* creature) : ScriptedAI(creature) {}
+        npc_vereesa_windrunner_121754AI(Creature* creature) : ScriptedAI(creature) { }
 
-        void Reset() override { Intr = false; }
+        bool Intr;
+        uint32 checkTimer = 4000;
+
+        void Reset() override
+        {
+            Intr = false;
+        }
 
         void MoveInLineOfSight(Unit* who) override
         {
             if (!who || !who->IsInWorld())
                 return;
+
             if (!me->IsWithinDist(who, 15.0f, false))
                 return;
 
@@ -171,63 +185,51 @@ public:
 
             if (!player)
                 return;
-            
+
             if (player->HasQuest(QUEST_A_THE_HAND_OF_FATE))
             {  
                 if (!player->GetQuestObjectiveData(QUEST_A_THE_HAND_OF_FATE, 0))
                 {
                     if (!Intr)
                         Intr = true;
-                    player->KilledMonsterCredit(KILLED_MONSTER_CREDIT_THE_HAND_OF_FATE); // QUEST_A_THE_HAND_OF_FATE storageIndex 0 KillCredit
+
+                    player->KilledMonsterCredit(KILLED_MONSTER_CREDIT_THE_HAND_OF_FATE);
                 }
             }
-            
         }
-        bool Intr;
-        uint32 checkTimer = 4000;
 
         void UpdateAI(uint32 diff) override
         {
             if (checkTimer <= diff)
             {
-                if (Intr) {
-                    //talk
+                if (Intr)
+                {
                     me->AI()->Talk(SAY_EVENT);
-                    //delay 1s
+
                     if (Creature* arator_the_redeemer = me->FindNearestCreature(NPC_ARATOR_THE_REDEEMER, me->GetVisibilityRange()))
                     {
 
-                        arator_the_redeemer->GetScheduler().Schedule(1s, 2s, [arator_the_redeemer](TaskContext context)
+                        arator_the_redeemer->GetScheduler().Schedule(4s, [arator_the_redeemer](TaskContext context)
                         {
                             arator_the_redeemer->AI()->Talk(SAY_EVENT);
                         });
                     }
-                    //delay 2s
+
                     if (Creature* vindicator_boros = me->FindNearestCreature(NPC_VINDICATOR_BOROS, me->GetVisibilityRange()))
                     {
 
-                        vindicator_boros->GetScheduler().Schedule(2s, 3s, [vindicator_boros](TaskContext context)
+                        vindicator_boros->GetScheduler().Schedule(5s, [vindicator_boros](TaskContext context)
                         {
                             vindicator_boros->AI()->Talk(SAY_EVENT);
                         });
                     }
+
                     Intr = false;
                 }
                 checkTimer = 4000;               
             }
             else checkTimer -= diff;
         }
-
-        bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest) 
-        {
-            if (quest->GetQuestId() == QUEST_A_TWO_IF_BY_SEA)
-            {
-
-            }
-            return true;
-        }
-
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -235,15 +237,118 @@ public:
         return new npc_vereesa_windrunner_121754AI(creature);
     }
 
+    bool OnQuestReward(Player* player, Creature* /*creature*/, Quest const* quest, uint32 /*item*/) override
+    {
+        if (quest->GetQuestId() == QUEST_THE_DREAMWAY)
+            player->RemoveAurasDueToSpell(SPELL_ASSIGN_DRUID_SPELL_BAR);
+
+        return true;
+    }
+};
+
+enum QuestLightsExodus
+{
+    QUEST_LIGHTS_EXODUS                     = 47223,
+
+    EVENT_STEP_01                           = 1,
+    EVENT_STEP_02                           = 2,
+    EVENT_STEP_03                           = 3,
+    EVENT_STEP_04                           = 4,
+    EVENT_STEP_05                           = 5,
+    EVENT_STEP_06                           = 6,
+
+    ACTION_START_ANIMATION                  = 1,
+
+    SAY_BOROS_TEXT_01                       = 1,
+};
+
+class npc_vindicator_boros_121756 : public CreatureScript
+{
+public:
+    npc_vindicator_boros_121756() : CreatureScript("npc_vindicator_boros_121756") { }
+
+    bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest) override
+    {
+        ObjectGuid _playerGUID = player->GetGUID();
+
+        if (quest->GetQuestId() == QUEST_LIGHTS_EXODUS)
+            creature->AI()->DoAction(ACTION_START_ANIMATION);
+ 
+        return true;
+    }
 
     bool OnQuestReward(Player* player, Creature* /*creature*/, Quest const* quest, uint32 /*item*/) override
     {
         if (quest->GetQuestId() == QUEST_THE_DREAMWAY)
-        {
             player->RemoveAurasDueToSpell(SPELL_ASSIGN_DRUID_SPELL_BAR);
-        }
 
         return true;
+    }
+
+    struct npc_vindicator_boros_121756AI : public npc_escortAI
+    {
+        npc_vindicator_boros_121756AI(Creature* creature) : npc_escortAI(creature) { }
+
+        void Reset() override
+        {
+            events.Reset();
+            _playerGUID = ObjectGuid::Empty;
+        }
+
+        void DoAction(int32 action)
+        {
+            if (action == ACTION_START_ANIMATION)
+                events.ScheduleEvent(EVENT_STEP_01, 1s);
+        }
+
+        void WaypointReached(uint32 Point) override
+        {
+            if (Point == 5)
+                events.ScheduleEvent(EVENT_STEP_04, 1s);
+        }
+
+        void UpdateAI(uint32 diff) override
+        {
+            events.Update(diff);
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                    case EVENT_STEP_01:
+                        if (Player* player = ObjectAccessor::GetPlayer(*me, _playerGUID))
+                            me->SetFacingToObject(player);
+                        events.ScheduleEvent(EVENT_STEP_02, 3s);
+                        break;
+                    case EVENT_STEP_02:
+                        Talk(SAY_BOROS_TEXT_01);
+                        events.ScheduleEvent(EVENT_STEP_03, 2s);
+                        break;
+                    case EVENT_STEP_03:
+                    {
+                        AddWaypoint(1, -4242.758301f, -11345.727539f, 8.943564f, 0);
+                        AddWaypoint(2, -4247.899902f, -11348.519742f, 10.034762f, 0);
+                        AddWaypoint(3, -4258.516602f, -11349.978516f, 4.728858f, 0);
+                        AddWaypoint(4, -4264.603027f, -11354.836914f, 4.856225f, 0);
+                        AddWaypoint(5, -4261.898926f, -11360.919922f, 5.132911f, 0);
+
+                        Start(true, true, ObjectGuid::Empty, nullptr, false, false);
+                        break;
+                    }
+                    case EVENT_STEP_04:
+                        break;
+                }
+            }
+        }
+
+    private:
+        EventMap events;
+        ObjectGuid _playerGUID;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_vindicator_boros_121756AI(creature);
     }
 };
 
@@ -334,106 +439,6 @@ private:
     TaskScheduler _scheduler;
     std::set<ObjectGuid> pList;
     ObjectGuid   m_playerGUID;
-};
-
-// npc_vindicator_boros_121756
-class npc_vindicator_boros_121756 : public CreatureScript
-{
-public:
-    npc_vindicator_boros_121756() : CreatureScript("npc_vindicator_boros_121756") { }
-
-
-    struct npc_vindicator_boros_121756AI : public ScriptedAI
-    {
-        npc_vindicator_boros_121756AI(Creature* creature) : ScriptedAI(creature) {}
-
-        void Reset() override { Intr = false; }
-
-        void MoveInLineOfSight(Unit* who) override
-        {
-            if (!who || !who->IsInWorld())
-                return;
-            if (!me->IsWithinDist(who, 15.0f, false))
-                return;
-
-            Player* player = who->GetCharmerOrOwnerPlayerOrPlayerItself();
-
-            if (!player)
-                return;
-
-            if (player->HasQuest(QUEST_A_TWO_IF_BY_SEA))
-            {
-                if (player->GetQuestObjectiveData(QUEST_A_TWO_IF_BY_SEA, 0))
-                {
-                    if (!Intr)
-                        Intr = true;
-                }
-            }
-
-        }
-        bool Intr;
-        uint32 checkTimer = 4000;
-
-        void UpdateAI(uint32 diff) override
-        {
-            if (checkTimer <= diff)
-            {
-                if (Intr) {
-
-                    //delay 2s
-                    if (Creature* vereesa_windrunner = me->FindNearestCreature(NPC_VEREESA_WINDRUNNER, me->GetVisibilityRange()))
-                    {
-
-                        vereesa_windrunner->GetScheduler().Schedule(2s, 3s, [vereesa_windrunner](TaskContext context)
-                        {
-                            vereesa_windrunner->AI()->Talk(SAY_EVENT_2);
-                        });
-                    }
-
-                    //delay 1s
-                    if (Creature* arator_the_redeemer = me->FindNearestCreature(NPC_ARATOR_THE_REDEEMER, 15.0f))
-                    {
-
-                        arator_the_redeemer->GetScheduler().Schedule(1s, 2s, [arator_the_redeemer](TaskContext context)
-                        {
-                            arator_the_redeemer->AI()->Talk(SAY_EVENT);
-                        });
-                    }
-                    
-                }
-                checkTimer = 4000;
-            }
-            else checkTimer -= diff;
-        }
-
-        
-    };
-
-    CreatureAI* GetAI(Creature* creature) const override
-    {
-        return new npc_vindicator_boros_121756AI(creature);
-    }
-
-    bool OnQuestAccept(Player* player, Creature* creature, Quest const* quest) override
-    {
-        if (quest->GetQuestId() == QUEST_LIGHTS_EXODUS)
-        {
-            //to do
-            creature->AI()->Talk(SAY_EVENT_2);
-            //LET'S GO
-        }
-        return true;
-    }
-
-    bool OnQuestReward(Player* player, Creature* /*creature*/, Quest const* quest, uint32 /*item*/) override
-    {
-        if (quest->GetQuestId() == QUEST_THE_DREAMWAY)
-        {
-            player->RemoveAurasDueToSpell(SPELL_ASSIGN_DRUID_SPELL_BAR);
-         }
-
-        return true;
-    }
 };
 
 // npc_lightforged_beacon_122045

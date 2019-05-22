@@ -519,9 +519,6 @@ UPDATE `broadcast_text` SET `ConditionID`=0, `SoundEntriesID2`=88060, `VerifiedB
 UPDATE `broadcast_text` SET `SoundEntriesID2`=0, `SoundEntriesID1`=88073, `VerifiedBuild`=25996 WHERE `ID`=135808;
 UPDATE `broadcast_text` SET `ConditionID`=0, `SoundEntriesID2`=87087, `VerifiedBuild`=25996 WHERE `ID`=131051;
 UPDATE `broadcast_text` SET `VerifiedBuild`=25996 WHERE `ID`=130807;
-UPDATE `broadcast_text` SET `ConditionID`=0, `SoundEntriesID2`=87088, `VerifiedBuild`=25996 WHERE `ID`=130826;
-UPDATE `broadcast_text` SET `SoundEntriesID2`=0, `SoundEntriesID1`=87998, `VerifiedBuild`=25996 WHERE `ID`=132489;
-UPDATE `broadcast_text` SET `SoundEntriesID2`=0, `SoundEntriesID1`=86878, `VerifiedBuild`=25996 WHERE `ID`=130856;
 UPDATE `broadcast_text` SET `VerifiedBuild`=25996 WHERE `ID`=103914;
 UPDATE `broadcast_text` SET `VerifiedBuild`=25996 WHERE `ID`=125593;
 UPDATE `broadcast_text` SET `VerifiedBuild`=25996 WHERE `ID`=116388;
@@ -1051,9 +1048,6 @@ UPDATE `broadcast_text_locale` SET `VerifiedBuild`=25996 WHERE (`ID`=135806 AND 
 UPDATE `broadcast_text_locale` SET `VerifiedBuild`=25996 WHERE (`ID`=135808 AND `locale`='zhCN');
 UPDATE `broadcast_text_locale` SET `VerifiedBuild`=25996 WHERE (`ID`=131051 AND `locale`='zhCN');
 UPDATE `broadcast_text_locale` SET `VerifiedBuild`=25996 WHERE (`ID`=130807 AND `locale`='zhCN');
-UPDATE `broadcast_text_locale` SET `VerifiedBuild`=25996 WHERE (`ID`=130826 AND `locale`='zhCN');
-UPDATE `broadcast_text_locale` SET `VerifiedBuild`=25996 WHERE (`ID`=132489 AND `locale`='zhCN');
-UPDATE `broadcast_text_locale` SET `VerifiedBuild`=25996 WHERE (`ID`=130856 AND `locale`='zhCN');
 UPDATE `broadcast_text_locale` SET `VerifiedBuild`=25996 WHERE (`ID`=103914 AND `locale`='zhCN');
 UPDATE `broadcast_text_locale` SET `VerifiedBuild`=25996 WHERE (`ID`=125593 AND `locale`='zhCN');
 UPDATE `broadcast_text_locale` SET `VerifiedBuild`=25996 WHERE (`ID`=116388 AND `locale`='zhCN');
