@@ -1,3 +1,16 @@
+UPDATE creature_template SET gossip_menu_id = 435 WHERE entry = 29712;
+UPDATE creature_template_addon SET emote = 379 WHERE entry = 42421;
+DELETE FROM creature_addon WHERE guid IN (21011113, 21011114, 20343390, 20343391);
+UPDATE creature_template SET AIName = "SmartAI" WHERE entry IN (61839, 61840);
+DELETE FROM `smart_scripts` WHERE `entryorguid` IN (61839, 61840, -20343390, -20343391) AND `source_type` = 0;
+INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES 
+(61839, 0, 0, 0, 60, 0, 100, 0, 6000, 11000, 6000, 11000, 10, 396, 273, 274, 6, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lucas Severing - On Update - Play Random Emote (396, 273, 274, 6)"),
+(61839, 0, 1, 0, 60, 0, 100, 0, 0, 0, 300000, 300000, 11, 79968, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lucas Severing - On Update - Cast Spell Self"),
+(61840, 0, 0, 0, 60, 0, 100, 0, 6000, 11000, 6000, 11000, 10, 396, 273, 274, 6, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Naanae - On Update - Play Random Emote (396, 273, 274, 6)"),
+(61840, 0, 1, 0, 60, 0, 100, 0, 0, 0, 300000, 300000, 11, 79977, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Naanae - On Update - Cast Spell Self"),
+(-20343390, 0, 0, 0, 60, 0, 100, 0, 6000, 11000, 6000, 11000, 10, 396, 273, 274, 6, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Stormwind City Guard - Play Random Emote (396, 273, 274, 6)"),
+(-20343391, 0, 0, 0, 60, 0, 100, 0, 6000, 11000, 6000, 11000, 10, 396, 273, 274, 6, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Stormwind City Guard - Play Random Emote (396, 273, 274, 6)");
+
 UPDATE creature SET id = 8666, position_x = -8634.51, position_y = 918.961, position_z = 99.355, orientation = 3.83299, spawntimesecs = 5400, MovementType = 2 WHERE guid = 10651910;
 UPDATE creature SET position_x = -8634.51, position_y = 918.961, position_z = 99.355, orientation = 3.83299 WHERE guid = 10651909;
 

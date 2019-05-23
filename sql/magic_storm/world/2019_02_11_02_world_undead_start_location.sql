@@ -332,3 +332,4 @@ INSERT INTO creature_text (CreatureID, GroupID, ID, Text, Type, Language, Probab
 (1521, 0, 1, "The cold dark beckons...", 12, 0, 100, 24, 0, 0, "Gretchen Dedmar", 39008),
 (1521, 0, 2, "Save me from the cold!", 12, 0, 100, 24, 0, 0, "Gretchen Dedmar", 39009);
 UPDATE creature SET spawndist = 1, MovementType = 1 WHERE guid = 192642 AND id = 3549;
+UPDATE creature_template SET npcflag = 0 WHERE entry = 7980;
