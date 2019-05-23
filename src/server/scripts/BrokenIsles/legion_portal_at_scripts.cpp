@@ -97,5 +97,7 @@ void AddSC_legion_portal_at_scripts()
     new at_legion_instance_portal("at_legion_portal_brh_exit",         1220,    3105.248f, 7543.426f,  31.97511f, 221.8234f);
     new at_legion_instance_portal("at_legion_portal_dht_entrance",     1466,     3247.98f,   1828.7f,   236.767f,  181.846f);
     new at_legion_instance_portal("at_legion_portal_dht_exit",         1220,    3812.909f, 6347.589f,  185.2995f,  218.575f);
+    new at_legion_instance_portal("at_portal_violet_hold_dh_havoc",    1494,    1293.18579f, -262.7205f, 44.364666f, 0.0f);
+    new at_legion_instance_portal("at_portal_violet_hold_dh_havoc_exit", 1220,  -953.287f, 4334.03f, 740.184f, 230.541f);
 
 }
