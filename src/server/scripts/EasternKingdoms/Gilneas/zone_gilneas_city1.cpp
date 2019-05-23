@@ -890,8 +890,8 @@ struct npc_frightened_citizen_34981 : public ScriptedAI
 
     void Reset() override
     {
-        m_playerGUID = Clear();
-        m_doorGUID = Clear();
+        m_playerGUID = ObjectGuid::Empty;
+        m_doorGUID = ObjectGuid::Empty;
         //me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
         me->SetReactState(REACT_PASSIVE);
     }
@@ -1002,8 +1002,8 @@ struct npc_frightened_citizen_35836 : public ScriptedAI
 
     void Reset() override
     {
-        m_playerGUID = Clear();
-        m_doorGUID = Clear();
+        m_playerGUID = ObjectGuid::Empty;
+        m_doorGUID = ObjectGuid::Empty;
         //me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
         me->SetReactState(REACT_PASSIVE);
     }
