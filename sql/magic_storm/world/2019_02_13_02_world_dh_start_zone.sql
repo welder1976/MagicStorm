@@ -837,11 +837,11 @@ UPDATE `creature_template` SET `npcflag` = 2 WHERE `entry` = 114562;
 DELETE FROM `creature_text` WHERE `CreatureID` = 116704;
 INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `BroadcastTextId`, `TextRange`, `Comment`) VALUES
 (116704, 0, 0, "$n, I need to speak with you.", 12, 0, 100, 0, 0, 64599, 100926, 0, "Kor'vas Bloodthorn"),
-(116704,1,0,'Altruis and the others await you at Krasus\' Landing. I\'ll meet you there.',12,0,100,0,0,57295,0,0,'Korvas Bloodthorn to Player'),
-(116704,2,0,'Kayn and the others await you at Krasus\' Landing. I\'ll meet you there.',12,0,100,0,0,57295,0,0,'Korvas Bloodthorn to Player'),
-(116704,3,0,'Every moment we sit idle, the Legion gains strength.',12,0,100,0,0,57295,0,0,'Korvas Bloodthorn to Player'),
-(116704,4,0,'In Lord Illidan\'s absence, you are the ranking member of our order. We can\'t make this decision without you.',12,0,100,0,0,57295,0,0,'Korvas Bloodthorn to Player'),
-(116704,5,0,'Let me know when you\'re ready.',12,0,100,0,0,57295,0,0,'Korvas Bloodthorn to Player');
+(116704, 0, 1, "Altruis and the others await you at Krasus' Landing. I'll meet you there.", 12, 0, 100, 0, 0, 58225, 104250, 0, "Kor'vas Bloodthorn"),
+(116704, 0, 2, "Kayn and the others await you at Krasus' Landing. I'll meet you there.", 12, 0, 100, 0, 0, 58224, 100927, 0, "Kor'vas Bloodthorn"),
+(116704, 0, 3, "Every moment we sit idle, the Legion gains strength.", 12, 0, 100, 0, 0, 64601, 0, 0, "Kor'vas Bloodthorn"),
+(116704, 0, 4, "In Lord Illidan's absence, you are the ranking member of our order. We can't make this decision without you.", 12, 0, 100, 0, 0, 64602, 115395, 0, "Kor'vas Bloodthorn"),
+(116704, 0, 5, "Let me know when you're ready.", 12, 0, 100, 0, 0, 64603, 115396, 0, "Kor'vas Bloodthorn");
 
 UPDATE `creature_template` SET `npcflag` = 2, `AIName` = "", `ScriptName` = "npc_korvas_bloodthorn_summon", `VerifiedBuild` = 25549 WHERE `entry` = 116704;
 DELETE FROM `creature_equip_template` WHERE `CreatureID` = 116704;
