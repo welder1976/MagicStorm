@@ -131,3 +131,18 @@ INSERT INTO creature_text (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Langu
 (8666, 0, 3, "Kitten for sale, looking for a good home.", 12, 7, 100, 0, 0, 0, 4526, 0, "Lil Timmy"),
 (8666, 0, 4, "What does allergic mean anyway? And what does it have to do with either of my kitties?", 12, 7, 100, 0, 0, 0, 4527, 0, "Lil Timmy"),
 (8666, 0, 5, "Will someone please give my little kitten a good home?", 12, 7, 100, 0, 0, 0, 4528, 0, "Lil Timmy");
+
+UPDATE creature SET modelid = 0 WHERE id = 51348;
+UPDATE creature SET curhealth = 116235, spawntimesecs = 300 WHERE guid IN (10645750, 10645755);
+DELETE FROM creature_addon WHERE guid IN (10645750, 188682, 188683, 188684, 188687, 188689, 188690, 189231, 189310, 10645755);
+INSERT INTO creature_addon (guid, path_id, mount, bytes1, bytes2, emote) VALUES
+(10645750, 0, 27913, 50331648, 257, 0),
+(188682, 0, 27913, 50331648, 257, 0),
+(188683, 0, 27913, 50331648, 257, 0),
+(188684, 0, 27913, 50331648, 257, 0),
+(188687, 0, 27913, 50331648, 257, 0),
+(188689, 0, 27913, 50331648, 257, 0),
+(188690, 0, 27913, 50331648, 257, 0),
+(189231, 0, 27913, 50331648, 257, 0),
+(189310, 0, 27913, 50331648, 257, 0),
+(10645755, 0, 27913, 50331648, 257, 0);

@@ -28,3 +28,8 @@ INSERT INTO game_event_creature (eventEntry, guid) VALUES
 (1, 353288),
 (1, 370258),
 (1, 353289);
+
+DELETE FROM game_event_gameobject WHERE guid IN (20373621, 20373673) AND eventEntry = 3;
+INSERT INTO game_event_gameobject (eventEntry, guid) VALUES
+(3, 20373621),
+(3, 20373673);
