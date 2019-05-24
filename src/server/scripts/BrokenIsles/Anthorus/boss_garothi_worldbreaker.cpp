@@ -479,20 +479,40 @@ enum DecimationSpell {
     SPELL_DECIMATION_DAMAGE = 244449, // trigger by 244448
 };
  
-// 244410
-class spell_decimation_aura : public AuraScript
+class spell_gen_antorus_decimation : public SpellScriptLoader
 {
-    PrepareAuraScript(spell_decimation_aura);
- 
-    void HandleRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+public:
+    spell_gen_antorus_decimation() : SpellScriptLoader("spell_gen_antorus_decimation") { }
+
+    class spell_gen_antorus_decimation_AuraScript : public AuraScript
     {
-        if (Unit* caster = GetCaster())
-            caster->CastSpell(GetTarget(), SPELL_DECIMATION_PROJECTILE_AREA_EXPLODE);
-    }
- 
-    void Register() override
+        PrepareAuraScript(spell_gen_antorus_decimation_AuraScript);
+
+        bool Validate(SpellInfo const* /spellInfo/) override
+        {
+            return ValidateSpellInfo({ SPELL_DECIMATOR });
+        }
+
+        void OnRemove(AuraEffect const* /aurEff/, AuraEffectHandleModes /mode/)
+        {
+            if (Unit* caster = GetTarget())
+                if (InstanceScript* instance = caster->GetInstanceScript())
+                {
+                    if (Creature* d = ObjectAccessor::GetCreature(caster, instance->GetGuidData(DATA_GAROTHI_WORLDBREAKER)))
+                        if (d->IsAlive())
+                            d->CastSpell(caster, 244449, true);
+                }
+        }
+
+        void Register() override
+        {
+            AfterEffectRemove += AuraEffectRemoveFn(spell_gen_antorus_decimation_AuraScript::OnRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+        }
+    };
+
+    AuraScript GetAuraScript() const override
     {
-        OnEffectRemove += AuraEffectRemoveFn(spell_decimation_aura::HandleRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+        return new spell_gen_antorus_decimation_AuraScript();
     }
 };
  
@@ -554,7 +574,7 @@ class spell_searing_barrage : public AuraScript
         OnEffectPeriodic += AuraEffectPeriodicFn(spell_searing_barrage::HandlePeriodic, EFFECT_0, SPELL_AURA_PERIODIC_TRIGGER_SPELL);
     }
 };
- 
+
 void AddSC_boss_garothi_worldbreaker()
 {
     RegisterCreatureAI(boss_garothi_worldbreaker);
@@ -563,7 +583,7 @@ void AddSC_boss_garothi_worldbreaker()
     RegisterCreatureAI(npc_garothi_decimator);
     RegisterSpellScript(spell_annihilation);
     RegisterAreaTriggerAI(at_spell_annihilation);
-    RegisterAuraScript(spell_decimation_aura);
+    new spell_gen_antorus_decimation();
     RegisterAuraScript(spell_fel_bombardment_aura);
     RegisterAuraScript(spell_fel_bombardment_aura_missile);
     RegisterAuraScript(spell_searing_barrage);
