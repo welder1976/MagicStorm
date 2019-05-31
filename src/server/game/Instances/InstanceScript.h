@@ -263,6 +263,9 @@ class TC_GAME_API InstanceScript : public ZoneScript
 
         // Play scene by packageId on all players in instance
         void DoPlayScenePackageIdOnPlayers(uint32 scenePackageId);
+           
+        // Play scene by Id on all players in instance
+        void DoPlaySceneOnPlayers(uint32 sceneId);
 
         // Remove all movement forces related to forceGuid
         void DoRemoveForcedMovementsOnPlayers(ObjectGuid forceGuid);
@@ -285,6 +288,9 @@ class TC_GAME_API InstanceScript : public ZoneScript
 
         // Add aura on all players in instance
         void DoAddAuraOnPlayers(uint32 spell);
+
+        /// Do combat stop on all players in instance
+        void DoCombatStopOnPlayers();
 
         // Start movie for all players in instance
         void DoStartMovie(uint32 movieId);

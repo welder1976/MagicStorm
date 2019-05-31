@@ -808,6 +808,17 @@ void InstanceScript::DoPlayScenePackageIdOnPlayers(uint32 scenePackageId)
             if (Player* player = i->GetSource())
                 player->GetSceneMgr().PlaySceneByPackageId(scenePackageId);
 }
+
+void InstanceScript::DoPlaySceneOnPlayers(uint32 sceneId)
+{
+    Map::PlayerList const &PlayerList = instance->GetPlayers();
+
+    if (!PlayerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                player->GetSceneMgr().PlayScene(sceneId);
+}
+
 void InstanceScript::DoRemoveForcedMovementsOnPlayers(ObjectGuid forceGuid)
 {
     Map::PlayerList const &PlayerList = instance->GetPlayers();
@@ -979,6 +990,17 @@ void InstanceScript::DoUpdateAchievementCriteria(CriteriaTypes type, uint32 misc
         for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
             if (Player* player = i->GetSource())
                 player->GetAchievementMgr()->UpdateCriteria(type, miscValue1, miscValue2, 0, unit);
+}
+
+// Add aura on all players in instance
+void InstanceScript::DoAddAuraOnPlayers(uint32 spell)
+{
+    Map::PlayerList const &PlayerList = instance->GetPlayers();
+
+    if (!PlayerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                player->AddAura(spell, player);
 }
 
 // Add aura on all players in instance
