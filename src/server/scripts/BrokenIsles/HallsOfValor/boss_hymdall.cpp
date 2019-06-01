@@ -136,7 +136,7 @@ struct boss_hymdall : public BossAI
 
                 me->SummonGameObject(GOB_HYMDALLS_CACHE, 3509.2f, 528.97f, 616.73f, 0.0f, QuaternionData(), false);
 
-                instance->DoPlayConversation(1185);
+                instance->DoConversation(1185);
             });
 
         }
@@ -343,7 +343,9 @@ struct hymdall_storm_drake : public ScriptedAI
         {
             targetList.remove_if([this](Creature* p_Creature) -> bool
             {
-                if (!me->isInFront(p_Creature, M_PI / 7.0f))
+                float arc = 7.0f;
+
+                if (!me->isInFront(p_Creature, M_PI / arc))
                     return true;
 
                 return false;

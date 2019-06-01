@@ -1003,22 +1003,9 @@ void InstanceScript::DoAddAuraOnPlayers(uint32 spell)
                 player->AddAura(spell, player);
 }
 
-// Add aura on all players in instance
-void InstanceScript::DoAddAuraOnPlayers(uint32 spell)
-{
-    Map::PlayerList const &PlayerList = instance->GetPlayers();
-
-    if (!PlayerList.isEmpty())
-        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
-            if (Player* player = i->GetSource())
-                player->AddAura(spell, player);
-}
-
 void InstanceScript::RespawnCreature(uint64 p_Guid /*= 0*/)
 {
     TC_LOG_ERROR("scripts", "RespawnCreature start %s", "");
-
-
 
     Map::PlayerList const& playerList = instance->GetPlayers();
     if (!playerList.isEmpty())
@@ -1030,8 +1017,6 @@ void InstanceScript::RespawnCreature(uint64 p_Guid /*= 0*/)
                 Trinity::RespawnDo u_do;
                 Trinity::WorldObjectWorker<Trinity::RespawnDo> worker(player, u_do);
                 Cell::VisitGridObjects(player, worker, player->GetGridActivationRange()*1000);
-
-
             }
 
     }
