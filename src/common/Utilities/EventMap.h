@@ -404,6 +404,8 @@ private:
     */
     EventStore _eventMap;
 
+    std::map<uint32 /*eventId*/, uint32 /*timeLeft*/> _pausedEvents;
+
     /**
     * @name _lastEvent
     * @brief Stores information on the most recently executed event
