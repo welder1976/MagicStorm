@@ -798,6 +798,24 @@ void InstanceScript::DoCastSpellOnPlayers(uint32 spell, Unit* caster /*= nullptr
     }
 }
 
+void InstanceScript::DoCombatStopOnPlayers()
+{
+    Map::PlayerList const& l_PlayerList = instance->GetPlayers();
+    if (l_PlayerList.isEmpty())
+        return;
+
+    for (Map::PlayerList::const_iterator l_Iter = l_PlayerList.begin(); l_Iter != l_PlayerList.end(); ++l_Iter)
+    {
+        if (Player* l_Player = l_Iter->GetSource())
+        {
+            if (!l_Player->IsInCombat())
+                continue;
+
+            l_Player->CombatStop();
+        }
+    }
+}
+
 // Cast spell on all players in instance
 void InstanceScript::DoPlayScenePackageIdOnPlayers(uint32 scenePackageId)
 {

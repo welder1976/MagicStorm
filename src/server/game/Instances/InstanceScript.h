@@ -261,6 +261,9 @@ class TC_GAME_API InstanceScript : public ZoneScript
         // Cast spell on all players in instance
         void DoCastSpellOnPlayers(uint32 spell, Unit* caster = nullptr, bool triggered = true);
 
+        // Do combat stop on all players in instance
+        void DoCombatStopOnPlayers();
+
         // Play scene by packageId on all players in instance
         void DoPlayScenePackageIdOnPlayers(uint32 scenePackageId);
            
@@ -288,9 +291,6 @@ class TC_GAME_API InstanceScript : public ZoneScript
 
         // Add aura on all players in instance
         void DoAddAuraOnPlayers(uint32 spell);
-
-        /// Do combat stop on all players in instance
-        void DoCombatStopOnPlayers();
 
         // Start movie for all players in instance
         void DoStartMovie(uint32 movieId);
