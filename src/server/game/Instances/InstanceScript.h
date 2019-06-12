@@ -97,7 +97,7 @@ enum DoorType
 enum ChallengeMode
 {
     GOB_CHALLENGER_DOOR     = 239408,
-    GOB_CHALLENGER_DOOR_LINE235 = 239323,
+	GOB_CHALLENGER_DOOR_LINE235 = 239323,
     GO_FONT_OF_POWER        = 246779,
 
     SPELL_CHALLENGER_MIGHT  = 206150,
@@ -225,6 +225,26 @@ class TC_GAME_API InstanceScript : public ZoneScript
         // * use HandleGameObject(0, boolen, GO); in OnObjectCreate in instance scripts
         // * use HandleGameObject(GUID, boolen, NULL); in any other script
         void HandleGameObject(ObjectGuid guid, bool open, GameObject* go = nullptr);
+		
+		//DoAddItemOnPlayers
+		void DoAddItemOnPlayers (uint32 entry, uint32 count);
+		
+		// Create Conversation for all players in instance
+        void DoConversation(uint32 conversationId);
+
+        void DoDelayedConversation(uint32 delay, uint32 conversationId);
+		
+		// Resurrect all players in instance
+        void InstanceScript::DoResurrectPlayers(float restore_percent);
+		
+		// Remove item on all players in instance
+        void DoDestroyItemCountOnPlayers(uint32 item, uint32 count);
+		
+		// Add item by class on all players in instance
+        void DoAddItemByClassOnPlayers(uint8 classId, uint32 itemId, uint32 count);
+
+        // Remove item by class on all players in instance
+        void DoDestroyItemCountByClassOnPlayers(uint8 classId, uint32 item, uint32 count);
 
         // Change active state of doors or buttons
         void DoUseDoorOrButton(ObjectGuid guid, uint32 withRestoreTime = 0, bool useAlternativeState = false);
@@ -242,12 +262,6 @@ class TC_GAME_API InstanceScript : public ZoneScript
         // Update Achievement Criteria for all players in instance
         void DoUpdateCriteria(CriteriaTypes type, uint32 miscValue1 = 0, uint32 miscValue2 = 0, Unit* unit = NULL);
 
-        // Complete Achievement for all players in instance
-        void DoCompletedAchievement(AchievementEntry const* entry);
-		
-		// Send Event For Scenario
-        void DoSendEventScenario(uint32 eventId);
-
         // Start/Stop Timed Achievement Criteria for all players in instance
         void DoStartCriteriaTimer(CriteriaTimedTypes type, uint32 entry);
         void DoStopCriteriaTimer(CriteriaTimedTypes type, uint32 entry);
@@ -261,14 +275,8 @@ class TC_GAME_API InstanceScript : public ZoneScript
         // Cast spell on all players in instance
         void DoCastSpellOnPlayers(uint32 spell, Unit* caster = nullptr, bool triggered = true);
 
-        // Do combat stop on all players in instance
-        void DoCombatStopOnPlayers();
-
         // Play scene by packageId on all players in instance
         void DoPlayScenePackageIdOnPlayers(uint32 scenePackageId);
-           
-        // Play scene by Id on all players in instance
-        void DoPlaySceneOnPlayers(uint32 sceneId);
 
         // Remove all movement forces related to forceGuid
         void DoRemoveForcedMovementsOnPlayers(ObjectGuid forceGuid);
@@ -278,8 +286,8 @@ class TC_GAME_API InstanceScript : public ZoneScript
         void DoModifyPlayerCurrencies(uint32 id, int32 value);
 
         void DoNearTeleportPlayers(const Position pos, bool casting = false);
-
-        void DoTeleportPlayers(uint32 mapId, const Position pos);
+		
+		void DoTeleportPlayers(uint32 mapId, const Position pos);
 
         void DoKilledMonsterKredit(uint32 questId, uint32 entry, ObjectGuid guid = ObjectGuid::Empty);
 
@@ -289,28 +297,20 @@ class TC_GAME_API InstanceScript : public ZoneScript
         // Update Achievement Criteria for all players in instance
         void DoUpdateAchievementCriteria(CriteriaTypes type, uint32 miscValue1 = 0, uint32 miscValue2 = 0, Unit* unit = nullptr);
 
-        // Add aura on all players in instance
+        // Complete Achievement for all players in instance
+        void DoCompletedAchievement(AchievementEntry const* entry);
+		
+	    // Send Event For Scenario
+        void DoSendEventScenario(uint32 eventId /*= 0*/);
+		
+		// Add aura on all players in instance
         void DoAddAuraOnPlayers(uint32 spell);
 
         // Start movie for all players in instance
         void DoStartMovie(uint32 movieId);
-
-        /// Create Conversation for all players in instance
-        void DoConversation(uint32 conversationId);
-
-        void DoDelayedConversation(uint32 delay, uint32 conversationId);
-
-	// Add phase on all players in instance
+		
+		// Add phase on all players in instance
         void DoAddPhaseOnPlayers(uint32 phase);
-
-        // Add item by class on all players in instance
-        void DoAddItemByClassOnPlayers(uint8 classId, uint32 itemId, uint32 count);
-
-        // Add item on all players in instance
-        void DoAddItemOnPlayers(uint32 itemId, uint32 count);
-
-        // Remove item by class on all players in instance
-        void DoDestroyItemCountByClassOnPlayers(uint8 classId, uint32 item, uint32 count);
 
         // Remove phase on all players in instance
         void DoRemovePhaseOnPlayers(uint32 phase);
@@ -345,8 +345,8 @@ class TC_GAME_API InstanceScript : public ZoneScript
 
         // Sets a temporary entrance that does not get saved to db
         void SetTemporaryEntranceLocation(uint32 worldSafeLocationId) { _temporaryEntranceId = worldSafeLocationId; }
-
-        // Get's the current entrance id
+		
+		// Get's the current entrance id
         uint32 GetEntranceLocation() const { uint32 locationId = _temporaryEntranceId ? _temporaryEntranceId : _entranceId; OnGetEntranceLocation(locationId); return locationId; }
 
         virtual void OnGetEntranceLocation(uint32& /*worldSafeLocationId*/) const { }
@@ -374,8 +374,8 @@ class TC_GAME_API InstanceScript : public ZoneScript
         void SendBossKillCredit(uint32 encounterId);
 
         virtual void FillInitialWorldStates(WorldPackets::WorldState::InitWorldStates& /*packet*/) { }
-
-        bool IsScenarioComplete()  { return m_IsScenarioComplete; }
+		
+		bool IsScenarioComplete()  { return m_IsScenarioComplete; }
         bool m_IsScenarioComplete;
         void CompleteScenario();
         void CompleteCurrStep();
@@ -561,6 +561,13 @@ class TC_GAME_API InstanceScript : public ZoneScript
 
         void SetChallengeDoorPos(Position pos) { _challengeModeDoorPosition = pos; }
         virtual void SpawnChallengeModeRewardChest() { }
+		
+		void SetFontOfPowerPos(Position pos) { _challengeModeFontOfPowerPosition = pos; }
+        void SetFontOfPowerPos2(Position pos) { _challengeModeFontOfPowerPosition2 = pos; }
+        void SpawnFontOfPower();
+		
+		virtual void ShowChallengeDoor() { }
+        virtual void HideChallengeDoor() { }
 
     protected:
         void SetHeaders(std::string const& dataHeaders);
@@ -617,6 +624,8 @@ class TC_GAME_API InstanceScript : public ZoneScript
         uint32 _challengeModeStartTime;
         uint32 _challengeModeDeathCount;
         Optional<Position> _challengeModeDoorPosition;
+        Optional<Position> _challengeModeFontOfPowerPosition;
+        Optional<Position> _challengeModeFontOfPowerPosition2;
 
     #ifdef TRINITY_API_USE_DYNAMIC_LINKING
         // Strong reference to the associated script module

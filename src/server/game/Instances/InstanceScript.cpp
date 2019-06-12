@@ -79,7 +79,7 @@ _challengeModeStarted(false), _challengeModeLevel(0), _challengeModeStartTime(0)
     module_reference = sScriptMgr->AcquireModuleReferenceOfScriptName(scriptname);
 #endif // #ifndef TRINITY_API_USE_DYNAMIC_LINKING
 
-    m_IsScenarioComplete = false;
+m_IsScenarioComplete = false;
 
     m_ChallengeStarted = false;
     m_ConditionCompleted = false;
@@ -694,26 +694,6 @@ void InstanceScript::DoSendNotifyToInstance(char const* format, ...)
     }
 }
 
-// Add phase on all players in instance
-void InstanceScript::DoAddPhaseOnPlayers(uint32 phase)
-{
-    Map::PlayerList const& playerList = instance->GetPlayers();
-    if (!playerList.isEmpty())
-        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
-            if (Player* player = i->GetSource())
-                PhasingHandler::AddPhase(player, phase, true);
-}
-
-// Remove phase on all players in instance
-void InstanceScript::DoRemovePhaseOnPlayers(uint32 phase)
-{
-    Map::PlayerList const& playerList = instance->GetPlayers();
-    if (!playerList.isEmpty())
-        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
-            if (Player* player = i->GetSource())
-                PhasingHandler::RemovePhase(player, phase, true);
-}
-
 // Update Achievement Criteria for all players in instance
 void InstanceScript::DoUpdateCriteria(CriteriaTypes type, uint32 miscValue1 /*= 0*/, uint32 miscValue2 /*= 0*/, Unit* unit /*= NULL*/)
 {
@@ -798,24 +778,6 @@ void InstanceScript::DoCastSpellOnPlayers(uint32 spell, Unit* caster /*= nullptr
     }
 }
 
-void InstanceScript::DoCombatStopOnPlayers()
-{
-    Map::PlayerList const& l_PlayerList = instance->GetPlayers();
-    if (l_PlayerList.isEmpty())
-        return;
-
-    for (Map::PlayerList::const_iterator l_Iter = l_PlayerList.begin(); l_Iter != l_PlayerList.end(); ++l_Iter)
-    {
-        if (Player* l_Player = l_Iter->GetSource())
-        {
-            if (!l_Player->IsInCombat())
-                continue;
-
-            l_Player->CombatStop();
-        }
-    }
-}
-
 // Cast spell on all players in instance
 void InstanceScript::DoPlayScenePackageIdOnPlayers(uint32 scenePackageId)
 {
@@ -826,17 +788,6 @@ void InstanceScript::DoPlayScenePackageIdOnPlayers(uint32 scenePackageId)
             if (Player* player = i->GetSource())
                 player->GetSceneMgr().PlaySceneByPackageId(scenePackageId);
 }
-
-void InstanceScript::DoPlaySceneOnPlayers(uint32 sceneId)
-{
-    Map::PlayerList const &PlayerList = instance->GetPlayers();
-
-    if (!PlayerList.isEmpty())
-        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
-            if (Player* player = i->GetSource())
-                player->GetSceneMgr().PlayScene(sceneId);
-}
-
 void InstanceScript::DoRemoveForcedMovementsOnPlayers(ObjectGuid forceGuid)
 {
     Map::PlayerList const &PlayerList = instance->GetPlayers();
@@ -936,67 +887,24 @@ void InstanceScript::DoStartMovie(uint32 movieId)
                 player->SendMovieStart(movieId);
 }
 
-/// Create Conversation for all players in instance
-void InstanceScript::DoConversation(uint32 conversationId)
+// Add phase on all players in instance
+void InstanceScript::DoAddPhaseOnPlayers(uint32 phase)
 {
-    if (!conversationId)
-    {
-        TC_LOG_ERROR("scripts", "DoConversation called for not existing conversationId %u", conversationId);
-        return;
-    }
-
     Map::PlayerList const& playerList = instance->GetPlayers();
     if (!playerList.isEmpty())
         for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
             if (Player* player = i->GetSource())
-                Conversation::CreateConversation(conversationId, player, player->GetPosition(), { player->GetGUID() });
+                PhasingHandler::AddPhase(player, phase, true);
 }
 
-void InstanceScript::DoDelayedConversation(uint32 delay, uint32 conversationId)
-{
-    if (!conversationId)
-    {
-        TC_LOG_ERROR("scripts", "DoDelayedConversation called for not existing conversationId %u", conversationId);
-        return;
-    }
-
-    Map::PlayerList const& playerList = instance->GetPlayers();
-    if (!playerList.isEmpty())
-        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
-            if (Player* player = i->GetSource())
-                player->AddDelayedConversation(delay, conversationId);
-}
-
-// Add item on all players in instance
-void InstanceScript::DoAddItemOnPlayers(uint32 itemId, uint32 count)
+// Remove phase on all players in instance
+void InstanceScript::DoRemovePhaseOnPlayers(uint32 phase)
 {
     Map::PlayerList const& playerList = instance->GetPlayers();
     if (!playerList.isEmpty())
         for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
             if (Player* player = i->GetSource())
-                player->AddItem(itemId, count);
-}
-
-// Remove item by class on all players in instance
-void InstanceScript::DoDestroyItemCountByClassOnPlayers(uint8 classId, uint32 item, uint32 count)
-{
-    Map::PlayerList const& playerList = instance->GetPlayers();
-    if (!playerList.isEmpty())
-        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
-            if (Player* player = i->GetSource())
-                if (player->getClass() == classId)
-                    player->DestroyItemCount(item, count, true);
-}
-
-// Add item by class on all players in instance
-void InstanceScript::DoAddItemByClassOnPlayers(uint8 classId, uint32 itemId, uint32 count)
-{
-    Map::PlayerList const& playerList = instance->GetPlayers();
-    if (!playerList.isEmpty())
-        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
-            if (Player* player = i->GetSource())
-                if(player->getClass()== classId)
-                    player->AddItem(itemId, count);
+                PhasingHandler::RemovePhase(player, phase, true);
 }
 
 // Update Achievement Criteria for all players in instance
@@ -1025,6 +933,8 @@ void InstanceScript::RespawnCreature(uint64 p_Guid /*= 0*/)
 {
     TC_LOG_ERROR("scripts", "RespawnCreature start %s", "");
 
+
+
     Map::PlayerList const& playerList = instance->GetPlayers();
     if (!playerList.isEmpty())
     {
@@ -1035,6 +945,8 @@ void InstanceScript::RespawnCreature(uint64 p_Guid /*= 0*/)
                 Trinity::RespawnDo u_do;
                 Trinity::WorldObjectWorker<Trinity::RespawnDo> worker(player, u_do);
                 Cell::VisitGridObjects(player, worker, player->GetGridActivationRange()*1000);
+
+
             }
 
     }
@@ -1479,9 +1391,9 @@ void InstanceScript::StartChallengeMode(uint8 level)
 
     Map::PlayerList const &players = instance->GetPlayers();
     for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
-    {
+	{
         CastChallengePlayerSpell(itr->GetSource());
-        // HOOK to PLAYERSCRIPT
+		// HOOK to PLAYERSCRIPT
         sScriptMgr->OnPlayerStartChallengeMode(itr->GetSource(), level);
     }
 
@@ -1493,6 +1405,8 @@ void InstanceScript::StartChallengeMode(uint8 level)
 
         if (GameObject* door = GetGameObject(GOB_CHALLENGER_DOOR))
             DoUseDoorOrButton(door->GetGUID(), WEEK);
+		
+		HideChallengeDoor();
     });
 }
 
@@ -1646,4 +1560,94 @@ void InstanceScript::DoCompletedAchievement(AchievementEntry const* entry)
         for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             if (Player* player = i->GetSource())
                 player->CompletedAchievement(entry);
+}
+
+/// Create Conversation for all players in instance
+void InstanceScript::DoConversation(uint32 conversationId)
+{
+    if (!conversationId)
+    {
+        TC_LOG_ERROR("scripts", "DoConversation called for not existing conversationId %u", conversationId);
+        return;
+    }
+
+    Map::PlayerList const& playerList = instance->GetPlayers();
+    if (!playerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                Conversation::CreateConversation(conversationId, player, player->GetPosition(), { player->GetGUID() });
+}
+
+void InstanceScript::DoDelayedConversation(uint32 delay, uint32 conversationId)
+{
+    if (!conversationId)
+    {
+        TC_LOG_ERROR("scripts", "DoDelayedConversation called for not existing conversationId %u", conversationId);
+        return;
+    }
+
+    Map::PlayerList const& playerList = instance->GetPlayers();
+    if (!playerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                player->AddDelayedConversation(delay, conversationId);
+}
+
+// Add item on all players in instance
+void InstanceScript::DoAddItemOnPlayers(uint32 itemId, uint32 count)
+{
+    Map::PlayerList const& playerList = instance->GetPlayers();
+    if (!playerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                player->AddItem(itemId, count);
+}
+
+// Remove item on all players in instance
+void InstanceScript::DoDestroyItemCountOnPlayers(uint32 item, uint32 count)
+{
+    Map::PlayerList const& playerList = instance->GetPlayers();
+    if (!playerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                player->DestroyItemCount(item, count, true);
+}
+// Add item by class on all players in instance
+void InstanceScript::DoAddItemByClassOnPlayers(uint8 classId, uint32 itemId, uint32 count)
+{
+    Map::PlayerList const& playerList = instance->GetPlayers();
+    if (!playerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                if(player->getClass()== classId)
+                    player->AddItem(itemId, count);
+}
+
+// Remove item by class on all players in instance
+void InstanceScript::DoDestroyItemCountByClassOnPlayers(uint8 classId, uint32 item, uint32 count)
+{
+    Map::PlayerList const& playerList = instance->GetPlayers();
+    if (!playerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                if (player->getClass() == classId)
+                    player->DestroyItemCount(item, count, true);
+}
+
+// Resurrect all players in instance
+void InstanceScript::DoResurrectPlayers(float restore_percent)
+{
+    Map::PlayerList const& playerList = instance->GetPlayers();
+    if (!playerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                player->ResurrectPlayer(restore_percent);
+}
+
+void InstanceScript::SpawnFontOfPower()
+{
+    if (_challengeModeFontOfPowerPosition.is_initialized() && instance->IsMythic())
+        instance->SummonGameObject(GO_FONT_OF_POWER, *_challengeModeFontOfPowerPosition, QuaternionData(), WEEK);
+    if (_challengeModeFontOfPowerPosition2.is_initialized() && instance->IsMythic())
+        instance->SummonGameObject(GO_FONT_OF_POWER, *_challengeModeFontOfPowerPosition2, QuaternionData(), WEEK);
 }
