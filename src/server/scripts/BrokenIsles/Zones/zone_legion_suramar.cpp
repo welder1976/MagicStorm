@@ -16,6 +16,28 @@
 */
 
 #include "ScriptMgr.h"
+#include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
+#include "ScriptedEscortAI.h"
+#include "SpellScript.h"
+#include "SpellMgr.h"
+#include "Player.h"
+#include "QuestPackets.h"
+#include "ScenePackets.h"
+#include "GameObjectAI.h"
+#include "ObjectAccessor.h"
+#include "SpellAuras.h"
+#include "LFGMgr.h"
+#include "MotionMaster.h"
+#include "ObjectMgr.h"
+#include "InstanceScript.h"
+#include "CriteriaHandler.h"
+#include "SceneMgr.h"
+#include "Creature.h"
+#include "GameObject.h"
+#include "PhasingHandler.h"
+#include "Log.h"
+#include "Object.h"
 
 enum SPELLS
 {
@@ -89,29 +111,6 @@ public:
         }
     }
 };
-
-#include "ScriptedCreature.h"
-#include "ScriptedGossip.h"
-#include "ScriptedEscortAI.h"
-#include "SpellScript.h"
-#include "SpellMgr.h"
-#include "Player.h"
-#include "QuestPackets.h"
-#include "ScenePackets.h"
-#include "GameObjectAI.h"
-#include "ObjectAccessor.h"
-#include "SpellAuras.h"
-#include "LFGMgr.h"
-#include "MotionMaster.h"
-#include "ObjectMgr.h"
-#include "InstanceScript.h"
-#include "CriteriaHandler.h"
-#include "SceneMgr.h"
-#include "Creature.h"
-#include "GameObject.h"
-#include "PhasingHandler.h"
-#include "Log.h"
-#include "Object.h"
 
 enum
 {
