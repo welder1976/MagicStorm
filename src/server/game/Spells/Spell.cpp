@@ -6903,7 +6903,10 @@ SpellCastResult Spell::CheckItems(uint32* param1 /*= nullptr*/, uint32* param2 /
                         }
                     }
 
-                    if (!HaveBonus)
+			if (Bonusfields.empty()) 
+			HaveBonus = true;
+
+		        if (!HaveBonus)
                         return SPELL_FAILED_NO_VALID_TARGETS;
                 }
                 else if (m_spellInfo->Id == 225158 || m_spellInfo->Id == 225160 || m_spellInfo->Id == 225161) // Upgrade Armor Class Halls
@@ -6968,7 +6971,7 @@ SpellCastResult Spell::CheckItems(uint32* param1 /*= nullptr*/, uint32* param2 /
                         151649, 151821, 151642, 151808, 151809, 151810, 151646, 151787, 151786, 151814, 151640, 151795, 151796,
                         151644, 151782, 151812, 151813, 151650, 151822, 151823, 151824, 151647, 151785, 151819, 151641, 151803,
                         151805, 151807, 144259, 150936, 151817, 151815, 151818, 151639, 151798, 151799, 151643, 151784, 151788,
-                        151811, 151636, 151783, 151800, 151801, 151802, 146666, 146667, 146668, 146669
+                        151811, 151636, 151783, 151800, 151801, 151802, 146666, 146667, 146668, 146669, 152626
                     };
 
                     bool ItemFound = false;

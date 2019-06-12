@@ -210,8 +210,30 @@ public:
     }
 };
 
+struct npc_captain_angelica_108920 : public ScriptedAI
+{
+    npc_captain_angelica_108920(Creature* creature) : ScriptedAI(creature) { }
+
+    void sGossipSelect(Player* player, uint32 /*menuId*/, uint32 gossipListId)
+    {
+        CloseGossipMenuFor(player);    
+        if (player->HasQuest(QUEST_THE_BATTLE_FOR_BROKEN_SHORE))
+        {
+            player->KilledMonsterCredit(108920);
+            player->CastSpell(player, 216356, true);//leave-for-broken-shore-client-scene
+            me->GetScheduler().Schedule(Milliseconds(9000), [player](TaskContext context)
+            {
+                player->TeleportTo(1460, Position(440.81f, 2025.0109f, 4.4497f, 0.4517f));
+            });
+          
+        }
+            
+    }
+};
+
 void AddSC_scenario_artifact_brokenshore()
 {
     RegisterInstanceScript(scenario_artifact_brokenshore, 1500);
     new scene_malgalor_arrives();
+    new npc_captain_angelica_108920 
 }
