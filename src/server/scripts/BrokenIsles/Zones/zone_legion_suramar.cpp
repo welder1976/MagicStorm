@@ -90,8 +90,268 @@ public:
     }
 };
 
+#include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
+#include "ScriptedEscortAI.h"
+#include "SpellScript.h"
+#include "SpellMgr.h"
+#include "Player.h"
+#include "QuestPackets.h"
+#include "ScenePackets.h"
+#include "GameObjectAI.h"
+#include "ObjectAccessor.h"
+#include "SpellAuras.h"
+#include "LFGMgr.h"
+#include "MotionMaster.h"
+#include "ObjectMgr.h"
+#include "InstanceScript.h"
+#include "CriteriaHandler.h"
+#include "SceneMgr.h"
+#include "Creature.h"
+#include "GameObject.h"
+#include "PhasingHandler.h"
+#include "Log.h"
+#include "Object.h"
+
+enum
+{
+///Quest
+	MAKE_YOUR_MARK = 42792,
+};
+
+struct npc_cyrille_107350 : public ScriptedAI
+{
+    npc_cyrille_107350(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    {
+        if (Player* player = clicker->ToPlayer())
+        {
+            if (player->HasQuest(MAKE_YOUR_MARK))
+            {
+                player->KilledMonsterCredit(107350);//52391
+            }
+            if (player->HasQuest(MAKE_YOUR_MARK))
+            {
+                player->KilledMonsterCredit(107350);
+            }
+        }
+    }
+
+	void MoveInLineOfSight(Unit* who) override
+    {
+        if (Player* player = who->ToPlayer())
+        {
+            if (me->IsWithinDist(player, 15.0f, false))
+            {
+                if (player->HasQuest(MAKE_YOUR_MARK))
+                    me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+            }
+        }
+    }
+};
+
+struct npc_lorin_107349 : public ScriptedAI
+{
+    npc_lorin_107349(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    {
+        if (Player* player = clicker->ToPlayer())
+        {
+            if (player->HasQuest(MAKE_YOUR_MARK))
+            {
+                player->KilledMonsterCredit(107349);
+            }
+            if (player->HasQuest(MAKE_YOUR_MARK))
+            {
+                player->KilledMonsterCredit(107349);
+            }
+        }
+    }
+
+	void MoveInLineOfSight(Unit* who) override
+    {
+        if (Player* player = who->ToPlayer())
+        {
+            if (me->IsWithinDist(player, 15.0f, false))
+            {
+                if (player->HasQuest(MAKE_YOUR_MARK))
+                    me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+            }
+        }
+    }
+};
+
+struct npc_sylessa_107348 : public ScriptedAI
+{
+    npc_sylessa_107348(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    {
+        if (Player* player = clicker->ToPlayer())
+        {
+            if (player->HasQuest(MAKE_YOUR_MARK))
+            {
+                player->KilledMonsterCredit(107348);
+            }
+            if (player->HasQuest(MAKE_YOUR_MARK))
+            {
+                player->KilledMonsterCredit(107348);
+            }
+        }
+    }
+
+	void MoveInLineOfSight(Unit* who) override
+    {
+        if (Player* player = who->ToPlayer())
+        {
+            if (me->IsWithinDist(player, 15.0f, false))
+            {
+                if (player->HasQuest(MAKE_YOUR_MARK))
+                    me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+            }
+        }
+    }
+};
+
+// quest 41878
+class npc_gondolier_107225 : public CreatureScript
+{
+public:
+    npc_gondolier_107225() : CreatureScript("npc_gondolier_107225") { }
+     struct npc_gondolier_107225AI : public ScriptedAI
+    {
+        npc_gondolier_107225AI(Creature* creature) : ScriptedAI(creature) { }
+         void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(41878) == QUEST_STATUS_INCOMPLETE)
+                {    
+                    if (player->IsInDist(me, 9.0f))
+                    {
+                       player->KilledMonsterCredit(107225);
+                    }
+                }
+            }
+        }
+    };
+     CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_gondolier_107225AI(creature);
+    }
+};
+
+// quest 42487
+class npc_thallyssra_97140 : public CreatureScript
+{
+public:
+    npc_thallyssra_97140() : CreatureScript("npc_thallyssra_97140") { }
+     struct npc_thallyssra_97140AI : public ScriptedAI
+    {
+        npc_thallyssra_97140AI(Creature* creature) : ScriptedAI(creature) { }
+         void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(42487) == QUEST_STATUS_INCOMPLETE)
+                {    
+                    if (player->IsInDist(me, 12.0f))
+                    {
+                       player->KilledMonsterCredit(97140);
+                    }
+                }
+            }
+        }
+    };
+     CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_thallyssra_97140AI(creature);
+    }
+};
+
+// quest 40010
+class npc_zoneexplorer_113893 : public CreatureScript
+{
+public:
+    npc_zoneexplorer_113893() : CreatureScript("npc_zoneexplorer_113893") { }
+     struct npc_zoneexplorer_113893AI : public ScriptedAI
+    {
+        npc_zoneexplorer_113893AI(Creature* creature) : ScriptedAI(creature) { }
+         void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(40010) == QUEST_STATUS_INCOMPLETE)
+                {    
+                    if (player->IsInDist(me, 12.0f))
+                    {
+                       player->KilledMonsterCredit(113893);
+                    }
+                }
+            }
+        }
+    };
+     CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_zoneexplorer_113893AI(creature);
+    }
+};
+
+class npc_zoneexplorer_113894 : public CreatureScript
+{
+public:
+    npc_zoneexplorer_113894() : CreatureScript("npc_zoneexplorer_113894") { }
+     struct npc_zoneexplorer_113894AI : public ScriptedAI
+    {
+        npc_zoneexplorer_113894AI(Creature* creature) : ScriptedAI(creature) { }
+         void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(40010) == QUEST_STATUS_INCOMPLETE)
+                {    
+                    if (player->IsInDist(me, 2.0f))
+                    {
+                       player->KilledMonsterCredit(113894);
+                    }
+                }
+            }
+        }
+    };
+     CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_zoneexplorer_113894AI(creature);
+    }
+};
+
+// 102600
+class npc_gossip_102600 : public CreatureScript
+{
+public:
+   npc_gossip_102600() : CreatureScript("npc_gossip_102600") { }
+
+   bool OnGossipHello(Player* player, Creature* creature) override
+   {
+        if (player->GetQuestStatus(40010) == QUEST_STATUS_INCOMPLETE)
+        {
+          player->KilledMonsterCredit(102600);
+        }
+        return true;
+	}
+};
+
 void AddSC_suramar()
 {
 
-    new Player_Spell_Masquerade();
+     new Player_Spell_Masquerade();
+     RegisterCreatureAI(npc_cyrille_107350);
+	RegisterCreatureAI(npc_lorin_107349);
+	RegisterCreatureAI(npc_sylessa_107348);
+	new npc_gondolier_107225();
+	new npc_thallyssra_97140();
+	new npc_zoneexplorer_113893();
+	new npc_zoneexplorer_113894();
+	new npc_gossip_102600();
 }

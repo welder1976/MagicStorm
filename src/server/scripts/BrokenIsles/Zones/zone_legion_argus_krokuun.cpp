@@ -1067,6 +1067,35 @@ struct npc_imp_mother_laglath : public ScriptedAI
     }
 };
 
+class npc_quest_48560 : public CreatureScript
+{
+public:
+    npc_quest_48560() : CreatureScript("npc_quest_48560") { }
+
+    bool OnQuestReward(Player* player, Creature* creature, const Quest *_Quest, uint32 /*slot*/) override
+    {
+        if (_Quest->GetQuestId() == 48560)
+        {
+            if (AchievementEntry const *ForgedforBattle = sAchievementStore.LookupEntry(12072))
+            {
+                player->CompletedAchievement(ForgedforBattle);
+            }
+        }
+
+        return true;
+    }
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_quest_48560AI(creature);
+    }
+
+    struct npc_quest_48560AI : public ScriptedAI
+    {
+        npc_quest_48560AI(Creature* creature) : ScriptedAI(creature) { }
+    };
+};
+
 void AddSC_zone_argus_krokuun()
 {
     new zone_argus_krokuun();
@@ -1075,6 +1104,7 @@ void AddSC_zone_argus_krokuun()
     new npc_vereesa_windrunner_121754();
     RegisterCreatureAI(npc_lady_liadrin_122065);
     new npc_vindicator_boros_121756();
+    new npc_quest_48560();
     new npc_lightforged_beacon_122045();
     new play_to_argus_cast_to_argus();
     new npc_prophet_velen_120977();

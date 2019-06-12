@@ -242,7 +242,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS]=
     &Spell::EffectForceCast,                                //160 SPELL_EFFECT_FORCE_CAST_2
     &Spell::EffectNULL,                                     //161 SPELL_EFFECT_TALENT_SPEC_COUNT        second talent spec (learn/revert)
     &Spell::EffectActivateSpec,                             //162 SPELL_EFFECT_TALENT_SPEC_SELECT       activate primary/secondary spec
-    &Spell::EffectUnused,                                   //163 SPELL_EFFECT_OBLITERATE_ITEM
+    &Spell::EffectObliterateItem,                           //163 SPELL_EFFECT_OBLITERATE_ITEM
     &Spell::EffectRemoveAura,                               //164 SPELL_EFFECT_REMOVE_AURA
     &Spell::EffectDamageFromMaxHealthPCT,                   //165 SPELL_EFFECT_DAMAGE_FROM_MAX_HEALTH_PCT
     &Spell::EffectGiveCurrency,                             //166 SPELL_EFFECT_GIVE_CURRENCY
@@ -1445,11 +1445,23 @@ void Spell::DoCreateItem(uint32 /*i*/, uint32 itemtype, uint8 context /*= 0*/, s
             return;
         }
     }
+	
+	std::vector<int32> bonusesListIDs;
+    bonusesListIDs.insert(bonusesListIDs.end(), bonusListIDs.begin(), bonusListIDs.end());
+    /// HACK: Added bonus and Random bonus for Craft items "Legion"
+    if (num_to_add && bgType == 0 && m_spellInfo->HasAttribute(SPELL_ATTR0_TRADESPELL) && pProto->GetBaseItemLevel() >= 810 && pProto->GetBaseItemLevel() <= 815)
+    {
+        // bonus obliterum 0/10
+        bonusesListIDs.push_back(596); // TODO get bonus from ItemBonusTree
+        std::vector<int32> randomBonuses = { 1711, 1719, 1683, 1718, 1697, 1720, 1690, 1721, 1676, 1704 }; // for secondary stats
+        std::random_shuffle(randomBonuses.begin(), randomBonuses.end());
+        bonusesListIDs.push_back(randomBonuses[0]);
+    }
 
     if (num_to_add)
     {
         // create the new item and store it
-        Item* pItem = player->StoreNewItem(dest, newitemid, true, GenerateItemRandomPropertyId(newitemid), GuidSet(), context, bonusListIDs);
+        Item* pItem = player->StoreNewItem(dest, newitemid, true, GenerateItemRandomPropertyId(newitemid), GuidSet(), context, bonusesListIDs);
 
         // was it successful? return error if not
         if (!pItem)
@@ -2066,7 +2078,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
         case 833:
         case 1161:
         case 713:
-        case 2929:
+		case 2929:
             numSummons = (damage > 0) ? damage : 1;
             break;
         default:
@@ -3121,7 +3133,7 @@ void Spell::EffectHealMaxHealth(SpellEffIndex /*effIndex*/)
         addhealth = unitTarget->GetMaxHealth() - unitTarget->GetHealth();
 
     m_healing += addhealth;
-    m_healing = unitTarget->SpellHealingBonusTaken(m_caster, m_spellInfo, m_healing, HEAL, effectInfo);
+	m_healing = unitTarget->SpellHealingBonusTaken(m_caster, m_spellInfo, m_healing, HEAL, effectInfo);
 }
 
 void Spell::EffectInterruptCast(SpellEffIndex effIndex)
@@ -4398,9 +4410,9 @@ void Spell::EffectSkinning(SpellEffIndex /*effIndex*/)
     if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
         return;
 
-    if (unitTarget->GetTypeId() != TYPEID_UNIT)
+    if (!unitTarget->IsCreature())
         return;
-    if (m_caster->GetTypeId() != TYPEID_PLAYER)
+    if (!m_caster->IsPlayer())
         return;
 
     Creature* creature = unitTarget->ToCreature();
@@ -4410,10 +4422,11 @@ void Spell::EffectSkinning(SpellEffIndex /*effIndex*/)
 
     m_caster->ToPlayer()->SendLoot(creature->GetGUID(), LOOT_SKINNING);
     creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
-    creature->SetFlag(OBJECT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
 
-    int32 reqValue = targetLevel < 10 ? 0 : targetLevel < 20 ? (targetLevel-10)*10 : targetLevel*5;
-
+    int32 reqValue = targetLevel < 10 ? 0 : targetLevel < 20 ? (targetLevel - 10) * 10 : targetLevel * 5;
+    if (targetLevel > 80)
+        reqValue = targetLevel * 6;
+ 
     int32 skillValue = m_caster->ToPlayer()->GetPureSkillValue(skill);
 
     // Double chances for elites
@@ -6178,6 +6191,11 @@ void Spell::EffectChangeItemBonus(SpellEffIndex effIndex)
         bonusesListIDs.insert(bonusesListIDs.end(), Bonusfields.begin(), Bonusfields.end());
         uint32 newBonusId = 0;
         bool NeedInit = false;
+		if (!bonusesListIDs.size()) 
+		{ 
+			bonusesListIDs.push_back(596); 
+			NeedInit = true; 
+		}
         for (uint32 j = 0; j < 10; ++j) // because not check last bonusId
         {
             if (NeedInit) // already change bonus
@@ -6201,7 +6219,7 @@ void Spell::EffectChangeItemBonus(SpellEffIndex effIndex)
                 }
             }
         }
-
+		
         if (!NeedInit)
             return;
 
@@ -6263,4 +6281,47 @@ void Spell::EffectChangeItemBonus(SpellEffIndex effIndex)
         if (itemTarget->IsEquipped())
             player->SetVisibleItemSlot(itemTarget->GetSlot(), itemTarget);
     }
+}
+
+void Spell::EffectObliterateItem(SpellEffIndex /*effIndex*/)
+{
+
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT)
+        return;
+
+    Item* itemTarget = m_targets.GetItemTarget();
+    if (!itemTarget)
+        return;
+
+    Player* player = itemTarget->GetOwner();
+    if (!player)
+
+        return;
+
+    // from http://wowgaid.ru/posts/annigilyat-gorn-annigilyacii-wow-legion
+    uint32 itemCount = urand(6, 8);
+    if (itemTarget->GetItemLevel(player) >= 815) // TODO: right recalculate
+        itemCount = urand(36, 73);
+
+    uint32 count = 1;
+    player->DestroyItemCount(itemTarget, count, true); // destroy item target
+
+                                                       // Add Obliterum Ash
+    uint32 itemId = 136342;
+    ItemPosCountVec dest;
+    InventoryResult msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, itemCount);
+    if (msg != EQUIP_ERR_OK)
+    {
+        player->SendItemRetrievalMail(itemId, itemCount, GenerateItemRandomPropertyId(itemId), {});
+        return;
+    }
+
+    Item* item = player->StoreNewItem(dest, itemId, true, GenerateItemRandomPropertyId(itemId), GuidSet(), {});
+    if (!item)
+    {
+        player->SendItemRetrievalMail(itemId, itemCount, GenerateItemRandomPropertyId(itemId), {});
+        return;
+    }
+
+    player->SendNewItem(item, itemCount, true, false);
 }
