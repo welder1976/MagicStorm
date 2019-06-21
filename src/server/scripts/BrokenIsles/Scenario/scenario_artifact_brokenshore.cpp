@@ -217,7 +217,7 @@ struct npc_captain_angelica_108920 : public ScriptedAI
     void sGossipSelect(Player* player, uint32 /*menuId*/, uint32 gossipListId)
     {
         CloseGossipMenuFor(player);    
-        if (player->HasQuest(QUEST_THE_BATTLE_FOR_BROKEN_SHORE))
+        if (player->HasQuest(42740))
         {
             player->KilledMonsterCredit(108920);
             player->CastSpell(player, 216356, true);//leave-for-broken-shore-client-scene
