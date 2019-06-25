@@ -23,6 +23,15 @@
 #include "InstanceScript.h"
 #include "antorus_the_burning_throne.h"
 
+
+ObjectData const creatureData[] =
+{
+    { BOSS_GAROTHI_WORLDBREAKER,    DATA_GAROTHI_WORLDBREAKER   },
+    { NPC_DECIMATOR,                DATA_DECIMATOR              },
+    { NPC_ANNIHILATOR,              DATA_ANNIHILATOR            },
+    { 0,                            0                           }  // END
+};
+
 DoorData const doorData[] =
 {
     { GO_DOOR_1,        DATA_GAROTHI_WORLDBREAKER,   DOOR_TYPE_PASSAGE },
@@ -39,73 +48,41 @@ DoorData const doorData[] =
     { GO_BOSS10,        DATA_AGGRAMAR,                DOOR_TYPE_ROOM },
 };
 
-class instance_antorus_the_burning_throne : public InstanceMapScript
+class instance_antorus_the_burning_throne: public InstanceMapScript
 {
-public:
-    instance_antorus_the_burning_throne() : InstanceMapScript("instance_antorus", 1712) { }
+    public:
+        instance_antorus_the_burning_throne() : InstanceMapScript(ABTScriptName, 757) { }
 
-    struct instance_antorus_the_burning_throne_InstanceMapScript : public InstanceScript
-    {
-        instance_antorus_the_burning_throne_InstanceMapScript(InstanceMap* map) : InstanceScript(map) { }
-
-        // Garothi
-        ObjectGuid GarothiWorldbreakerGUID;
-        ObjectGuid GarothiWorldbreakerAnnihilatorGUID;
-        ObjectGuid GarothiWorldbreakerDecimatorGUID;
-
-        void Initialize() override
+        struct instance_antorus_the_burning_throne_InstanceMapScript: public InstanceScript
         {
-            SetBossNumber(DATA_MAX_ENCOUNTERS);
-            LoadDoorData(doorData);
-        }
-
-        void OnCreatureCreate(Creature* creature) override
-        {
-            switch (creature->GetEntry())
+            instance_antorus_the_burning_throne_InstanceMapScript(InstanceMap* map) : InstanceScript(map)
             {
-            case NPC_GAROTHI_WORLDBREAKER:
-                GarothiWorldbreakerGUID = creature->GetGUID();
-                break;
-            case NPC_CANNON_ANNIHILATOR:
-                GarothiWorldbreakerAnnihilatorGUID = creature->GetGUID();
-                break;
-            case NPC_CANNON_DECIMATOR:
-                GarothiWorldbreakerDecimatorGUID = creature->GetGUID();
-                break;
-            default:
-                break;
-            }
-        }
-
-        /*void OnGameObjectCreate(GameObject* object) override
-        {
-            switch (object->GetEntry())
-            {
-                default:
-                    break;
-            }
-        }*/
-
-        ObjectGuid GetGuidData(uint32 data) const override
-        {
-            switch (data)
-            {
-            case DATA_GAROTHI_WORLDBREAKER:
-                return GarothiWorldbreakerGUID;
-            case DATA_CANNON_ANNIHILATOR:
-                return GarothiWorldbreakerAnnihilatorGUID;
-            case DATA_CANNON_DECIMATOR:
-                return GarothiWorldbreakerDecimatorGUID;
+                SetHeaders(DataHeader);
+                SetBossNumber(EncounterCount);
+                LoadObjectData(creatureData, nullptr);
+                LoadDoorData(doorData);
             }
 
-            return ObjectGuid::Empty;
-        }
-    };
+            void OnCreatureCreate(Creature* creature) override
+            {
+                InstanceScript::OnCreatureCreate(creature);
 
-    InstanceScript* GetInstanceScript(InstanceMap* map) const override
-    {
-        return new instance_antorus_the_burning_throne_InstanceMapScript(map);
-    }
+                switch (creature->GetEntry())
+                {
+                    case NPC_ANNIHILATION:
+                        if (Creature* garothi = GetCreature(DATA_GAROTHI_WORLDBREAKER))
+                            garothi->AI()->JustSummoned(creature);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+
+        InstanceScript* GetInstanceScript(InstanceMap* map) const
+        {
+            return new instance_antorus_the_burning_throne_InstanceMapScript(map);
+        }
 };
 
 void AddSC_instance_antorus_the_burning_throne()
