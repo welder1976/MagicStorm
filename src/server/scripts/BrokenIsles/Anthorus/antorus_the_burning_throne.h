@@ -19,6 +19,9 @@
 #define ANTORUS_THE_BURNING_THRONE_H
 
 #define DataHeader "ATBT"
+#define ABTScriptName "instance_antorus_the_burning_throne"
+
+uint32 const EncounterCount = 10;
 
 enum DataTypes
 {
@@ -55,9 +58,11 @@ enum Creatures
     NPC_NOURA_MOTHER_OF_FLAMES              = 122468,
     NPC_AGGRAMAR                            = 121975,
     NPC_ARGUS_THE_UNMAKER                   = 124828,
-    //1 boss mobs
-    NPC_ANNIHILATOR                         = 122778,
+    //1 boss
     NPC_DECIMATOR                           = 122773,
+    NPC_ANNIHILATOR                         = 122778,
+    NPC_ANNIHILATION                        = 122818,
+    NPC_GAROTHI_WORLDBREAKER                = 124167,
     //2 boss
     NPC_SHATUG                              = 122135,
     //3 boss
@@ -71,8 +76,8 @@ enum CosmeticSpells { };
 
 enum Gameobjects
 {
-    GO_DOOR_1                               = 277365,
-    GO_DOOR_2                               = 278488,
+    GO_COLLISION                            = 277365,
+    GO_ROCK                                 = 278488,
     GO_DOOR_3                               = 277359,
     GO_DOOR_4                               = 277358,
 
@@ -91,4 +96,12 @@ enum Gameobjects
 
 
 
-#endif // ANTORUS_THE_BURNING_THRONE_H
+template <class AI, class T>
+inline AI* GetAntorusTheBurningThroneAI(T* obj)
+{
+    return GetInstanceAI<AI>(obj, ABTScriptName);
+}
+
+#define RegisterAntorusTheBurningThroneCreatureAI(ai_name) RegisterCreatureAIWithFactory(ai_name, GetAntorusTheBurningThroneAI)
+
+#endifH
