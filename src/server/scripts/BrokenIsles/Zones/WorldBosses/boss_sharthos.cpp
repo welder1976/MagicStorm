@@ -189,7 +189,7 @@ public:
     }
 };
 
-void AddSC_boss_shar_thos()
+void AddSC_boss_sharthos()
 {
     new boss_shar_thos();
     new at_sharthos_burning_earth();
