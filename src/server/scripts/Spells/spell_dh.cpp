@@ -2588,7 +2588,7 @@ public:
         void Register() override
         {
             OnCheckCast += SpellCheckCastFn(spell_dh_glide_SpellScript::CheckCast);
-            OnEffectHitTarget += SpellEffectFn(spell_dh_glide_SpellScript::HandleOnHit, EFFECT_0, SPELL_EFFECT_APPLY_AURA);
+            OnEffectHitTarget += SpellEffectFn(spell_dh_glide_SpellScript::HandleOnHit, EFFECT_0, SPELL_EFFECT_KNOCK_BACK);
         }
     };
 
