@@ -2,6 +2,8 @@
 #include "ScriptedCreature.h"
 #include "AreaTriggerTemplate.h"
 #include "AreaTriggerAI.h"
+#include "SpellAuraEffects.h"
+#include "SpellAuras.h"
 #include "eye_of_azshara.h"
 
 enum Spells

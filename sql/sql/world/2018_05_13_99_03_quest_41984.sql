@@ -1,4 +1,4 @@
-# TrinityCore - WowPacketParser
+﻿# TrinityCore - WowPacketParser
 # File name: 7.3.5_26365_五月-11-1611 - shijie41984.awps.pkt
 # Detected build: V7_3_5_26365
 # Detected locale: zhCN
@@ -30,7 +30,7 @@ INSERT INTO `conversation_actors` (`ConversationId`, `ConversationActorId`, `Idx
 
 
 DELETE FROM `conversation_line_template` WHERE `Id` IN (3965, 3966);
-INSERT INTO `conversation_line_template` (`Id`, `StartTime`, `UiCameraID`, `ActorIdx`, `Unk`, `VerifiedBuild`) VALUES
+INSERT INTO `conversation_line_template` (`Id`, `StartTime`, `UiCameraID`, `ActorIdx`, `flags`, `VerifiedBuild`) VALUES
 (3965, 0, 137, 0, 0, 26365),
 (3966, 0, 137, 0, 0, 26365);
 
@@ -77,7 +77,7 @@ INSERT INTO `quest_request_items_locale` (`ID`, `locale`, `CompletionText`, `Ver
 SET @CGUID = 443229;
 SET @OGUID = 105387;
 DELETE FROM `creature` WHERE `guid` BETWEEN @CGUID+0 AND @CGUID+51;
-INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `PhaseId`, `PhaseGroup`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `VerifiedBuild`) VALUES
+INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `PhaseGroup`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `VerifiedBuild`) VALUES
 (@CGUID+0, 105531, 1220, 0, 0, 1, '0', 0, 0, 0, 3447.848, 1621.229, 16.13572, 3.311092, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- 恐惧飞鹰 (Area: -Unknown- - Difficulty: 1)
 (@CGUID+1, 92072, 1220, 0, 0, 1, '0', 0, 0, 0, 3515.546, 1608.776, 40.60169, 5.124469, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- 锚点 (Area: -Unknown- - Difficulty: 1) (Auras: 182476 - -Unknown-)
 (@CGUID+2, 105502, 1220, 0, 0, 1, '0', 0, 0, 0, 3448.307, 1520.597, 53.24988, 4.213274, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- 冥口唤雾者 (Area: -Unknown- - Difficulty: 1)
@@ -188,7 +188,7 @@ INSERT INTO `creature_addon` (`guid`, `path_id`, `mount`, `bytes1`, `bytes2`, `e
 (@CGUID+51, 0, 0, 0, 1, 0, 0, 0, 0, '123169'); -- 野生平原符角牛 - 123169 - -Unknown-
 
 DELETE FROM `gameobject` WHERE `guid` BETWEEN @OGUID+0 AND @OGUID+99;
-INSERT INTO `gameobject` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `PhaseId`, `PhaseGroup`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`, `VerifiedBuild`) VALUES
+INSERT INTO `gameobject` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `PhaseGroup`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`, `VerifiedBuild`) VALUES
 (@OGUID+0, 252163, 1220, 0, 0, 1, '0', 0, 3407.781, 1641.84, 11.09139, 5.536709, 0, 0, -0.3646326, 0.9311515, 7200, 255, 1, 26365), -- Cursed Coins (Area: -Unknown- - Difficulty: 1)
 (@OGUID+1, 248920, 1220, 0, 0, 1, '0', 0, 3431.369, 1473.929, 57.40679, 0, 0, 0, 0, 1, 7200, 255, 1, 26365), -- Despawnable Fog (Area: -Unknown- - Difficulty: 1)
 (@OGUID+2, 246493, 1220, 0, 0, 1, '0', 0, 3539.08, 1567.931, 0, 3.141593, 0, 0, -1, 0, 7200, 255, 1, 26365), -- Black Barracuda School (Area: -Unknown- - Difficulty: 1)

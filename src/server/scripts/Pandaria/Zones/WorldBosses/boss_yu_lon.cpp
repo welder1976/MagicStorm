@@ -21,8 +21,6 @@
 #include "ObjectMgr.h"
 #include "../../scripts/Pandaria/Zones/zone_pandaria_timeless_isle.h"
 
-#define BOSS_YU_LON 0
-
 #define INITIAL_HEALTH_POINTS 92300000
 #define MAX_HEALTH_POINTS 371000000
 #define INCREMENTAL 3000000
@@ -31,74 +29,74 @@
 
 enum YuLonSpells
 {
-    SPELL_JADEFIRE_BREATH                = 144530,
+    SPELL_JADEFIRE_BREATH                   = 144530,
 
-    SPELL_JADEFLAME_BUFFET               = 144630,
+    SPELL_JADEFLAME_BUFFET                  = 144630,
 
-    SPELL_JADEFIRE_BOLT_SUMMON           = 144541,
-    SPELL_JADEFIRE_BOLT_AOE              = 144545,
-    SPELL_JADEFIRE_BOLT_MISSILE          = 144532,
+    SPELL_JADEFIRE_BOLT_SUMMON              = 144541,
+    SPELL_JADEFIRE_BOLT_AOE                 = 144545,
+    SPELL_JADEFIRE_BOLT_MISSILE             = 144532,
 
-    SPELL_JADEFIRE_BLAZE_AURA            = 144537,
-    SPELL_JADEFIRE_BLAZE_DMG             = 144538,
+    SPELL_JADEFIRE_BLAZE_AURA               = 144537,
+    SPELL_JADEFIRE_BLAZE_DMG                = 144538,
 
-    SPELL_JADEFIRE_WALL_VISUAL           = 144533,
-    SPELL_JADEFIRE_WALL_DMG              = 144539
+    SPELL_JADEFIRE_WALL_VISUAL              = 144533,
+    SPELL_JADEFIRE_WALL_DMG                 = 144539
 };
 
 enum YuLonEvents
 {
-    EVENT_TIMER_HEALTH_POOL              = 1,
-    EVENT_TIMER_JADE_BREATH              = 2,
-    EVENT_TIMER_JADEFIRE_WALL            = 3,
-    EVENT_TIMER_JADEFIRE_BOLT            = 4,
-    EVENT_TIMER_JADEFLAME_BUFFET         = 5,
-    EVENT_TIMER_SHAO_DO_INTRO            = 6,
-    EVENT_TIMER_SHAO_DO_INTRO_ATTACKABLE = 7,
-    EVENT_TIMER_SHAO_DO_OUTRO            = 8,
-    EVENT_TIMER_DEATH                    = 9
+    EVENT_TIMER_HEALTH_POOL                 = 1,
+    EVENT_TIMER_JADE_BREATH                 = 2,
+    EVENT_TIMER_JADEFIRE_WALL               = 3,
+    EVENT_TIMER_JADEFIRE_BOLT               = 4,
+    EVENT_TIMER_JADEFLAME_BUFFET            = 5,
+    EVENT_TIMER_SHAO_DO_INTRO               = 6,
+    EVENT_TIMER_SHAO_DO_INTRO_ATTACKABLE    = 7,
+    EVENT_TIMER_SHAO_DO_OUTRO               = 8,
+    EVENT_TIMER_DEATH                       = 9
 };
 
 enum YuLonCreatures
 {
-    NPC_JADEFIRE_WALL                    = 72020,
-    NPC_JADEFIRE_BLAZE                   = 72016
+    NPC_JADEFIRE_WALL                       = 72020,
+    NPC_JADEFIRE_BLAZE                      = 72016
 };
 
 enum YuLonTexts
 {
-    SAY_AGGRO                            = 0,
-    SAY_INTRO                            = 1,
-    SAY_DEATH                            = 2,
-    SAY_KILL                             = 3,
-    SAY_WALL                             = 4,
-    SAY_WALL_2                           = 5,
-    SAY_WALL_3                           = 6,
-    SAY_WALL_ANN                         = 7
+    SAY_AGGRO                               = 0,
+    SAY_INTRO                               = 1,
+    SAY_DEATH                               = 2,
+    SAY_KILL                                = 3,
+    SAY_WALL                                = 4,
+    SAY_WALL_2                              = 5,
+    SAY_WALL_3                              = 6,
+    SAY_WALL_ANN                            = 7
 };
 
 enum YuLonActions
 {
-    ACTION_JADEFIRE_WALL                 = 1,
-    ACTION_JADEFIRE_BLAZE                = 2
+    ACTION_JADEFIRE_WALL                    = 1,
+    ACTION_JADEFIRE_BLAZE                   = 2
 };
 
 enum wallEvent
 {
-    WALL_EVENT_TIMER_DESPAWN             = 1,
-    WALL_EVENT_TIMER_GO,
-    WALL_EVENT_TIMER_DAMAGE
+    WALL_EVENT_TIMER_DESPAWN                = 1,
+    WALL_EVENT_TIMER_GO                     = 2,
+    WALL_EVENT_TIMER_DAMAGE                 = 3
 };
 
 enum wallAction
 {
-    WALL_ACTION_GO                       = 1,
-    WALL_ACTION_RETURN
+    WALL_ACTION_GO                          = 1,
+    WALL_ACTION_RETURN                      = 2
 };
 
 enum wallMovement
 {
-    WALL_MOVEMENT_FORWARD                = 1
+    WALL_MOVEMENT_FORWARD                   = 1
 };
 
 Position wallStartPos = { -561.17f, -5091.70f, -6.277f, MIDDLE_FACING_ANGLE };
@@ -160,6 +158,7 @@ class boss_yu_lon_celestial : public CreatureScript
                         return;
 
                     ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+
                     for (auto itr = threatlist.begin(); itr != threatlist.end(); ++itr)
                         if (Unit* unit = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid()))
                             if (unit->IsWithinDist(me, 100.0f))
@@ -200,6 +199,8 @@ class boss_yu_lon_celestial : public CreatureScript
                     me->setFaction(FACTION_HOSTILE_NEUTRAL);
                     me->GetCreatureListWithEntryInGrid(_wallList, NPC_JADEFIRE_WALL, 250.0f);
                     me->SetHomePosition(_timelessIsleMiddle);
+                    me->SetMaxHealth(INITIAL_HEALTH_POINTS);
+                    me->SetHealth(me->GetMaxHealth());
                 }
             }
 
@@ -216,10 +217,12 @@ class boss_yu_lon_celestial : public CreatureScript
                     return;
 
                 ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+
                 if (threatlist.empty())
                     return;
 
                 uint8 count = 0;
+
                 for (auto itr = threatlist.begin(); itr != threatlist.end(); ++itr)
                     if (Unit* unit = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid()))
                         if (unit->IsWithinDist(me, 100.0f))
@@ -227,6 +230,7 @@ class boss_yu_lon_celestial : public CreatureScript
 
                 uint32 hp = me->GetMaxHealth() - me->GetHealth();
                 uint32 newhp = std::min<uint32>((INCREMENTAL * count), MAX_HEALTH_POINTS);
+
                 if (newhp != me->GetMaxHealth() && newhp > INITIAL_HEALTH_POINTS)
                 {
                     me->SetMaxHealth(std::min<uint32>((me->GetMaxHealth() * count), MAX_HEALTH_POINTS));
@@ -242,9 +246,11 @@ class boss_yu_lon_celestial : public CreatureScript
                     {
                         uint8 _random = urand(0, WALLS_MAX-1);
                         uint8 _count = 0;
+
                         for (auto wall : _wallList)
                         {
                             wall->SetFacingTo(MIDDLE_FACING_ANGLE);
+
                             if (_count != _random)
                                 wall->AddAura(SPELL_JADEFIRE_WALL_VISUAL, wall);
 
@@ -288,7 +294,6 @@ class boss_yu_lon_celestial : public CreatureScript
                         case EVENT_TIMER_SHAO_DO_INTRO_ATTACKABLE:
                         {
                             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-                            me->SetMaxHealth(INITIAL_HEALTH_POINTS);
                             break;
                         }
                         case EVENT_TIMER_JADEFLAME_BUFFET:

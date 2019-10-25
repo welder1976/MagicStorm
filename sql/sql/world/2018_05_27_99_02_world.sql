@@ -1,11 +1,11 @@
--- UPDATE `creature_template_addon` SET `auras`='' WHERE `entry`=121263; -- 121263 (大技师罗姆尔)
+﻿-- UPDATE `creature_template_addon` SET `auras`='' WHERE `entry`=121263; -- 121263 (大技师罗姆尔)
 
 DELETE FROM `conversation_actors` WHERE (`ConversationId`=6607 AND `ConversationActorId`=62294 AND `Idx`=0);
 INSERT INTO `conversation_actors` (`ConversationId`, `ConversationActorId`, `Idx`, `VerifiedBuild`) VALUES
 (6607, 62294, 0, 26654); -- summons-to-stormwind On quest 50371 accept
 
 
-UPDATE `conversation_line_template` SET `Unk`=8239, `VerifiedBuild`=26654 WHERE `Id`=15022;
+UPDATE `conversation_line_template` SET `flags`=8239, `VerifiedBuild`=26654 WHERE `Id`=15022;
 
 UPDATE `gameobject_template_addon` SET `faction`=35 WHERE `entry`=259114; -- [DNT] Command Table Collision Cylinder
 UPDATE `quest_template` SET `RewardBonusMoney`=18350, `VerifiedBuild`=26654 WHERE `ID`=49976; -- Gifts of the Fallen
@@ -35,7 +35,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_master_mathias_shaw_132255' WHE
 SET @CGUID = 443486;
 SET @OGUID = 100695;
 DELETE FROM `creature` WHERE `guid` BETWEEN @CGUID+0 AND @CGUID+6;
-INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `PhaseId`, `PhaseGroup`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `VerifiedBuild`) VALUES
+INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `PhaseGroup`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `VerifiedBuild`) VALUES
 (@CGUID+0, 132255, 0, 1519, 8411, 1, '0', 0, 0, 0, -8723.726, 1045.88, 79.58228, 5.848409, 120, 0, 0, 0, 0, 0, 0, 0, 0, 26654), -- 马迪亚斯·肖尔大师 
 (@CGUID+1, 128607, 1, 1377, 3077, 1, '0', 0, 0, 0, -6467.526, -219.9097, 5.90872, 2.209932, 120, 0, 0, 0, 0, 0, 0, 0, 0, 26654), -- 希多尔米 (Area: -希利苏斯- - Difficulty: 0) (Auras: 132482 - -Unknown-)
 (@CGUID+2, 128607, 1817, 1377, 3077, 1, '0', 0, 0, 0, -6467.526, -219.9097, 5.90872, 2.209932, 120, 0, 0, 0, 0, 0, 0, 0, 0, 26654), -- 希多尔米 (Area: -希利苏斯- - Difficulty: 0) (Auras: 132482 - -Unknown-)
@@ -55,7 +55,7 @@ INSERT INTO `creature_addon` (`guid`, `path_id`, `mount`, `bytes1`, `bytes2`, `e
 (@CGUID+6, 0, 0, 0, 1, 0, 0, 0, 0, ''); -- "The Imposter" Quest SI:7 Courtyard Reached Kill Credit & POI Marker
 
 DELETE FROM `gameobject` WHERE `guid` BETWEEN @OGUID+0 AND @OGUID+0;
-INSERT INTO `gameobject` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `PhaseId`, `PhaseGroup`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`, `VerifiedBuild`) VALUES
+INSERT INTO `gameobject` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `PhaseGroup`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`, `VerifiedBuild`) VALUES
 (@OGUID+0, 281106, 1817, 1377, 3077, 1, '0', 0, -7127.976, 930.3802, 22.39398, 5.271965, -0.06616688, -0.05829334, -0.4846163, 0.8702706, 120, 255, 1, 26654); -- 7FX_SARGERASSWORD_FX (Area: -Unknown- - Difficulty: 0)
 DELETE FROM `gameobject_addon` WHERE `guid` BETWEEN @OGUID+0 AND @OGUID+0;
 

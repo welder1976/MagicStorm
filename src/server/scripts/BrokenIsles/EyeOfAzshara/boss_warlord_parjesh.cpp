@@ -2,6 +2,8 @@
 #include "ScriptedCreature.h"
 #include "AreaTriggerTemplate.h"
 #include "AreaTriggerAI.h"
+#include "AreaTrigger.h"
+#include <G3D/Vector3.h>
 #include "eye_of_azshara.h"
 
 enum Spells
@@ -174,7 +176,7 @@ class boss_warlord_parjesh : public CreatureScript
 
             void EnterCombat(Unit* ) override
             {
-                me->SetMaxPower(me->getPowerType(), 100);
+                //me->SetMaxPower(me->getPowerType(), 100);
                 DoCast(me, SPELL_ENERGIZE, true);
                 Talk(SAY_AGGRO);
                 _EnterCombat();
@@ -594,7 +596,7 @@ class spell_parjesh_crashing_wave_trigger : public SpellScriptLoader
                     if (!GetCaster())
                         return;
 
-                    wave_FinalPos = G3D::Vector3(target._position.GetPositionX(), target._position.GetPositionY(), target._position.GetPositionZ());
+                    //wave_FinalPos = G3D::Vector3(_position.GetPositionX(), _position.GetPositionY(), _position.GetPositionZ());
 
                 }
                 

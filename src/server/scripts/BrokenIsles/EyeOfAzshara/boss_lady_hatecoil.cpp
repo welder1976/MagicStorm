@@ -2,7 +2,8 @@
 #include "ScriptedCreature.h"
 #include "AreaTriggerTemplate.h"
 #include "AreaTriggerAI.h"
-#include "GameObjectAI.h"
+#include "GameObjectAi.h"
+#include "GameObject.h"
 #include "eye_of_azshara.h"
 
 enum Spells
@@ -478,8 +479,8 @@ class npc_eoa_moonson : public CreatureScript
             void CheckDunesNear()
             {
                 if (_dunes.empty())
-                    return;
-                
+                   return;
+               
                 for (auto & it : _dunes)
                 {
                     if (it == nullptr)
@@ -489,7 +490,7 @@ class npc_eoa_moonson : public CreatureScript
                     {
                         it->SetGoState(GO_STATE_ACTIVE);
                         it = nullptr;
-                    }
+                   }
                 }
             }
 
@@ -649,7 +650,7 @@ class spell_lady_hatecoil_curse_of_witch_kill : public SpellScriptLoader
 
                 void Register()
                 {
-                    OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_lady_hatecoil_curse_of_witch_kill_SpellScript::FilterTargets, EFFECT_0, TARGET_DEST_UNK_110);
+                    // OnEffectHitTarget += SpellEffectFn(spell_lady_hatecoil_excess_lighting_SpellScript::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
                 }
         };
 
@@ -760,8 +761,8 @@ class spell_lady_hatecoil_excess_lighting : public SpellScriptLoader
 
                     if (target->GetEntry() == NPC_SAND_DUNE)
                     {
-                        if (GameObject* dune = target->FindNearestGameObject(GO_SAND_DUNE, 10.0f))
-                            dune->SetGoState(GO_STATE_ACTIVE);
+                        if (GameObject* Cage = target->FindNearestGameObject(GO_SAND_DUNE, 10.0f))
+                            Cage->SetGoState(GO_STATE_ACTIVE);
                     }
                 }
 

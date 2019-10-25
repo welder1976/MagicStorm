@@ -154,6 +154,12 @@ namespace WorldPackets
         class RequestRealmListTicket;
     }
 
+    namespace BattlePay
+    {
+        class UserClientBattlePayConfirmPurchaseResponse;
+        class UserClientBattlePayStartPurchase;
+    }
+
     namespace BattlePet
     {
         class BattlePetRequestJournal;
@@ -1806,6 +1812,16 @@ class TC_GAME_API WorldSession
         std::unordered_map<uint32, uint8> const& GetRealmCharacterCounts() const { return _realmCharacterCounts; }
 
         void HandleQueryRealmName(WorldPackets::Query::QueryRealmName& queryRealmName);
+
+        #pragma region (BattlePay)
+        //////////////////////////////////////////////////////////////////////////
+        /// Battlepay
+        //////////////////////////////////////////////////////////////////////////
+        void HandleBattlepayGetProductListQuery(WorldPacket& p_RecvData);
+        void HandleBattlepayGetPurchaseList(WorldPacket& p_RecvData);
+        void HandleBattlePayStartPurchase(WorldPackets::BattlePay::UserClientBattlePayStartPurchase& ClientBattlePayStartPurchase);
+        void HandleBattlePayConfirmPurchase(WorldPackets::BattlePay::UserClientBattlePayConfirmPurchaseResponse& ClientBattlePayConfirmPurchaseResponse);
+        #pragma endregion
 
         // Artifact
         void HandleArtifactAddPower(WorldPackets::Artifact::ArtifactAddPower& artifactAddPower);

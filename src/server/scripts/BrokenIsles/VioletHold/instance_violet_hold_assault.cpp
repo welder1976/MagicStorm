@@ -145,7 +145,7 @@ class instance_violet_hold_assault : public InstanceMapScript
                     case NPC_PORTAL_INQUISITOR:
                     {
                         CriteriaTree const* tree = sCriteriaMgr->GetCriteriaTree(_criteriaToFind);
-                        if (!instance->ToInstanceMap()->GetInstanceScenario()->IsCompletedCriteriaTree(tree))
+                        if (!instance->ToInstanceMap()->GetInstanceScenario()->CheckCompletedCriteriaTree(tree))
                             _events.ScheduleEvent(EVENT_INIT_ROUND, Seconds(20));
                         break;                                            
                     }
@@ -162,7 +162,7 @@ class instance_violet_hold_assault : public InstanceMapScript
                     {
                         _eliteDead++;
                         CriteriaTree const* tree = sCriteriaMgr->GetCriteriaTree(_criteriaToFind);
-                        if (!instance->ToInstanceMap()->GetInstanceScenario()->IsCompletedCriteriaTree(tree))
+                        if (!instance->ToInstanceMap()->GetInstanceScenario()->CheckCompletedCriteriaTree(tree))
                         {
                             if (_firstBoss != 0 && _eliteDead >= 3)
                             {

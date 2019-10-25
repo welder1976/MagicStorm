@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2017-2018 AshamaneProject <https://github.com/AshamaneProject>
  * Copyright (C) 2008-2017 TrinityCore <http://www.trinitycore.org/>
  *
@@ -110,10 +110,10 @@ struct npc_eitrigg_93775 : public ScriptedAI
 
     void sQuestAccept(Player* player, Quest const* quest) override
     {
-        if (quest->GetQuestId() == QUEST_H_A_DESPERATE_PLEA )
+        if (quest->GetQuestId() == QUEST_H_A_DESPERATE_PLEA)
         {
             if (player->IsInHorde() && player->GetAreaId() == 7502 && player->getClass() == CLASS_WARRIOR)
-                PhasingHandler::AddPhase(player, PHASE_CLASS_WARRIOR_HORDE);                  
+                PhasingHandler::AddPhase(player, PHASE_CLASS_WARRIOR_HORDE);
             Talk(1, player);
             me->DespawnOrUnsummon(5000);
         }
@@ -214,12 +214,12 @@ private:
 
 enum classHallTeleportSpells
 {
-    SPELL_TELE_DALARAN      = 191473,
-    SPELL_TELE_STORMHEIM    = 225220,
-    SPELL_TELE_ASZUNA       = 225163,
-    SPELL_TELE_VALSHARAH    = 225115,
+    SPELL_TELE_DALARAN = 191473,
+    SPELL_TELE_STORMHEIM = 225220,
+    SPELL_TELE_ASZUNA = 225163,
+    SPELL_TELE_VALSHARAH = 225115,
     SPELL_TELE_HIGHMOUNTAIN = 205813,
-    SPELL_TELE_SURAMAR      = 225233,
+    SPELL_TELE_SURAMAR = 225233,
     SPELL_TELE_BROKEN_SHORE = 241928
 };
 
@@ -233,29 +233,29 @@ struct npc_class_hall_warrior_aerylia : public ScriptedAI
         uint32 spellId = 0;
         switch (gossipListId)
         {
-            case 2:
-                spellId = SPELL_TELE_DALARAN;
-                break;
-            case 3:
-                spellId = SPELL_TELE_STORMHEIM;
-                break;
-            case 4:
-                spellId = SPELL_TELE_ASZUNA;
-                break;
-            case 5:
-                spellId = SPELL_TELE_VALSHARAH;
-                break;
-            case 6:
-                spellId = SPELL_TELE_HIGHMOUNTAIN;
-                break;
-            case 7:
-                spellId = SPELL_TELE_SURAMAR;
-                break;
-            case 8:
-                spellId = SPELL_TELE_BROKEN_SHORE;
-                break;
-            default:
-                break;
+        case 2:
+            spellId = SPELL_TELE_DALARAN;
+            break;
+        case 3:
+            spellId = SPELL_TELE_STORMHEIM;
+            break;
+        case 4:
+            spellId = SPELL_TELE_ASZUNA;
+            break;
+        case 5:
+            spellId = SPELL_TELE_VALSHARAH;
+            break;
+        case 6:
+            spellId = SPELL_TELE_HIGHMOUNTAIN;
+            break;
+        case 7:
+            spellId = SPELL_TELE_SURAMAR;
+            break;
+        case 8:
+            spellId = SPELL_TELE_BROKEN_SHORE;
+            break;
+        default:
+            break;
         }
 
         if (spellId != 0)
@@ -1087,7 +1087,7 @@ void AddSC_class_hall_warrior()
 {
     RegisterCreatureAI(npc_eitrigg_93775);
     RegisterCreatureAI(npc_sergeant_dalton_108961);
-	RegisterSpellScript(spell_class_hall_warrior_jump_exit);
+    RegisterSpellScript(spell_class_hall_warrior_jump_exit);
     RegisterSpellScript(spell_class_hall_warrior_jump_teleport);
 
     RegisterCreatureAI(npc_class_hall_warrior_aerylia);

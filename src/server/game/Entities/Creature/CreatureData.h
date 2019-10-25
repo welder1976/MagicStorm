@@ -502,7 +502,7 @@ struct CreatureData
                      posX(0.0f), posY(0.0f), posZ(0.0f), orientation(0.0f), spawntimesecs(0),
                      spawndist(0.0f), currentwaypoint(0), curhealth(0), curmana(0), movementType(0),
                      spawnDifficulties(), npcflag(0), unit_flags(0), unit_flags2(0), unit_flags3(0), dynamicflags(0),
-                     phaseUseFlags(0), phaseId(0), phaseGroup(0), terrainSwapMap(-1), ScriptId(0), dbData(true) { }
+                     phaseUseFlags(0), phaseId(0), phaseGroup(0), terrainSwapMap(-1), ScriptId(0), movementmode(0.0f), dbData(true) { }
     uint32 id;                                              // entry in creature_template
     uint16 mapid;
     uint32 areaId;
@@ -529,6 +529,7 @@ struct CreatureData
     uint32 phaseGroup;
     int32 terrainSwapMap;
     uint32 ScriptId;
+    float movementmode;
     bool dbData;
 };
 

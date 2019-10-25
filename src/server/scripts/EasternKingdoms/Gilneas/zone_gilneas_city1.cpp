@@ -656,6 +656,8 @@ struct npc_rampaging_worgen_35660 : public ScriptedAI
                 }
                 case EVENT_FOLLOW_CITIZEN1:
                 {
+                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+
                     if (Creature* citizen = ObjectAccessor::GetCreature(*me, m_citizenGUID))
                         me->GetMotionMaster()->MoveFollow(citizen, 1.0f, 0.0f);
 
@@ -879,7 +881,6 @@ struct npc_rampaging_worgen_34884 : public ScriptedAI
     }
 };
 
-/// alexkulya: ToDo citizens running out after help text.
 struct npc_frightened_citizen_34981 : public ScriptedAI
 {
     npc_frightened_citizen_34981(Creature* creature) : ScriptedAI(creature) { }
@@ -892,7 +893,6 @@ struct npc_frightened_citizen_34981 : public ScriptedAI
     {
         m_playerGUID = ObjectGuid::Empty;
         m_doorGUID = ObjectGuid::Empty;
-        //me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
         me->SetReactState(REACT_PASSIVE);
     }
 
@@ -1004,7 +1004,6 @@ struct npc_frightened_citizen_35836 : public ScriptedAI
     {
         m_playerGUID = ObjectGuid::Empty;
         m_doorGUID = ObjectGuid::Empty;
-        //me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
         me->SetReactState(REACT_PASSIVE);
     }
 
@@ -1273,6 +1272,11 @@ public:
     struct npc_wounded_guard_47091AI : public ScriptedAI
     {
         npc_wounded_guard_47091AI(Creature* creature) : ScriptedAI(creature) { }
+
+        void Reset() override
+        {
+            me->SetReactState(REACT_PASSIVE);
+        }
 
         void SpellHit(Unit* caster, SpellInfo const* /*spell*/) override
         {
@@ -1613,6 +1617,7 @@ public:
             m_events.Reset();
             c_events.Reset();
             m_summons.DespawnAll();
+            m_playerGUID = ObjectGuid::Empty;
         }
 
         void JustSummoned(Creature* summoned) override
@@ -2404,6 +2409,7 @@ public:
         return new npc_bloodfang_worgen_35118AI(creature);
     }
 };
+
 // 14159
 class npc_josiah_avery_35369 : public CreatureScript
 {
@@ -2697,11 +2703,20 @@ public:
 
     struct npc_gilnean_mastiff_35631AI : public ScriptedAI
     {
-        npc_gilnean_mastiff_35631AI(Creature* creature) : ScriptedAI(creature) { }
+        npc_gilnean_mastiff_35631AI(Creature* creature) : ScriptedAI(creature)
+        {
+            Initialize();
+        }
 
         EventMap m_events;
         ObjectGuid m_playerGUID;
         ObjectGuid m_lurkerGUID;
+
+        void Initialize()
+        {
+            m_playerGUID = ObjectGuid::Empty;
+            m_lurkerGUID = ObjectGuid::Empty;
+        }
 
         void Reset() override
         {
@@ -2712,6 +2727,7 @@ public:
                 me->SetReactState(REACT_DEFENSIVE);
                 info->SetIsFollowing(true);
             }
+
             m_events.Reset();
             m_events.ScheduleEvent(EVENT_CHECK_QUEST_REWARDED, 10s);
         }
@@ -2722,9 +2738,17 @@ public:
                 m_playerGUID = player->GetGUID();
         }
 
-        /*void SpellHitTarget(Unit* mastiff, SpellInfo const* cSpell) override
+        void SpellHitTarget(Unit* worgenTarget, SpellInfo const* Spell) override
         {
-        }*/
+            if (Spell->Id == SPELL_ATTACK_LURKER)
+            {
+                worgenTarget->RemoveAura(SPELL_SHADOWSTALKER_STEALTH);
+                worgenTarget->AddThreat(me, 1.0f);
+                me->AddThreat(worgenTarget, 1.0f);
+                me->AI()->AttackStart(worgenTarget);
+                me->GetMotionMaster()->MoveCharge(worgenTarget->GetPositionX(), worgenTarget->GetPositionY(), worgenTarget->GetPositionZ(), 5.0f, 0);
+            }
+        }
 
         void JustDied(Unit* /*killer*/) override // Otherwise, player is stuck with pet corpse they cannot remove from world
         {
@@ -2783,10 +2807,21 @@ public:
 
         void Reset() override
         {
+            me->SetReactState(REACT_PASSIVE);
             tEnrage = 0;
             willCastEnrage = urand(0, 1);
             tSeek = urand(5000, 10000);
             DoCast(me, SPELL_SHADOWSTALKER_STEALTH);
+        }
+
+        void SpellHit(Unit* caster, const SpellInfo* spell)
+        {
+            if (me->HasReactState(REACT_PASSIVE))
+                if (spell->Id == SPELL_ATTACK_LURKER)
+                {
+                    me->SetReactState(REACT_AGGRESSIVE);
+                    AttackStart(caster);
+                }
         }
 
         void UpdateAI(uint32 diff) override

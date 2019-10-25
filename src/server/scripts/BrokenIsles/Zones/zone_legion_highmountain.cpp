@@ -16,9 +16,27 @@
 */
 
 #include "ScriptMgr.h"
+#include "ScriptedGossip.h"
 
+
+struct npc_94973 : public ScriptedAI
+{
+   npc_94973(Creature* creature) : ScriptedAI(creature) {  }
+
+    void sGossipSelect(Player* player, uint32 menuId, uint32 gossipListId)
+    {
+        if (player->HasQuest(40244))
+        {
+            if (gossipListId == 0)
+            {
+                player->CastSpell(player, 205336, true);
+                CloseGossipMenuFor(player);
+            }
+        }
+    }
+};
 
 void AddSC_highmountain()
 {
-
+    RegisterCreatureAI(npc_94973);
 }

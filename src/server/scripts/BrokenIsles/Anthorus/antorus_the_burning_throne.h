@@ -23,31 +23,36 @@
 
 uint32 const EncounterCount = 10;
 
-enum DataTypes
+enum AntorusDataTypes
 {
-    DATA_GAROTHI_WORLDBREAKER               = 0,
-    DATA_FHARG                              = 1,
-    DATA_ADMIRAL_SVIRAX                     = 2,
-    DATA_PORTAL_KEEPER_HASABEL              = 3,
-    DATA_ESSENCE_OF_EONAR                   = 4,
-    DATA_IMONAR_THE_SOULHUNTER              = 5,
-    DATA_KINGAROTH                          = 6,
-    DATA_VARIMATHRAS                        = 7,
-    DATA_NOURA_MOTHER_OF_FLAMES             = 8,
-    DATA_AGGRAMAR                           = 9,
-    DATA_ARGUS_THE_UNMAKER                  = 10,
-    DATA_CANNON_ANNIHILATOR                 = 11,
-    DATA_CANNON_DECIMATOR                   = 12,
+    // Encounters
+    DATA_GAROTHI_WORLDBREAKER   = 0,
+    DATA_FELHOUNDS_OF_SAGERAS   = 1,
+    DATA_ANTORAN_HIGH_COMMAND   = 2,
+    DATA_PORTAL_KEEPER_HASABEL  = 3,
+    DATA_EONAR_THE_LIFE_BINDER  = 4,
+    DATA_IMONAR_THE_SOULHUNTER  = 5,
+    DATA_KINGAROTH              = 6,
+    DATA_VARIMATHRAS            = 7,
+    DATA_THE_COVEN_OF_SHIVARRA  = 8,
+    DATA_AGGRAMAR               = 9,
+    DATA_ARGUS_THE_UNMAKER      = 10,
+    DATA_ADMIRAL_SVIRAX         = 11,
+    DATA_ESSENCE_OF_EONAR       = 12,
+    DATA_NOURA_MOTHER_OF_FLAMES = 13,
+    DATA_FHARG                  = 14,
+    DATA_SHATUG                 = 15,
 
-    DATA_MAX_ENCOUNTERS,
-    DATA_SHATUG                             = 13
+    // Encounter related data
+    DATA_DECIMATOR,
+    DATA_ANNIHILATOR
 };
 
-enum Creatures
+enum AntorusCreatureIds
 {
     NPC_CANNON_DECIMATOR                    = 122773,
     NPC_CANNON_ANNIHILATOR                  = 122778,
-    NPC_GAROTHI_WORLDBREAKER                = 122450,
+    BOSS_GAROTHI_WORLDBREAKER               = 122450,
     NPC_FHARG                               = 122477,
     NPC_ADMIRAL_SVIRAX                      = 122367,
     NPC_PORTAL_KEEPER_HASABEL               = 122104,
@@ -58,18 +63,22 @@ enum Creatures
     NPC_NOURA_MOTHER_OF_FLAMES              = 122468,
     NPC_AGGRAMAR                            = 121975,
     NPC_ARGUS_THE_UNMAKER                   = 124828,
-    //1 boss
-    NPC_DECIMATOR                           = 122773,
-    NPC_ANNIHILATOR                         = 122778,
-    NPC_ANNIHILATION                        = 122818,
-    NPC_GAROTHI_WORLDBREAKER                = 124167,
+    // Encounter related creatures
     //2 boss
     NPC_SHATUG                              = 122135,
     //3 boss
     //MOTHER_OF_FLAMES
     NPC_ASARA_MOTHER_OF_NIGHT               = 122467,
     NPC_DIIMA_MOTHER_OF_GLOOM               = 122469,
-    NPC_THURAYA_MOTHER_OF_THE_COSMOS        = 125436
+    NPC_THURAYA_MOTHER_OF_THE_COSMOS        = 125436,
+
+
+    // Encounter related creatures
+    /*Garothi Worldbreaker*/
+    NPC_DECIMATOR                           = 122773,
+    NPC_ANNIHILATOR                         = 122778,
+    NPC_ANNIHILATION                        = 122818,
+    NPC_GAROTHI_WORLDBREAKER                = 124167
 };
 
 enum CosmeticSpells { };
@@ -104,4 +113,4 @@ inline AI* GetAntorusTheBurningThroneAI(T* obj)
 
 #define RegisterAntorusTheBurningThroneCreatureAI(ai_name) RegisterCreatureAIWithFactory(ai_name, GetAntorusTheBurningThroneAI)
 
-#endifH
+#endif

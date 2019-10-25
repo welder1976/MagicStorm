@@ -20,12 +20,15 @@
 #include "MapManager.h"
 #include "ObjectMgr.h"
 #include "PhasingHandler.h"
+#include "GameObjectAI.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "SpellMgr.h"
 #include "ScriptedCreature.h"
 #include "SpellScript.h"
+#include "ScriptedEscortAI.h"
 #include "ScriptedGossip.h"
+#include "Log.h"
 
 /*
  * Dalaran above Karazhan
@@ -306,8 +309,6 @@ public:
 
 enum ChoicesAndKillcredits
 {
-    DRUID_CHOICE                            = 247,
-    DRUID_ARTIFACT_QUEST_KILLCREDIT         = 101296,
     HUNTER_CHOICE                           = 240,
     HUNTER_ARTIFACT_QUEST_KILLCREDIT        = 104634,
     ROGUE_CHOICE                            = 280,
@@ -341,9 +342,6 @@ public:
     {
         switch (choiceId)
         {
-            case DRUID_CHOICE:
-                player->KilledMonsterCredit(DRUID_ARTIFACT_QUEST_KILLCREDIT);
-                break;
             case HUNTER_CHOICE:
                 player->KilledMonsterCredit(HUNTER_ARTIFACT_QUEST_KILLCREDIT);
                 break;
@@ -575,23 +573,497 @@ public:
 };
 
 // 86563
-class npc_khadgar_dalaran : public CreatureScript
+// 86563
+class npc_archmage_khadgar_86563 : public CreatureScript
 {
 public:
-    npc_khadgar_dalaran() : CreatureScript("npc_khadgar_dalaran") { }
+    npc_archmage_khadgar_86563() : CreatureScript("npc_archmage_khadgar_86563") { }
 
-    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    enum eNpc
+    {   
+        QUEST_DOWN_TO_AZSUNA = 41220,
+        SPELL_TAXI_DALARAN_AZSUNA_ALLIANCE = 205098,
+        SPELL_TAXI_DALARAN_AZSUNA_HORDE = 205203,
+    };
+
+    bool OnGossipSelect(Player* player, Creature* /*creature*/, uint32 /*sender*/, uint32 /*action*/) override
     {
-        switch (action)
-        {
-        case 1:
-            player->CastSpell(player, 205098, true);
-            player->PlayerTalkClass->ClearMenus();
-            CloseGossipMenuFor(player);
-            break;
-        }
+        if (player->HasQuest(QUEST_DOWN_TO_AZSUNA) || player->GetQuestStatus(QUEST_DOWN_TO_AZSUNA) == QUEST_STATUS_INCOMPLETE)
+            player->CastSpell(player, player->IsInAlliance() ? SPELL_TAXI_DALARAN_AZSUNA_ALLIANCE : SPELL_TAXI_DALARAN_AZSUNA_HORDE, true); // KillCredit & SendTaxi
 
         return true;
+    }
+
+    bool OnQuestAccept(Player* /*player*/, Creature* creature, Quest const* quest) override
+    {
+        if (quest->GetQuestId() == QUEST_DOWN_TO_AZSUNA)
+        {
+            creature->AI()->Talk(1);
+        }
+        return true;
+    }
+};
+
+// npc 90417 for the quest 41804 'Ask and You Shall Receive'
+class npc_archmage_khadgar_90417 : public CreatureScript {
+public:
+    npc_archmage_khadgar_90417() : CreatureScript("npc_archmage_khadgar_90417") { }
+
+    enum Khadgar {
+        QUEST_ASK_AND_YOU_SHALL_RECEIVE = 41804,
+        QUEST_RETURN_TO_JACE = 41806,
+        SPELL_CRYSTALLIZED_SOUL = 208510,
+        PHASE_NONE = 0,
+        PHASE_CONTINUE = -1,
+        DATA_EVENT_STARTER_GUID = 0,
+        SAY_KHADGAR_1 = 3,
+        SAY_KHADGAR_2 = 4,
+        SAY_KHADGAR_3 = 5,
+        SAY_KHADGAR_4 = 6,
+        SAY_KHADGAR_5 = 7,
+        SAY_KHADGAR_6 = 8,
+        SAY_KHADGAR_7 = 9,
+        SAY_KHADGAR_8 = 10,
+        WP_START = 1,
+        WP_START_WALK = 4,
+        WP_IN_THE_MIDDLE = 10,
+        WP_AT_FIRST_CHEST = 11,
+        WP_AT_SECOND_CHEST = 15,
+        WP_AT_HOME = 21,
+        PHASE_WAIT_IN_MIDDLE = 1,
+        PHASE_SEEK_IN_FIRST_CHEST_1 = 2,
+        PHASE_SEEK_IN_FIRST_CHEST_2 = 3,
+        PHASE_SEEK_IN_FIRST_CHEST_3 = 4,
+        PHASE_SEEK_IN_SECOND_CHEST_1 = 5,
+        PHASE_SEEK_IN_SECOND_CHEST_2 = 6,
+        PHASE_SEEK_IN_SECOND_CHEST_3 = 7,
+        PHASE_SEEK_IN_SECOND_CHEST_4 = 8,
+        PHASE_MOVE_HOME = 9,
+        PHASE_DESPAWN = 10,
+        GO_CRYSTALLIZED_SOUL = 248521,
+    };
+
+    struct npc_archmage_khadgar_90417_AI : public npc_escortAI
+    {
+        npc_archmage_khadgar_90417_AI(Creature* creature) : npc_escortAI(creature)
+        {
+            Initialize();
+        }
+
+        void Initialize()
+        {
+            _phase = PHASE_NONE;
+            _moveTimer = 0;
+        }
+
+        void sQuestAccept(Player* player, Quest const* quest) override
+        {
+            if (quest->GetQuestId() == QUEST_ASK_AND_YOU_SHALL_RECEIVE)
+            {
+                SetGUID(player->GetGUID(), DATA_EVENT_STARTER_GUID);
+                Talk(SAY_KHADGAR_1);
+                Start(false, true, player->GetGUID(), quest);
+            }
+            if (quest->GetQuestId() == QUEST_RETURN_TO_JACE)
+            {
+                Talk(SAY_KHADGAR_8);
+            }
+        }
+
+        ObjectGuid GetGUID(int32 type) const override
+        {
+            if (type == DATA_EVENT_STARTER_GUID)
+                return _eventStarterGuid;
+
+            return ObjectGuid::Empty;
+        }
+
+        void SetGUID(ObjectGuid guid, int32 type) override
+        {
+            switch (type)
+            {
+            case DATA_EVENT_STARTER_GUID:
+                _eventStarterGuid = guid;
+                break;
+            default:
+                break;
+            }
+        }
+
+        void Reset() override
+        {
+            me->SetWalk(false);
+            Initialize();
+            _events.Reset();
+        }
+
+        void UpdateAI(uint32 diff) override
+        {
+            _events.Update(diff);
+
+            if (UpdateVictim())
+            {
+                DoMeleeAttackIfReady();
+            }
+
+            if (HasEscortState(STATE_ESCORT_NONE))
+                return;
+
+            npc_escortAI::UpdateAI(diff);
+
+            if (_phase)
+            {
+                if (_moveTimer <= diff)
+                {
+                    switch (_phase)
+                    {
+                    case PHASE_CONTINUE:
+                        SetEscortPaused(false);
+                        _moveTimer = 0 * IN_MILLISECONDS;
+                        _phase = PHASE_NONE;
+                        break;
+                    case PHASE_WAIT_IN_MIDDLE:
+                        _moveTimer = 0 * IN_MILLISECONDS;
+                        _phase = PHASE_CONTINUE;
+                        break;
+                    case PHASE_SEEK_IN_FIRST_CHEST_1:
+                        me->HandleEmoteCommand(EMOTE_STATE_USESTANDING);
+                        Talk(SAY_KHADGAR_3);
+                        _moveTimer = 7 * IN_MILLISECONDS;
+                        _phase = PHASE_SEEK_IN_FIRST_CHEST_2;
+                        break;
+                    case PHASE_SEEK_IN_FIRST_CHEST_2:
+                        me->HandleEmoteCommand(EMOTE_STATE_NONE);
+                        me->SetFacingTo(5.1576f);
+                        Talk(SAY_KHADGAR_4);
+                        _moveTimer = 3 * IN_MILLISECONDS;
+                        _phase = PHASE_SEEK_IN_FIRST_CHEST_3;
+                        break;
+                    case PHASE_SEEK_IN_FIRST_CHEST_3:
+                        SetEscortPaused(false);
+                        _moveTimer = 0 * IN_MILLISECONDS;
+                        _phase = PHASE_NONE;
+                        break;
+                    case PHASE_SEEK_IN_SECOND_CHEST_1:
+                        me->HandleEmoteCommand(EMOTE_STATE_USESTANDING);
+                        Talk(SAY_KHADGAR_5);
+                        _moveTimer = 7 * IN_MILLISECONDS;
+                        _phase = PHASE_SEEK_IN_SECOND_CHEST_2;
+                        break;
+                    case PHASE_SEEK_IN_SECOND_CHEST_2:
+                        me->HandleEmoteCommand(EMOTE_STATE_NONE);
+                        Talk(SAY_KHADGAR_6);
+                        _moveTimer = 6 * IN_MILLISECONDS;
+                        _phase = PHASE_SEEK_IN_SECOND_CHEST_3;
+                        break;
+                    case PHASE_SEEK_IN_SECOND_CHEST_3:
+                        me->CastSpell(me, SPELL_CRYSTALLIZED_SOUL);
+                        me->SummonGameObject(GO_CRYSTALLIZED_SOUL, -829.154f, 4653.472f, 768.774f, 1.46863f, QuaternionData(), 60);
+                        if (Player* player = ObjectAccessor::GetPlayer(*me, _eventStarterGuid))
+                        {
+                            player->KilledMonsterCredit(90417, ObjectGuid::Empty);
+                        }
+                        me->SetFacingTo(1.9587f);
+                        Talk(SAY_KHADGAR_7);
+                        _moveTimer = 5 * IN_MILLISECONDS;
+                        _phase = PHASE_SEEK_IN_SECOND_CHEST_4;
+                        break;
+                    case PHASE_SEEK_IN_SECOND_CHEST_4:
+                        SetEscortPaused(false);
+                        _moveTimer = 0 * IN_MILLISECONDS;
+                        _phase = PHASE_NONE;
+                        break;
+                    case PHASE_DESPAWN:
+                        me->DespawnOrUnsummon(5000, Seconds(1));
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                else if (!me->IsInCombat())
+                    _moveTimer -= diff;
+            }
+        }
+
+        void WaypointReached(uint32 waypointId) override
+        {
+            Player* player = GetPlayerForEscort();
+            if (!player)
+                return;
+
+            switch (waypointId)
+            {
+            case WP_START_WALK:
+                _moveTimer = 0 * IN_MILLISECONDS;
+                _phase = PHASE_NONE;
+                me->SetWalk(true);
+                me->SetUnitMovementFlags(MOVEMENTFLAG_WALKING);
+                break;
+            case WP_IN_THE_MIDDLE:
+                SetEscortPaused(true);
+                me->SetFacingTo(2.3671f);
+                Talk(SAY_KHADGAR_2);
+                _moveTimer = 5 * IN_MILLISECONDS;
+                _phase = PHASE_WAIT_IN_MIDDLE;
+                break;
+            case WP_AT_FIRST_CHEST:
+                SetEscortPaused(true);
+                me->SetFacingTo(3.6316f);
+                _moveTimer = 0.2 * IN_MILLISECONDS;
+                _phase = PHASE_SEEK_IN_FIRST_CHEST_1;
+                break;
+            case WP_AT_SECOND_CHEST:
+                SetEscortPaused(true);
+                _moveTimer = 0.2 * IN_MILLISECONDS;
+                _phase = PHASE_SEEK_IN_SECOND_CHEST_1;
+                break;
+            case WP_AT_HOME:
+                _moveTimer = 0.2 * IN_MILLISECONDS;
+                _phase = PHASE_DESPAWN;
+                break;
+            default:
+                break;
+            }
+        }
+
+    private:
+        int8 _phase;
+        uint32 _moveTimer;
+        ObjectGuid _eventStarterGuid;
+        GuidList _explosivesGuids;
+        EventMap _events;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_archmage_khadgar_90417_AI(creature);
+    }
+};
+enum
+{
+    QUEST_ESTABLISHING_A_CONNECTION = 41807,
+    KILLCREDIT_ACTIVATE_COMMUNICATOR = 104907,
+    KILLCREDIT_REPORT_RECEIVED = 104908,
+    SPELL_ACTIVATE_LEGION_COMMUNICATOR = 37020,
+    EVENT_START_ANIM = 1,
+    DATA_COMMUNICATOR_ACTIVATED = 21,
+    DATA_REPORT_RECEIVED = 22,
+    DATA_GARBLED_POSITION = 23,
+    DATA_GARBLED_INCOMING = 24,
+    SPELL_SUMMON_ALLARI = 207795,
+};
+// npc 99262 for the quest 41807 'Establishing A Connection'
+class npc_jace_darkweaver_99262 : public CreatureScript
+{
+public:
+    npc_jace_darkweaver_99262() : CreatureScript("npc_jace_darkweaver_99262") { }
+
+    enum eJace
+    {
+        SAY_JACE_1 = 0,
+        SAY_JACE_2 = 1,
+        SAY_ALTRUIS_1 = 0,
+    };
+
+    bool OnQuestReward(Player* player, Creature* creature, Quest const* quest, uint32 /*opt*/) override
+    {
+        if (quest->GetQuestId() == QUEST_ESTABLISHING_A_CONNECTION)
+            if (Creature* altruis = creature->FindNearestCreature(99254, 15.0f))
+                altruis->AI()->Talk(SAY_ALTRUIS_1);
+        return true;
+    }
+
+    struct npc_jace_darkweaver_99262_AI : public ScriptedAI
+    {
+        npc_jace_darkweaver_99262_AI(Creature* creature) : ScriptedAI(creature) {
+            me->SetReactState(REACT_PASSIVE);
+        }
+
+        void SetData(uint32 id, uint32 /*value*/) override
+        {
+            switch (id)
+            {
+            case DATA_COMMUNICATOR_ACTIVATED:
+                Talk(SAY_JACE_1);
+                break;
+            case DATA_REPORT_RECEIVED:
+                Talk(SAY_JACE_2);
+                break;
+            }
+        }
+
+    private:
+        EventMap _events;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_jace_darkweaver_99262_AI(creature);
+    }
+};
+
+// gameobject 251528 for the quest 41807 'Establishing A Connection'
+class go_legion_communicator : public GameObjectScript
+{
+public:
+    go_legion_communicator() : GameObjectScript("go_legion_communicator") { }
+
+    enum eAllari {
+        EVENT_TALK_JACE_00 = 1,
+        EVENT_TALK_JACE_01 = 2,
+        EVENT_TALK_PART_00 = 3,
+        EVENT_TALK_PART_01 = 4,
+        EVENT_GIVE_CREDIT = 5,
+        NPC_ALLARI_SOULEATER = 104909,
+    };
+
+    bool OnGossipHello(Player* player, GameObject* go) override
+    {
+        if (player->HasQuest(QUEST_ESTABLISHING_A_CONNECTION) &&
+            !player->GetQuestObjectiveData(QUEST_ESTABLISHING_A_CONNECTION, 0))
+        {
+            Position allariPosition = { go->GetPositionX(), go->GetPositionY(), 747.019f, 0.385333f };
+            player->SummonCreature(NPC_ALLARI_SOULEATER, allariPosition, TEMPSUMMON_TIMED_DESPAWN, 30000);
+        }
+
+        return false;
+    }
+
+    struct go_legion_communicator_AI : public GameObjectAI
+    {
+        go_legion_communicator_AI(GameObject* go) : GameObjectAI(go) { }
+
+        EventMap    _events;
+        ObjectGuid  _playerGUID;
+        ObjectGuid  _allariGUID;
+        ObjectGuid  _jaceGUID;
+
+        void Reset() override
+        {
+            _playerGUID = ObjectGuid::Empty;
+            _allariGUID = ObjectGuid::Empty;
+            _jaceGUID = ObjectGuid::Empty;
+        }
+
+        void OnStateChanged(uint32 /*state*/, Unit* unit) override
+        {
+            if (unit)
+                if (unit->ToPlayer()->HasQuest(QUEST_ESTABLISHING_A_CONNECTION) &&
+                    !unit->ToPlayer()->GetQuestObjectiveData(QUEST_ESTABLISHING_A_CONNECTION, 0))
+                    if (Creature* allari = go->FindNearestCreature(104909, 3.0f))
+                        if (Creature* jace = go->FindNearestCreature(99262, 5.0f))
+                            if (Player* player = unit->ToPlayer())
+                            {
+                                _playerGUID = player->GetGUID();
+                                _allariGUID = allari->GetGUID();
+                                _jaceGUID = jace->GetGUID();
+                                _events.ScheduleEvent(EVENT_TALK_JACE_00, 1000);
+                                _events.RescheduleEvent(EVENT_TALK_PART_00, 7000);
+                            }
+        }
+
+        void UpdateAI(uint32 diff) override
+        {
+            _events.Update(diff);
+
+            while (uint32 eventId = _events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                case EVENT_TALK_JACE_00:
+                {
+                    if (Creature* jace = ObjectAccessor::GetCreature(*go, _jaceGUID))
+                        if (Player* player = ObjectAccessor::GetPlayer(*go, _playerGUID))
+                        {
+                            jace->AI()->SetData(DATA_COMMUNICATOR_ACTIVATED, DATA_COMMUNICATOR_ACTIVATED);
+                            player->KilledMonsterCredit(KILLCREDIT_ACTIVATE_COMMUNICATOR, ObjectGuid::Empty);
+                        }   
+                    break;
+                }
+                case EVENT_TALK_PART_00:
+                {
+                    if (Creature* allari = ObjectAccessor::GetCreature(*go, _allariGUID))
+                        if (Player* player = ObjectAccessor::GetPlayer(*go, _playerGUID))
+                            allari->AI()->SetData(DATA_GARBLED_POSITION, DATA_GARBLED_POSITION);
+                    _events.ScheduleEvent(EVENT_TALK_PART_01, 6000);
+                    break;
+                }
+                case EVENT_TALK_PART_01:
+                {
+                    if (Creature* allari = ObjectAccessor::GetCreature(*go, _allariGUID))
+                        if (Player* player = ObjectAccessor::GetPlayer(*go, _playerGUID))
+                            allari->AI()->SetData(DATA_GARBLED_INCOMING, DATA_GARBLED_INCOMING);
+                    _events.ScheduleEvent(EVENT_GIVE_CREDIT, 2000);
+                    break;
+                }
+                case EVENT_GIVE_CREDIT:
+                {
+                    if (Creature* allari = ObjectAccessor::GetCreature(*go, _allariGUID))
+                        if (Player* player = ObjectAccessor::GetPlayer(*go, _playerGUID))
+                        {
+                            player->KilledMonsterCredit(KILLCREDIT_REPORT_RECEIVED, ObjectGuid::Empty);
+                            allari->DespawnOrUnsummon(Seconds(2));
+                        }
+                    _events.ScheduleEvent(EVENT_TALK_JACE_01, 2000);
+                    break;
+                }
+                case EVENT_TALK_JACE_01:
+                {
+                    if (Creature* jace = ObjectAccessor::GetCreature(*go, _jaceGUID))
+                        if (Player* player = ObjectAccessor::GetPlayer(*go, _playerGUID))
+                            jace->AI()->SetData(DATA_REPORT_RECEIVED, DATA_REPORT_RECEIVED);
+                    break;
+                }
+                default:
+                    break;
+                }                
+            }
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new go_legion_communicator_AI(go);
+    }
+};
+
+// npc 104909 for the quest 41807 'Establishing A Connection'
+class npc_allari_souleater_104909 : public CreatureScript
+{
+public:
+    npc_allari_souleater_104909() : CreatureScript("npc_allari_souleater_104909") { }
+
+    enum eAllari {
+        SAY_ALLARI_1 = 0,
+        SAY_ALLARI_2 = 1,
+    };
+
+    struct npc_allari_souleater_104909_AI : public ScriptedAI
+    {
+        npc_allari_souleater_104909_AI(Creature* creature) : ScriptedAI(creature) {
+            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, Emote::EMOTE_STATE_READY2H);
+        }
+
+        void SetData(uint32 id, uint32 /*value*/) override
+        {
+            switch (id)
+            {
+            case DATA_GARBLED_POSITION:
+                Talk(SAY_ALLARI_1);
+                break;
+            case DATA_GARBLED_INCOMING:
+                Talk(SAY_ALLARI_2);
+                break;
+            }
+        }
+
+    private:
+        EventMap _events;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_allari_souleater_104909_AI(creature);
     }
 };
 
@@ -1182,6 +1654,272 @@ private:
     ObjectGuid   m_playerGUID;
 };
 
+#define GOSSIP_HELLO_ALTURAS1 "There's no time to explain. Let us inside the hold, warden."
+#define GOSSIP_HELLO_ALTURAS2 "Let us inside or I'll show you the difference."
+#define GOSSIP_HELLO_ALTURAS3 "Do you want to find out?"
+#define GOSSIP_HELLO_ALTURAS4 "What do you have to lose either way?"
+class npc_warden_alturas : public CreatureScript
+{
+public:
+    npc_warden_alturas() : CreatureScript("npc_warden_alturas") { }
+
+    enum {
+        TEXT_ALLOW_ENTER = 3,
+        EVENT_TELEPORT_VIOLETHOLD = 11,
+        EVENT_START_MOVE = 12,
+        EVENT_MOVE_TO_GATES = 13,
+        EVENT_TELEPORT = 14,
+        EVENT_RESET = 15,
+        DATA_START_EVENT = 21,
+    };
+
+    bool _diffsPicked = false;
+    bool _noTimePicked = false;
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (player->GetQuestStatus(41121) == QUEST_STATUS_INCOMPLETE && !_diffsPicked && !_noTimePicked)
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_HELLO_ALTURAS1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+        if (player->GetQuestStatus(41121) == QUEST_STATUS_INCOMPLETE && !_diffsPicked)
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_HELLO_ALTURAS2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+
+        if (player->GetQuestStatus(41121) == QUEST_STATUS_INCOMPLETE && _diffsPicked)
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_HELLO_ALTURAS3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+
+        if (player->GetQuestStatus(41121) == QUEST_STATUS_INCOMPLETE && _diffsPicked)
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_HELLO_ALTURAS4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+
+        SendGossipMenuFor(player, player->GetGossipTextId(creature), creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        if (!player)
+            return false;
+
+        player->PlayerTalkClass->ClearMenus();
+
+        if (action == GOSSIP_ACTION_INFO_DEF + 1)
+        {
+            _noTimePicked = true;
+            creature->AI()->Talk(0);
+            creature->SetStandState(UNIT_STAND_STATE_STAND);
+            CloseGossipMenuFor(player);
+        }
+
+        if (action == GOSSIP_ACTION_INFO_DEF + 2)
+        {
+            _diffsPicked = true;
+            creature->SetStandState(UNIT_STAND_STATE_STAND);
+            CloseGossipMenuFor(player);
+        }
+
+        if (action == GOSSIP_ACTION_INFO_DEF + 3)
+        {
+            creature->AI()->Talk(2);
+            player->KilledMonsterCredit(96313);
+            creature->AI()->SetData(DATA_START_EVENT, DATA_START_EVENT);
+            CloseGossipMenuFor(player);
+        }
+
+        if (action == GOSSIP_ACTION_INFO_DEF + 4)
+        {
+            creature->AI()->Talk(1);
+            player->KilledMonsterCredit(96313);
+            creature->AI()->SetData(DATA_START_EVENT, DATA_START_EVENT);
+            CloseGossipMenuFor(player);
+        }
+
+        return true;
+    }
+
+    bool OnQuestAccept(Player* /*player*/, Creature* /*creature*/, Quest const* quest) override
+    {
+        if (quest->GetQuestId() == 41121)
+        {
+            _diffsPicked = false;
+            _noTimePicked = false;
+        }
+
+        return true;
+    }
+
+    struct npc_warden_alturas_AI : public ScriptedAI
+    {
+        npc_warden_alturas_AI(Creature* creature) : ScriptedAI(creature) {
+            Initialize();
+        }
+
+        void Reset() override
+        {
+            _events.Reset();
+        }
+
+        void Initialize() {}
+
+        void UpdateAI(uint32 diff) override
+        {
+            UpdateVictim();
+            _events.Update(diff);
+
+            while (uint32 eventId = _events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                case EVENT_TELEPORT_VIOLETHOLD: {
+                    Talk(TEXT_ALLOW_ENTER, me->GetOwner());
+                    _events.ScheduleEvent(EVENT_START_MOVE, 4000);
+                    break;
+                }   
+                case EVENT_START_MOVE: {
+                    _events.ScheduleEvent(EVENT_MOVE_TO_GATES, 2000);
+                    me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                    me->SetOrientation(4.0119f);
+                    break;
+                }
+                case EVENT_MOVE_TO_GATES: {
+                    _events.ScheduleEvent(EVENT_TELEPORT, 3000);
+                    me->GetMotionMaster()->MovePoint(2, -958.91f, 4326.97f, 740.20f);
+                    break;
+                }
+                case EVENT_TELEPORT: {
+                    _events.ScheduleEvent(EVENT_RESET, 1500);
+                    me->CastSpell(me, 52096, true); // cosmetic-teleport-effect
+                    break;
+                }
+                case EVENT_RESET: {
+                    me->AI()->Reset();
+                    _events.CancelEvent(EVENT_TELEPORT_VIOLETHOLD);
+                    _events.CancelEvent(EVENT_START_MOVE);
+                    _events.CancelEvent(EVENT_MOVE_TO_GATES);
+                    _events.CancelEvent(EVENT_TELEPORT);
+                    me->DespawnOrUnsummon(5000, Seconds(3));
+                    break;
+                }
+                default:
+                    break;
+                }
+            }
+            // no melee attacks
+        }
+
+        void SetData(uint32 id, uint32 /*value*/) override
+        {
+            switch (id)
+            {
+                case DATA_START_EVENT:
+                {
+                    _events.ScheduleEvent(EVENT_TELEPORT_VIOLETHOLD, 3000);
+                    break;
+                }
+            }
+        }
+
+    private:
+        EventMap _events;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_warden_alturas_AI(creature);
+    }
+};
+
+class go_violethold_entrance_portal : public GameObjectScript
+{
+public:
+    go_violethold_entrance_portal() : GameObjectScript("go_violethold_entrance_portal")
+    {
+        checkTimer = 1000;
+        giveKillCredit = 1000;
+    }
+
+    uint32 checkTimer;
+    uint32 giveKillCredit;
+
+    void OnUpdate(GameObject* p_Object, uint32 diff) override
+    {
+        if (checkTimer < diff)
+        {
+            checkTimer -= diff;
+            return;
+        }
+
+        checkTimer = 1000;
+        giveKillCredit = 1000;
+
+        std::list<Player*> playerList;
+        GetPlayerListInGrid(playerList, p_Object, 2.0f);
+
+        for (Player* player : playerList)
+        {
+            if (player->GetQuestStatus(41121) == QUEST_STATUS_INCOMPLETE)
+            {
+                player->KilledMonsterCredit(95731, ObjectGuid::Empty);
+                player->TeleportTo(1494, 1293.185f, -262.720f, 44.364f, 0.307976f);
+            }
+        }
+    }
+};
+
+struct npc_illidari_fel_bat_94324 : public ScriptedAI
+{
+    npc_illidari_fel_bat_94324(Creature* creature) : ScriptedAI(creature)
+    {
+        me->SetAIAnimKitId(0);
+    }
+
+    enum eQuest {
+        QUEST_THE_HUNT_1 = 39247,
+        QUEST_THE_HUNT_2 = 41119,
+        QUEST_VENGEANCE_WILL_BE_OURS_1 = 40249,
+        QUEST_VENGEANCE_WILL_BE_OURS_2 = 41863,
+    };
+
+    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    {
+        if (Player* player = clicker->ToPlayer())
+        {
+            if (player->HasQuest(QUEST_THE_HUNT_1) || player->HasQuest(QUEST_THE_HUNT_2))
+            {
+                me->SetAIAnimKitId(4061);
+                player->KilledMonsterCredit(94321); // 52391
+                player->AddConversationDelayedTeleport(3000, 1325, 1498, Position(1263.69f, 5236.659f, 93.531f, 2.73693f));
+            }
+
+            if (player->HasQuest(QUEST_VENGEANCE_WILL_BE_OURS_1) || player->HasQuest(QUEST_VENGEANCE_WILL_BE_OURS_2))
+            {
+                me->SetAIAnimKitId(4061);
+                player->KilledMonsterCredit(99250);
+                player->AddDelayedTeleport(2000, 1500, Position(-2379.679f, 174.2f, 3.5625f, 3.733872f));
+            }
+        }
+    }
+};
+
+struct npc_Gryphon_108973 : public ScriptedAI
+{
+    npc_Gryphon_108973(Creature* creature) : ScriptedAI(creature)
+    {
+        me->SetAIAnimKitId(0);
+    }
+
+    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    {
+        if (Player* player = clicker->ToPlayer())
+        {
+            if (player->HasQuest(42815))
+            {
+                me->SetAIAnimKitId(4061);
+                player->CastSpell(player, 197879, true);
+                player->AddDelayedTeleport(2000, 1500, Position(-2379.679f, 174.2f, 3.5625f, 3.733872f));
+            }
+        }
+    }
+};
+
 void AddSC_dalaran_legion()
 {
     new OnLegionArrival();
@@ -1200,7 +1938,9 @@ void AddSC_dalaran_legion()
     new npc_quest_49032();
     new npc_tele_q47223();
     new npc_tele_q48507();
-    new npc_khadgar_dalaran();
+    new npc_archmage_khadgar_86563();
+    new npc_archmage_khadgar_90417();
+    new npc_jace_darkweaver_99262();
     new npc_khadgar_upgraded_servant();
     new npc_tele_q38564();
     RegisterCreatureAI(npc_guard_dalaran_legion);
@@ -1209,4 +1949,10 @@ void AddSC_dalaran_legion()
     new zone_legion_dalaran();
     new PhaseOnDaralanArea();
     RegisterCreatureAI(npc_emissary_auldbridge_111109);
+    new npc_warden_alturas();
+    new go_legion_communicator();
+    new npc_allari_souleater_104909();
+    new go_violethold_entrance_portal();
+    RegisterCreatureAI(npc_illidari_fel_bat_94324);
+    RegisterCreatureAI(npc_Gryphon_108973);
 }

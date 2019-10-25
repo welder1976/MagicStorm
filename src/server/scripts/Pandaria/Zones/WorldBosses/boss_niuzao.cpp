@@ -21,8 +21,6 @@
 #include "ObjectMgr.h"
 #include "../../scripts/Pandaria/Zones/zone_pandaria_timeless_isle.h"
 
-#define BOSS_NIUZAO 0
-
 #define MAX_HEALTH_POINTS 392500000
 #define INITIAL_HEALTH_POINTS 98125000
 #define INCREMENTAL 3212500
@@ -38,49 +36,49 @@ const float _chargePos[5][3] =
 
 enum NiuzaoSpells
 {
-    SPELL_NIUZAO_CHARGE                         = 144608,
-    SPELL_NIUZAO_HEADBUTT                       = 144610,
-    SPELL_NIUZAO_MASSIVE_QUAKE                  = 144611,
-    SPELL_NIUZAO_OXEN_FORTITUDE                 = 144606,
-    SPELL_NIUZAO_OXEN_FORTITUDE_ACTIVE          = 144607
+    SPELL_NIUZAO_CHARGE                     = 144608,
+    SPELL_NIUZAO_HEADBUTT                   = 144610,
+    SPELL_NIUZAO_MASSIVE_QUAKE              = 144611,
+    SPELL_NIUZAO_OXEN_FORTITUDE             = 144606,
+    SPELL_NIUZAO_OXEN_FORTITUDE_ACTIVE      = 144607
 };
 
 enum NiuzaoEvents
 {
-    EVENT_NIUZAO_OXEN_FORTITUDE                 = 1,
-    EVENT_NIUZAO_HEADBUTT,
-    EVENT_NIUZAO_MASSIVE_QUAKE,
-    EVENT_NIUZAO_HEALTH_66_PERCENT,
-    EVENT_NIUZAO_HEALTH_33_PERCENT,
-    EVENT_NIUZAO_DEFEATED,
-    EVENT_NIUZAO_DEATH,
-    EVENT_NIUZAO_CHARGE,
-    EVENT_NIUZAO_SHAO_DO_INTRO,
-    EVENT_NIUZAO_SHAO_DO_INTRO_ATTACKABLE,
-    EVENT_NIUZAO_SHAO_DO_OUTRO
+    EVENT_NIUZAO_OXEN_FORTITUDE             = 1,
+    EVENT_NIUZAO_HEADBUTT                   = 2,
+    EVENT_NIUZAO_MASSIVE_QUAKE              = 3,
+    EVENT_NIUZAO_HEALTH_66_PERCENT          = 4,
+    EVENT_NIUZAO_HEALTH_33_PERCENT          = 5,
+    EVENT_NIUZAO_DEFEATED                   = 6,
+    EVENT_NIUZAO_DEATH                      = 7,
+    EVENT_NIUZAO_CHARGE                     = 8,
+    EVENT_NIUZAO_SHAO_DO_INTRO              = 9,
+    EVENT_NIUZAO_SHAO_DO_INTRO_ATTACKABLE   = 10,
+    EVENT_NIUZAO_SHAO_DO_OUTRO              = 11
 };
 
 enum NiuzaoTexts
 {
-    SAY_AGGRO                                   = 0,
-    SAY_INTRO                                   = 1,
-    SAY_DEATH                                   = 2,
-    SAY_KILL                                    = 3,
-    SAY_SPELL_1                                 = 4,
-    SAY_SPELL_2                                 = 5,
-    SAY_SPELL_3                                 = 6
+    SAY_AGGRO                               = 0,
+    SAY_INTRO                               = 1,
+    SAY_DEATH                               = 2,
+    SAY_KILL                                = 3,
+    SAY_SPELL_1                             = 4,
+    SAY_SPELL_2                             = 5,
+    SAY_SPELL_3                             = 6
 };
 
 enum NiuzaoActions
 {
-    ACTION_NIUZAO_CHARGE_66                     = 1,
-    ACTION_NIUZAO_CHARGE_33,
-    ACTION_NIUZAO_CHARGE
+    ACTION_NIUZAO_CHARGE_66                 = 1,
+    ACTION_NIUZAO_CHARGE_33                 = 2,
+    ACTION_NIUZAO_CHARGE                    = 3
 };
 
 enum NiuzaoMovement
 {
-    MOVEMENT_NIUZAO_CHARGE                      = 2
+    MOVEMENT_NIUZAO_CHARGE                  = 2
 };
 
 class boss_niuzao_celestial : public CreatureScript
@@ -170,6 +168,7 @@ class boss_niuzao_celestial : public CreatureScript
                         return;
 
                     ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+
                     for (auto itr = threatlist.begin(); itr != threatlist.end(); ++itr)
                         if (Unit* unit = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid()))
                             if (unit->IsWithinDist(me, 100.0f))
@@ -211,6 +210,8 @@ class boss_niuzao_celestial : public CreatureScript
                         me->setFaction(FACTION_HOSTILE_NEUTRAL);
                         me->SetFacingTo(MIDDLE_FACING_ANGLE);
                         me->SetHomePosition(_timelessIsleMiddle);
+                        me->SetMaxHealth(INITIAL_HEALTH_POINTS);
+                        me->SetHealth(me->GetMaxHealth());
                         break;
                     }
                     case MOVEMENT_NIUZAO_CHARGE:
@@ -244,10 +245,12 @@ class boss_niuzao_celestial : public CreatureScript
                     return;
 
                 ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+
                 if (threatlist.empty())
                     return;
 
                 uint8 count = 0;
+
                 for (auto itr = threatlist.begin(); itr != threatlist.end(); ++itr)
                     if (Unit* unit = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid()))
                         if (unit->IsWithinDist(me, 100.0f))
@@ -255,6 +258,7 @@ class boss_niuzao_celestial : public CreatureScript
 
                 uint32 hp = me->GetMaxHealth() - me->GetHealth();
                 uint32 newhp = std::min<uint32>((INCREMENTAL * count), MAX_HEALTH_POINTS);
+
                 if (newhp != me->GetMaxHealth() && newhp > INITIAL_HEALTH_POINTS)
                 {
                     me->SetMaxHealth(std::min<uint32>((me->GetMaxHealth() * count), MAX_HEALTH_POINTS));
@@ -265,6 +269,7 @@ class boss_niuzao_celestial : public CreatureScript
             void UpdateAI(const uint32 diff)
             {
                 events.Update(diff);
+
                 if (me->HasUnitState(UNIT_STATE_CASTING))
                     return;
 
@@ -279,7 +284,6 @@ class boss_niuzao_celestial : public CreatureScript
                     case EVENT_NIUZAO_SHAO_DO_INTRO_ATTACKABLE:
                     {
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-                        me->SetMaxHealth(INITIAL_HEALTH_POINTS);
                         break;
                     }
                     case EVENT_NIUZAO_CHARGE:

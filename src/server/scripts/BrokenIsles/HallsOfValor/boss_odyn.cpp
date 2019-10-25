@@ -22,28 +22,28 @@
 
 enum odynHoVSpells
 {
-    SPELL_RADIANT_TEMPEST       = 198263,
-    SPELL_SPEAR_OF_LIGHT        = 198072,
-    SPELL_SPEAR_OF_LIGHT_DMG    = 200988,
-    SPELL_SHATTER_SPEARS        = 231013,
-    SPELL_SHATTER_SPEARS_DMG    = 231019,
-    SPELL_GLOWING_FRAGMENTS     = 198088,
-    SPELL_RUNIC_BRAND           = 197961,
-    SPELL_UNWORTHY              = 198190,
-    SPELL_STORMFORGED           = 201215,
-    SPELL_SURGE                 = 198750,
-    SPELL_RUNIC_MARK1           = 197963,
-    SPELL_RUNIC_MARK2           = 197964,
-    SPELL_RUNIC_MARK3           = 197965,
-    SPELL_RUNIC_MARK4           = 197966,
-    SPELL_RUNIC_MARK5           = 197967,
-    SPELL_RUNIC_MARK_AT1        = 197968,
-    SPELL_RUNIC_MARK_AT2        = 197971,
-    SPELL_RUNIC_MARK_AT3        = 197972,
-    SPELL_RUNIC_MARK_AT4        = 197975,
-    SPELL_RUNIC_MARK_AT5        = 197977,
-    SPELL_BRANDED               = 197996,
-    SPELL_AEGIS_SUMMON          = 193781,
+    SPELL_RADIANT_TEMPEST = 198263,
+    SPELL_SPEAR_OF_LIGHT = 198072,
+    SPELL_SPEAR_OF_LIGHT_DMG = 200988,
+    SPELL_SHATTER_SPEARS = 231013,
+    SPELL_SHATTER_SPEARS_DMG = 231019,
+    SPELL_GLOWING_FRAGMENTS = 198088,
+    SPELL_RUNIC_BRAND = 197961,
+    SPELL_UNWORTHY = 198190,
+    SPELL_STORMFORGED = 201215,
+    SPELL_SURGE = 198750,
+    SPELL_RUNIC_MARK1 = 197963,
+    SPELL_RUNIC_MARK2 = 197964,
+    SPELL_RUNIC_MARK3 = 197965,
+    SPELL_RUNIC_MARK4 = 197966,
+    SPELL_RUNIC_MARK5 = 197967,
+    SPELL_RUNIC_MARK_AT1 = 197968,
+    SPELL_RUNIC_MARK_AT2 = 197971,
+    SPELL_RUNIC_MARK_AT3 = 197972,
+    SPELL_RUNIC_MARK_AT4 = 197975,
+    SPELL_RUNIC_MARK_AT5 = 197977,
+    SPELL_BRANDED = 197996,
+    SPELL_AEGIS_SUMMON = 193781,
 };
 
 enum odynHoVEvents
@@ -63,10 +63,10 @@ enum odynHoVEvents
 
 enum odynHoVSays
 {
-    SAY_EVENT_1         = 1,
-    SAY_EVENT_2         = 10,
-    SAY_PRE_COMBAT      = 2,
-    SAY_COMBAT_START    = 3,
+    SAY_EVENT_1 = 1,
+    SAY_EVENT_2 = 10,
+    SAY_PRE_COMBAT = 2,
+    SAY_COMBAT_START = 3,
 };
 
 struct boss_odyn_hov : public BossAI
@@ -146,105 +146,105 @@ struct boss_odyn_hov : public BossAI
         {
             switch (eventId)
             {
-                case EVENT_RADIANT_TEMPEST:
-                    DoCast(SPELL_RADIANT_TEMPEST);
+            case EVENT_RADIANT_TEMPEST:
+                DoCast(SPELL_RADIANT_TEMPEST);
 
-                    canSummonSpear = false;
+                canSummonSpear = false;
 
-                    events.ScheduleEvent(EVENT_RADIANT_TEMPEST, 60 * IN_MILLISECONDS);
-                    break;
+                events.ScheduleEvent(EVENT_RADIANT_TEMPEST, 60 * IN_MILLISECONDS);
+                break;
 
-                case EVENT_SPEAR_OF_LIGHT:
-                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 50.0f, true))
+            case EVENT_SPEAR_OF_LIGHT:
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 50.0f, true))
+                {
+                    me->CastSpell(target, SPELL_SPEAR_OF_LIGHT, true);
+                    ++spearOfLightCount;
+                    if (spearOfLightCount >= 3)
                     {
-                        me->CastSpell(target, SPELL_SPEAR_OF_LIGHT, true);
-                        ++spearOfLightCount;
-                        if (spearOfLightCount >= 3)
-                        {
-                            spearOfLightCount = 0;
-                            events.ScheduleEvent(EVENT_SHATTER_SPEARS, 1 * IN_MILLISECONDS);
-                        }
+                        spearOfLightCount = 0;
+                        events.ScheduleEvent(EVENT_SHATTER_SPEARS, 1 * IN_MILLISECONDS);
                     }
+                }
 
-                    if (canSummonSpear)
-                        events.ScheduleEvent(EVENT_SPEAR_OF_LIGHT, 8 * IN_MILLISECONDS);
+                if (canSummonSpear)
+                    events.ScheduleEvent(EVENT_SPEAR_OF_LIGHT, 8 * IN_MILLISECONDS);
 
-                    break;
+                break;
 
-                case EVENT_SHATTER_SPEARS:
-                    DoCast(SPELL_SHATTER_SPEARS);
+            case EVENT_SHATTER_SPEARS:
+                DoCast(SPELL_SHATTER_SPEARS);
 
-                    events.ScheduleEvent(EVENT_RUNIC_BRAND, 1 * IN_MILLISECONDS);
-                    break;
+                events.ScheduleEvent(EVENT_RUNIC_BRAND, 1 * IN_MILLISECONDS);
+                break;
 
-                case EVENT_RUNIC_BRAND:
+            case EVENT_RUNIC_BRAND:
 
-                    if (!PlayerList.isEmpty())
+                if (!PlayerList.isEmpty())
+                {
+                    for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                     {
-                        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                        if (Player *player = i->GetSource())
                         {
-                            if (Player *player = i->GetSource())
+                            if (player->IsAlive() && player->GetDistance(me) <= 150.0f)
                             {
-                                if (player->IsAlive() && player->GetDistance(me) <= 150.0f)
-                                {
-                                    if (players == 1)
-                                        me->AddAura(SPELL_RUNIC_MARK1, player);
-                                    else if (players == 2)
-                                        me->AddAura(SPELL_RUNIC_MARK2, player);
-                                    else if (players == 3)
-                                        me->AddAura(SPELL_RUNIC_MARK3, player);
-                                    else if (players == 4)
-                                        me->AddAura(SPELL_RUNIC_MARK4, player);
-                                    else if (players == 5)
-                                        me->AddAura(SPELL_RUNIC_MARK5, player);
+                                if (players == 1)
+                                    me->AddAura(SPELL_RUNIC_MARK1, player);
+                                else if (players == 2)
+                                    me->AddAura(SPELL_RUNIC_MARK2, player);
+                                else if (players == 3)
+                                    me->AddAura(SPELL_RUNIC_MARK3, player);
+                                else if (players == 4)
+                                    me->AddAura(SPELL_RUNIC_MARK4, player);
+                                else if (players == 5)
+                                    me->AddAura(SPELL_RUNIC_MARK5, player);
 
-                                    ++players;
-                                }
+                                ++players;
                             }
                         }
                     }
+                }
 
-                    me->CastSpell(2437.733f, 497.3854f, 749.4288f, SPELL_RUNIC_MARK_AT1, true);
-                    me->CastSpell(2403.48f, 509.241f, 749.66f, SPELL_RUNIC_MARK_AT2, true);
-                    me->CastSpell(2403.48f, 547.997f, 749.716f, SPELL_RUNIC_MARK_AT3, true);
-                    me->CastSpell(2437.67f, 559.781f, 749.638f, SPELL_RUNIC_MARK_AT4, true);
-                    me->CastSpell(2461.51f, 528.667f, 749.589f, SPELL_RUNIC_MARK_AT5, true);
+                me->CastSpell(2437.733f, 497.3854f, 749.4288f, SPELL_RUNIC_MARK_AT1, true);
+                me->CastSpell(2403.48f, 509.241f, 749.66f, SPELL_RUNIC_MARK_AT2, true);
+                me->CastSpell(2403.48f, 547.997f, 749.716f, SPELL_RUNIC_MARK_AT3, true);
+                me->CastSpell(2437.67f, 559.781f, 749.638f, SPELL_RUNIC_MARK_AT4, true);
+                me->CastSpell(2461.51f, 528.667f, 749.589f, SPELL_RUNIC_MARK_AT5, true);
 
-                    break;
+                break;
 
-                case EVENT_UNWORTHY:
-                    break;
+            case EVENT_UNWORTHY:
+                break;
 
-                case EVENT_STORMFORGED:
-                    break;
+            case EVENT_STORMFORGED:
+                break;
 
-                case EVENT_SURGE:
-                    break;
+            case EVENT_SURGE:
+                break;
 
-                case EVENT_START_TALK:
-                    if (Creature* kovald = instance->GetCreature(BOSS_GOD_KING_SKOVALD))
-                        kovald->AI()->DoAction(ACTION_EVENT_START);
+            case EVENT_START_TALK:
+                if (Creature* kovald = instance->GetCreature(BOSS_GOD_KING_SKOVALD))
+                    kovald->AI()->DoAction(ACTION_EVENT_START);
 
-                    events.ScheduleEvent(EVENT_TALK, 12 * IN_MILLISECONDS);
-                    break;
+                events.ScheduleEvent(EVENT_TALK, 12 * IN_MILLISECONDS);
+                break;
 
-                case EVENT_TALK:
-                    Talk(SAY_EVENT_2);
+            case EVENT_TALK:
+                Talk(SAY_EVENT_2);
 
-                    break;
+                break;
 
-                case EVENT_SAY_PRE_COMBAT:
-                    me->setFaction(14);
-                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                    me->SetWalk(false);
-                    me->GetMotionMaster()->MoveJump(2402.76f, 528.64f, 748.99f, 0.0f, 20.0f, 5.0f);
-                    me->SetHomePosition(2402.76f, 528.64f, 748.99f, 0.0f);
-                    Talk(SAY_COMBAT_START);
-                    break;
+            case EVENT_SAY_PRE_COMBAT:
+                me->setFaction(14);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                me->SetWalk(false);
+                me->GetMotionMaster()->MoveJump(2402.76f, 528.64f, 748.99f, 0.0f, 20.0f, 5.0f);
+                me->SetHomePosition(2402.76f, 528.64f, 748.99f, 0.0f);
+                Talk(SAY_COMBAT_START);
+                break;
 
-                default:
-                    break;
+            default:
+                break;
             }
         }
 

@@ -1,5 +1,6 @@
 #include "ScriptMgr.h"
 #include "InstanceScript.h"
+#include "GameObject.h"
 #include "eye_of_azshara.h"
 
 DoorData const doorData[] =

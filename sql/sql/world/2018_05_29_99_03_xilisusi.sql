@@ -1,4 +1,4 @@
-# TrinityCore - WowPacketParser
+﻿# TrinityCore - WowPacketParser
 # File name: 7.3.5_26654_五月-29-2053 - bl_xilisusi_1.awps.pkt
 # Detected build: V7_3_5_26654
 # Detected locale: zhCN
@@ -17,7 +17,7 @@ INSERT INTO `conversation_actor_template` (`Id`, `CreatureId`, `CreatureModelId`
 
 
 DELETE FROM `conversation_line_template` WHERE `Id` IN (15027, 15026, 15025);
-INSERT INTO `conversation_line_template` (`Id`, `StartTime`, `UiCameraID`, `ActorIdx`, `Unk`, `VerifiedBuild`) VALUES
+INSERT INTO `conversation_line_template` (`Id`, `StartTime`, `UiCameraID`, `ActorIdx`, `flags`, `VerifiedBuild`) VALUES
 (15027, 11719, 83, 0, 0, 26654),
 (15026, 4805, 83, 0, 0, 26654),
 (15025, 0, 83, 0, 0, 26654);
@@ -43,10 +43,10 @@ INSERT INTO `quest_offer_reward_locale` (`ID`, `locale`, `RewardText`, `Verified
 SET NAMES 'latin1';
 
 DELETE FROM `quest_poi` WHERE (`QuestID`=50341 AND `BlobIndex`=0 AND `Idx1`=2) OR (`QuestID`=50341 AND `BlobIndex`=0 AND `Idx1`=1) OR (`QuestID`=50341 AND `BlobIndex`=0 AND `Idx1`=0) OR (`QuestID`=49977 AND `BlobIndex`=0 AND `Idx1`=0) OR (`QuestID`=49473 AND `BlobIndex`=0 AND `Idx1`=1) OR (`QuestID`=49473 AND `BlobIndex`=0 AND `Idx1`=0) OR (`QuestID`=49293 AND `BlobIndex`=1 AND `Idx1`=17) OR (`QuestID`=49293 AND `BlobIndex`=0 AND `Idx1`=16) OR (`QuestID`=49293 AND `BlobIndex`=11 AND `Idx1`=15) OR (`QuestID`=49293 AND `BlobIndex`=10 AND `Idx1`=14) OR (`QuestID`=49293 AND `BlobIndex`=9 AND `Idx1`=13) OR (`QuestID`=49293 AND `BlobIndex`=8 AND `Idx1`=12) OR (`QuestID`=49293 AND `BlobIndex`=7 AND `Idx1`=11) OR (`QuestID`=49293 AND `BlobIndex`=6 AND `Idx1`=10) OR (`QuestID`=49293 AND `BlobIndex`=5 AND `Idx1`=9) OR (`QuestID`=49293 AND `BlobIndex`=4 AND `Idx1`=8) OR (`QuestID`=49293 AND `BlobIndex`=3 AND `Idx1`=7) OR (`QuestID`=49293 AND `BlobIndex`=2 AND `Idx1`=6) OR (`QuestID`=49293 AND `BlobIndex`=1 AND `Idx1`=5) OR (`QuestID`=49293 AND `BlobIndex`=0 AND `Idx1`=4) OR (`QuestID`=49293 AND `BlobIndex`=1 AND `Idx1`=3) OR (`QuestID`=49293 AND `BlobIndex`=0 AND `Idx1`=2) OR (`QuestID`=49293 AND `BlobIndex`=0 AND `Idx1`=1) OR (`QuestID`=49293 AND `BlobIndex`=0 AND `Idx1`=0) OR (`QuestID`=49015 AND `BlobIndex`=2 AND `Idx1`=6) OR (`QuestID`=49015 AND `BlobIndex`=1 AND `Idx1`=5) OR (`QuestID`=49015 AND `BlobIndex`=0 AND `Idx1`=4) OR (`QuestID`=49015 AND `BlobIndex`=0 AND `Idx1`=3) OR (`QuestID`=49015 AND `BlobIndex`=0 AND `Idx1`=2) OR (`QuestID`=49015 AND `BlobIndex`=0 AND `Idx1`=1) OR (`QuestID`=49015 AND `BlobIndex`=0 AND `Idx1`=0) OR (`QuestID`=48288 AND `BlobIndex`=0 AND `Idx1`=11) OR (`QuestID`=48288 AND `BlobIndex`=0 AND `Idx1`=10) OR (`QuestID`=48288 AND `BlobIndex`=0 AND `Idx1`=9) OR (`QuestID`=48288 AND `BlobIndex`=0 AND `Idx1`=8) OR (`QuestID`=48288 AND `BlobIndex`=0 AND `Idx1`=7) OR (`QuestID`=48288 AND `BlobIndex`=0 AND `Idx1`=6) OR (`QuestID`=48288 AND `BlobIndex`=0 AND `Idx1`=5) OR (`QuestID`=48288 AND `BlobIndex`=0 AND `Idx1`=4) OR (`QuestID`=48288 AND `BlobIndex`=0 AND `Idx1`=3) OR (`QuestID`=48288 AND `BlobIndex`=0 AND `Idx1`=2) OR (`QuestID`=48288 AND `BlobIndex`=0 AND `Idx1`=1) OR (`QuestID`=48288 AND `BlobIndex`=0 AND `Idx1`=0) OR (`QuestID`=48078 AND `BlobIndex`=2 AND `Idx1`=5) OR (`QuestID`=48078 AND `BlobIndex`=1 AND `Idx1`=4) OR (`QuestID`=48078 AND `BlobIndex`=0 AND `Idx1`=3) OR (`QuestID`=48078 AND `BlobIndex`=2 AND `Idx1`=2) OR (`QuestID`=48078 AND `BlobIndex`=1 AND `Idx1`=1) OR (`QuestID`=48078 AND `BlobIndex`=0 AND `Idx1`=0) OR (`QuestID`=45414 AND `BlobIndex`=0 AND `Idx1`=5) OR (`QuestID`=45414 AND `BlobIndex`=0 AND `Idx1`=4) OR (`QuestID`=45414 AND `BlobIndex`=0 AND `Idx1`=3) OR (`QuestID`=45414 AND `BlobIndex`=0 AND `Idx1`=2) OR (`QuestID`=45414 AND `BlobIndex`=0 AND `Idx1`=1) OR (`QuestID`=45414 AND `BlobIndex`=0 AND `Idx1`=0) OR (`QuestID`=38397 AND `BlobIndex`=1 AND `Idx1`=2) OR (`QuestID`=38397 AND `BlobIndex`=0 AND `Idx1`=1) OR (`QuestID`=28654 AND `BlobIndex`=3 AND `Idx1`=4) OR (`QuestID`=28654 AND `BlobIndex`=2 AND `Idx1`=3) OR (`QuestID`=28654 AND `BlobIndex`=1 AND `Idx1`=2) OR (`QuestID`=28654 AND `BlobIndex`=0 AND `Idx1`=1) OR (`QuestID`=28376 AND `BlobIndex`=0 AND `Idx1`=1) OR (`QuestID`=28250 AND `BlobIndex`=1 AND `Idx1`=3) OR (`QuestID`=28250 AND `BlobIndex`=0 AND `Idx1`=2) OR (`QuestID`=28250 AND `BlobIndex`=0 AND `Idx1`=1) OR (`QuestID`=27779 AND `BlobIndex`=0 AND `Idx1`=2) OR (`QuestID`=27779 AND `BlobIndex`=0 AND `Idx1`=1);
-INSERT INTO `quest_poi` (`QuestID`, `BlobIndex`, `Idx1`, `ObjectiveIndex`, `QuestObjectiveID`, `QuestObjectID`, `MapID`, `WorldMapAreaId`, `Floor`, `Priority`, `Flags`, `WorldEffectID`, `PlayerConditionID`, `WoDUnk1`, `AlwaysAllowMergingBlobs`, `VerifiedBuild`) VALUES
+INSERT INTO `quest_poi` (`QuestID`, `BlobIndex`, `Idx1`, `ObjectiveIndex`, `QuestObjectiveID`, `QuestObjectID`, `MapID`, `WorldMapAreaId`, `Floor`, `Priority`, `Flags`, `WorldEffectID`, `PlayerConditionID`, `WoDflags1`, `AlwaysAllowMergingBlobs`, `VerifiedBuild`) VALUES
 (50341, 0, 2, 32, 0, 0, 1, 321, 0, 0, 0, 0, 0, 1446848, 0, 26654), -- a-recent-discovery
-(50341, 0, 1, 0, 312259, 132290, 1, 321, 0, 0, 0, 0, 0, 1446848, 0, 26654), -- -Unknown-
-(50341, 0, 0, -1, 0, 0, 1, 321, 0, 0, 0, 0, 0, 1446848, 0, 26654), -- -Unknown-
+(50341, 0, 1, 0, 312259, 132290, 1, 321, 0, 0, 0, 0, 0, 1446848, 0, 26654), -- -flagsnown-
+(50341, 0, 0, -1, 0, 0, 1, 321, 0, 0, 0, 0, 0, 1446848, 0, 26654), -- -flagsnown-
 (49977, 0, 0, -1, 0, 0, 1, 321, 0, 0, 0, 0, 0, 1446848, 0, 26654), -- Summons to Orgrimmar
 (49473, 0, 1, 32, 0, 0, 1220, 1014, 10, 0, 0, 0, 0, 1154921, 0, 26654), -- A Titanic Effort
 (49473, 0, 0, -1, 0, 0, 1220, 1014, 10, 0, 0, 0, 0, 1154921, 0, 26654), -- A Titanic Effort
@@ -200,9 +200,9 @@ UPDATE `quest_poi` SET `ObjectiveIndex`=-1, `QuestObjectiveID`=0, `QuestObjectID
 UPDATE `quest_poi` SET `AlwaysAllowMergingBlobs`=0, `VerifiedBuild`=26654 WHERE (`QuestID`=27779 AND `BlobIndex`=0 AND `Idx1`=0); -- Gnomebliteration
 DELETE FROM `quest_poi_points` WHERE (`QuestID`=50341 AND `Idx1`=2 AND `Idx2`=0) OR (`QuestID`=50341 AND `Idx1`=1 AND `Idx2`=0) OR (`QuestID`=50341 AND `Idx1`=0 AND `Idx2`=0) OR (`QuestID`=49977 AND `Idx1`=0 AND `Idx2`=0) OR (`QuestID`=49473 AND `Idx1`=1 AND `Idx2`=0) OR (`QuestID`=49473 AND `Idx1`=0 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=17 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=16 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=15 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=14 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=13 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=12 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=11 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=10 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=9 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=8 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=7 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=6 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=5 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=4 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=3 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=2 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=1 AND `Idx2`=0) OR (`QuestID`=49293 AND `Idx1`=0 AND `Idx2`=0) OR (`QuestID`=49015 AND `Idx1`=6 AND `Idx2`=0) OR (`QuestID`=49015 AND `Idx1`=5 AND `Idx2`=0) OR (`QuestID`=49015 AND `Idx1`=4 AND `Idx2`=0) OR (`QuestID`=49015 AND `Idx1`=3 AND `Idx2`=0) OR (`QuestID`=49015 AND `Idx1`=2 AND `Idx2`=0) OR (`QuestID`=49015 AND `Idx1`=1 AND `Idx2`=0) OR (`QuestID`=49015 AND `Idx1`=0 AND `Idx2`=0) OR (`QuestID`=48288 AND `Idx1`=11 AND `Idx2`=0) OR (`QuestID`=48288 AND `Idx1`=10 AND `Idx2`=0) OR (`QuestID`=48288 AND `Idx1`=9 AND `Idx2`=0) OR (`QuestID`=48288 AND `Idx1`=8 AND `Idx2`=0) OR (`QuestID`=48288 AND `Idx1`=7 AND `Idx2`=0) OR (`QuestID`=48288 AND `Idx1`=6 AND `Idx2`=0) OR (`QuestID`=48288 AND `Idx1`=5 AND `Idx2`=0) OR (`QuestID`=48288 AND `Idx1`=4 AND `Idx2`=0) OR (`QuestID`=48288 AND `Idx1`=3 AND `Idx2`=0) OR (`QuestID`=48288 AND `Idx1`=2 AND `Idx2`=0) OR (`QuestID`=48288 AND `Idx1`=1 AND `Idx2`=0) OR (`QuestID`=48288 AND `Idx1`=0 AND `Idx2`=0) OR (`QuestID`=48078 AND `Idx1`=5 AND `Idx2`=0) OR (`QuestID`=48078 AND `Idx1`=4 AND `Idx2`=0) OR (`QuestID`=48078 AND `Idx1`=3 AND `Idx2`=0) OR (`QuestID`=48078 AND `Idx1`=2 AND `Idx2`=0) OR (`QuestID`=48078 AND `Idx1`=1 AND `Idx2`=0) OR (`QuestID`=48078 AND `Idx1`=0 AND `Idx2`=0) OR (`QuestID`=45414 AND `Idx1`=5 AND `Idx2`=0) OR (`QuestID`=45414 AND `Idx1`=4 AND `Idx2`=0) OR (`QuestID`=45414 AND `Idx1`=3 AND `Idx2`=0) OR (`QuestID`=45414 AND `Idx1`=2 AND `Idx2`=0) OR (`QuestID`=45414 AND `Idx1`=1 AND `Idx2`=0) OR (`QuestID`=45414 AND `Idx1`=0 AND `Idx2`=0) OR (`QuestID`=38397 AND `Idx1`=2 AND `Idx2`=0) OR (`QuestID`=38397 AND `Idx1`=1 AND `Idx2`=0) OR (`QuestID`=28654 AND `Idx1`=4 AND `Idx2`=0) OR (`QuestID`=28654 AND `Idx1`=3 AND `Idx2`=0) OR (`QuestID`=28654 AND `Idx1`=2 AND `Idx2`=0) OR (`QuestID`=28654 AND `Idx1`=1 AND `Idx2`=0) OR (`QuestID`=28376 AND `Idx1`=1 AND `Idx2`=0) OR (`QuestID`=28250 AND `Idx1`=3 AND `Idx2`=0) OR (`QuestID`=28250 AND `Idx1`=2 AND `Idx2`=0) OR (`QuestID`=28250 AND `Idx1`=1 AND `Idx2`=9) OR (`QuestID`=28250 AND `Idx1`=1 AND `Idx2`=8) OR (`QuestID`=28250 AND `Idx1`=1 AND `Idx2`=7) OR (`QuestID`=28250 AND `Idx1`=1 AND `Idx2`=6) OR (`QuestID`=28250 AND `Idx1`=1 AND `Idx2`=5) OR (`QuestID`=28250 AND `Idx1`=1 AND `Idx2`=4) OR (`QuestID`=28250 AND `Idx1`=1 AND `Idx2`=3) OR (`QuestID`=28250 AND `Idx1`=1 AND `Idx2`=2) OR (`QuestID`=28250 AND `Idx1`=1 AND `Idx2`=1) OR (`QuestID`=27779 AND `Idx1`=2 AND `Idx2`=0);
 INSERT INTO `quest_poi_points` (`QuestID`, `Idx1`, `Idx2`, `X`, `Y`, `VerifiedBuild`) VALUES
-(50341, 2, 0, 1613, -4372, 26654), -- -Unknown-
-(50341, 1, 0, 1613, -4372, 26654), -- -Unknown-
-(50341, 0, 0, 1613, -4372, 26654), -- -Unknown-
+(50341, 2, 0, 1613, -4372, 26654), -- -flagsnown-
+(50341, 1, 0, 1613, -4372, 26654), -- -flagsnown-
+(50341, 0, 0, 1613, -4372, 26654), -- -flagsnown-
 (49977, 0, 0, 1613, -4372, 26654), -- Summons to Orgrimmar
 (49473, 1, 0, -743, 4501, 26654), -- A Titanic Effort
 (49473, 0, 0, -743, 4501, 26654), -- A Titanic Effort
@@ -279,19 +279,19 @@ UPDATE `quest_poi_points` SET `Y`=607, `VerifiedBuild`=26654 WHERE (`QuestID`=28
 UPDATE `quest_poi_points` SET `X`=-9652, `Y`=-1299, `VerifiedBuild`=26654 WHERE (`QuestID`=28250 AND `Idx1`=1 AND `Idx2`=0); -- Thieving Little Pluckers
 UPDATE `quest_poi_points` SET `X`=-9606, `Y`=-1251, `VerifiedBuild`=26654 WHERE (`QuestID`=28250 AND `Idx1`=0 AND `Idx2`=0); -- Thieving Little Pluckers
 
-DELETE FROM `quest_details` WHERE `ID` IN (50341 /*-Unknown-*/, 49977 /*Summons to Orgrimmar*/);
+DELETE FROM `quest_details` WHERE `ID` IN (50341 /*-flagsnown-*/, 49977 /*Summons to Orgrimmar*/);
 INSERT INTO `quest_details` (`ID`, `Emote1`, `Emote2`, `Emote3`, `Emote4`, `EmoteDelay1`, `EmoteDelay2`, `EmoteDelay3`, `EmoteDelay4`, `VerifiedBuild`) VALUES
-(50341, 1, 1, 0, 0, 0, 0, 0, 0, 26654), -- -Unknown-
+(50341, 1, 1, 0, 0, 0, 0, 0, 0, 26654), -- -flagsnown-
 (49977, 0, 0, 0, 0, 0, 0, 0, 0, 26654); -- Summons to Orgrimmar
 
 
 DELETE FROM `quest_request_items` WHERE `ID`=50341;
 INSERT INTO `quest_request_items` (`ID`, `EmoteOnComplete`, `EmoteOnIncomplete`, `EmoteOnCompleteDelay`, `EmoteOnIncompleteDelay`, `CompletionText`, `VerifiedBuild`) VALUES
-(50341, 0, 0, 0, 0, '情况紧急', 26654); -- -Unknown-
+(50341, 0, 0, 0, 0, '情况紧急', 26654); -- -flagsnown-
 
 DELETE FROM `quest_request_items_locale` WHERE `locale`='zhCN' AND `ID`=50341;
 INSERT INTO `quest_request_items_locale` (`ID`, `locale`, `CompletionText`, `VerifiedBuild`) VALUES
-(50341, 'zhCN', '情况紧急', 26654); -- -Unknown-
+(50341, 'zhCN', '情况紧急', 26654); -- -flagsnown-
 
 
 DELETE FROM `creature_template_addon` WHERE `entry`=132254;
@@ -307,7 +307,7 @@ UPDATE `creature_template_scaling` SET `LevelScalingMin`=1, `LevelScalingMax`=11
 
 DELETE FROM `creature_equip_template` WHERE (`CreatureID`=132254 AND `ID`=1);
 INSERT INTO `creature_equip_template` (`CreatureID`, `ID`, `ItemID1`, `AppearanceModID1`, `ItemVisual1`, `ItemID2`, `AppearanceModID2`, `ItemVisual2`, `ItemID3`, `AppearanceModID3`, `ItemVisual3`) VALUES
-(132254, 1, 65795, 0, 0, 0, 0, 0, 5258, 0, 0); -- -Unknown-
+(132254, 1, 65795, 0, 0, 0, 0, 0, 5258, 0, 0); -- -flagsnown-
 
 
 DELETE FROM `gossip_menu` WHERE (`MenuId`=22011 AND `TextId`=33716);
@@ -340,13 +340,13 @@ UPDATE `creature_template` SET `minlevel`=110, `maxlevel`=110 WHERE `entry`=8870
 UPDATE `creature_template` SET `minlevel`=110, `maxlevel`=110 WHERE `entry`=44876; -- 步兵克玛
 UPDATE `creature_template` SET `minlevel`=110, `maxlevel`=110 WHERE `entry`=74228; -- 暗矛猎头者
 UPDATE `creature_template` SET `minlevel`=110, `maxlevel`=110 WHERE `entry`=44877; -- 步兵索兰
-UPDATE `creature_template` SET `gossip_menu_id`=22011, `minlevel`=98, `maxlevel`=110, `faction`=35, `npcflag`=3, `BaseAttackTime`=2000, `RangeAttackTime`=2000, `unit_class`=2, `unit_flags`=33536, `unit_flags2`=2048 WHERE `entry`=132254; -- -Unknown-
+UPDATE `creature_template` SET `gossip_menu_id`=22011, `minlevel`=98, `maxlevel`=110, `faction`=35, `npcflag`=3, `BaseAttackTime`=2000, `RangeAttackTime`=2000, `unit_class`=2, `unit_flags`=33536, `unit_flags2`=2048 WHERE `entry`=132254; -- -flagsnown-
 UPDATE `creature_template` SET `minlevel`=90, `maxlevel`=90 WHERE `entry`=14392; -- 纳多吉大王
 UPDATE `creature_template` SET `minlevel`=110, `maxlevel`=110 WHERE `entry`=14375; -- 斥候斯托加德
 UPDATE `creature_template` SET `minlevel`=110, `maxlevel`=110 WHERE `entry`=44878; -- 步兵卡鲁斯
 UPDATE `creature_template` SET `minlevel`=110, `maxlevel`=110 WHERE `entry`=3296; -- 奥格瑞玛步兵
 
-UPDATE `quest_template` SET `RewardBonusMoney`=18350, `VerifiedBuild`=26654 WHERE `ID`=50341; -- -Unknown-
+UPDATE `quest_template` SET `RewardBonusMoney`=18350, `VerifiedBuild`=26654 WHERE `ID`=50341; -- -flagsnown-
 
 UPDATE `creature_template` SET `HealthScalingExpansion`=0, `VerifiedBuild`=26654 WHERE `entry`=86883; -- Raptor
 UPDATE `creature_template` SET `VerifiedBuild`=26654 WHERE `entry`=131072; -- 虚空猎手
@@ -359,7 +359,7 @@ INSERT INTO `npc_text` (`ID`, `Probability0`, `Probability1`, `Probability2`, `P
 SET @CGUID = 441213;
 DELETE FROM `creature` WHERE `guid` = @CGUID+0 ;
 INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `PhaseId`, `PhaseGroup`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `VerifiedBuild`) VALUES
-(@CGUID+0, 132254, 1, 1637, 5170, 1, '0', 0, 0, 0, 1613.111, -4372.49, 24.71432, 3.66064, 120, 0, 0, 0, 0, 0, 0, 0, 0, 26654); -- nathanos-blightcaller (Area: -Unknown- - Difficulty: 0)
+(@CGUID+0, 132254, 1, 1637, 5170, 1, '0', 0, 0, 0, 1613.111, -4372.49, 24.71432, 3.66064, 120, 0, 0, 0, 0, 0, 0, 0, 0, 26654); -- nathanos-blightcaller (Area: -flagsnown- - Difficulty: 0)
 
 DELETE FROM `creature_addon` WHERE `guid` = @CGUID+0;
 INSERT INTO `creature_addon` (`guid`, `path_id`, `mount`, `bytes1`, `bytes2`, `emote`, `aiAnimKit`, `movementAnimKit`, `meleeAnimKit`, `auras`) VALUES

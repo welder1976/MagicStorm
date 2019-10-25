@@ -307,26 +307,38 @@ struct npc_brother_paxton : public ScriptedAI
         _events.Reset();
 
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
-        me->SetReactState(REACT_PASSIVE);
+        DoCastSelf(SPELL_FORTITUDE);
+        me->InitializeReactState();
 
         _cooldown = false;
         _cooldownTimer = 0;
     }
 
-    void EnterCombat(Unit * who) override { }
+    void EnterEvadeMode(EvadeReason /*why*/) override
+    {
+        return;
+    }
 
     void MoveInLineOfSight(Unit* who) override
     {
-        if (who && who->GetTypeId() == TYPEID_PLAYER && !who->HasAura(SPELL_FORTITUDE) && me->GetDistance(who) < 10.0f)
+        if (me->GetDistance(who) < 15.0f)
         {
-            if (roll_chance_i(30) && !_cooldown)
+            if (who && who->GetTypeId() == TYPEID_PLAYER && !who->HasAura(SPELL_FORTITUDE) && !_cooldown)
             {
-                me->CastSpell(who, SPELL_FORTITUDE);
-                me->CastSpell(who, SPELL_RENEW, true);
-                Talk(BROTHER_PAXTON_TEXT_PLAYER, who);
-                _cooldown = true;
+                if (roll_chance_i(30))
+                {
+                    _cooldown = true;
+                    me->CastSpell(who, SPELL_FORTITUDE);
+                    me->CastSpell(who, SPELL_RENEW, true);
+                    Talk(BROTHER_PAXTON_TEXT_PLAYER, who);
+                }
             }
         }
+    }
+
+    void EnterCombat(Unit* /*who*/) override
+    {
+        return;
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -365,6 +377,8 @@ struct npc_brother_paxton : public ScriptedAI
         switch (_events.ExecuteEvent())
         {
             case 1:
+                me->SetReactState(REACT_PASSIVE);
+
                 if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
                     stormwind_infantry->AI()->Talk(INFANTRY_HELP_YELL);
                 _events.ScheduleEvent(2, 1s);
@@ -381,8 +395,11 @@ struct npc_brother_paxton : public ScriptedAI
             case 4:
                 if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
                     me->CastSpell(stormwind_infantry, SPELL_PENANCE);
+                _events.ScheduleEvent(17, 4s);
                 break;
             case 5:
+                me->SetReactState(REACT_PASSIVE);
+
                 if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
                     stormwind_infantry->AI()->Talk(INFANTRY_HELP_YELL);
                 _events.ScheduleEvent(6, 1s);
@@ -399,8 +416,11 @@ struct npc_brother_paxton : public ScriptedAI
             case 8:
                 if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
                     me->CastSpell(stormwind_infantry, SPELL_FLASH_HEAL);
+                _events.ScheduleEvent(17, 4s);
                 break;
             case 9:
+                me->SetReactState(REACT_PASSIVE);
+
                 if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
                     stormwind_infantry->AI()->Talk(INFANTRY_HELP_YELL);
                 _events.ScheduleEvent(10, 1s);
@@ -417,8 +437,11 @@ struct npc_brother_paxton : public ScriptedAI
             case 12:
                 if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
                     me->CastSpell(stormwind_infantry, SPELL_RENEW);
+                _events.ScheduleEvent(17, 4s);
                 break;
             case 13:
+                me->SetReactState(REACT_PASSIVE);
+
                 if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
                     stormwind_infantry->AI()->Talk(INFANTRY_HELP_YELL);
                 _events.ScheduleEvent(14, 1s);
@@ -435,6 +458,13 @@ struct npc_brother_paxton : public ScriptedAI
             case 16:
                 if (Creature* stormwind_infantry = me->FindNearestCreature(NPC_STORMWIND_INFANTRY, 6.0f))
                     me->CastSpell(stormwind_infantry, SPELL_REVIVE);
+                _events.ScheduleEvent(17, 4s);
+                break;
+            case 17:
+                me->ClearInCombat();
+                Reset();
+                break;
+            default:
                 break;
         }
 

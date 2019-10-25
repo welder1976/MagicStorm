@@ -1,4 +1,4 @@
-# TrinityCore - WowPacketParser
+﻿# TrinityCore - WowPacketParser
 # File name: 7.3.5_26365_五月-11-1534 - binghuo47132.awps.pkt
 # Detected build: V7_3_5_26365
 # Detected locale: zhCN
@@ -25,7 +25,7 @@ UPDATE `quest_poi` SET `AlwaysAllowMergingBlobs`=0, `VerifiedBuild`=26365 WHERE 
 SET @CGUID = 453767; -- 138
 SET @OGUID = 100766; -- 5
 DELETE FROM `creature` WHERE `guid` BETWEEN @CGUID+0 AND @CGUID+137;
-INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `PhaseId`, `PhaseGroup`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `VerifiedBuild`) VALUES
+INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `PhaseGroup`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `VerifiedBuild`) VALUES
 -- (@CGUID+0, 115056, 1220, 0, 0, 1, '0', 0, 0, 0, -1936.194, 2954.985, 16.21499, 5.187116, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- 邪翼吞噬者 (Area: -Unknown- - Difficulty: 1)
 -- (@CGUID+1, 115056, 1220, 0, 0, 1, '0', 0, 0, 0, -1806.835, 3058.54, 19.35583, 4.170858, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- 邪翼吞噬者 (Area: -Unknown- - Difficulty: 1)
 (@CGUID+2, 117793, 1220, 0, 0, 1, '0', 0, 0, 0, -1758.825, 3030.175, 20.65312, 4.531646, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- 幼年魔蝠 (Area: -Unknown- - Difficulty: 1)
@@ -305,8 +305,9 @@ INSERT INTO `creature_addon` (`guid`, `path_id`, `mount`, `bytes1`, `bytes2`, `e
 (@CGUID+136, 0, 0, 0, 1, 0, 0, 0, 0, ''), -- 活性邪焰元素
 (@CGUID+137, 0, 0, 0, 1, 0, 0, 0, 0, ''); -- 燃烧哨兵
 
+SET @OGUID = 100766; -- 5
 DELETE FROM `gameobject` WHERE `guid` BETWEEN @OGUID+0 AND @OGUID+4;
-INSERT INTO `gameobject` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `PhaseId`, `PhaseGroup`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`, `VerifiedBuild`) VALUES
+INSERT INTO `gameobject` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `PhaseGroup`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`, `VerifiedBuild`) VALUES
 (@OGUID+0, 241537, 1220, 7543, 8547, 1, '0', 0, -1603.828, 2880.208, 21.03529, 1.994451, 0, 0, 0.8399687, 0.5426349, 7200, 255, 1, 26365), -- Chaos Clover (Area: -Unknown- - Difficulty: 1)
 (@OGUID+1, 244774, 1220, 7543, 8547, 1, '0', 0, -1637.038, 2838.854, 16.48882, 0, 0, 0, 0, 1, 7200, 255, 1, 26365), -- Aethril (Area: -Unknown- - Difficulty: 1)
 (@OGUID+2, 268435, 1220, 7543, 8547, 1, '0', 0, -1682.156, 2758.584, 17.22924, 2.419727, 0, 0, 0.9355679, 0.3531469, 7200, 255, 1, 26365), -- Ancient Shrine (Area: -Unknown- - Difficulty: 1)

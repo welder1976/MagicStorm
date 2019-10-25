@@ -191,6 +191,11 @@ enum WarriorSpells
     SPELL_WARRIOR_WRECKING_BALL_EFFECT              = 215570,
     SPELL_WARRIOR_COMMANDING_SHOUT                  = 97463,
 	SPELL_WARRIOR_REVENGE                           = 6572,
+    SPELL_WARR_ART_VOID_CLEAVE_TALENT               = 209573,
+    SPELL_WARR_ART_VOID_CLEAVE_SPELL                = 209700,	
+    WARRIOR_SPELL_SHIELD_OF_WALL_NOSHIELD           = 146128,
+    WARRIOR_SPELL_SHIELD_OF_WALL_HORDE              = 146127,
+    WARRIOR_SPELL_SHIELD_OF_WALL_ALLIANCE           = 147925,
 
     NPC_WARRIOR_RAVAGER                             = 76168,
 };
@@ -3422,6 +3427,92 @@ public:
     }
 };
 
+//ID - 845 Cleave
+class spell_warr_cleave_SpellScript : public SpellScript
+{
+    PrepareSpellScript(spell_warr_cleave_SpellScript);
+
+    void FilterTargets(std::list<WorldObject*>& unitList)
+    {
+        Unit* caster = GetCaster();
+        if (!caster)
+            return;
+
+        if (caster->HasAura(SPELL_WARR_ART_VOID_CLEAVE_TALENT)) {
+            int32 count = 0;
+            for (WorldObject* obj : unitList) {
+                count++;
+            }
+
+            if (count > 2)
+                caster->CastSpell(caster, SPELL_WARR_ART_VOID_CLEAVE_SPELL, true);
+        }
+    }
+
+    void Register() override
+    {
+        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_warr_cleave_SpellScript::FilterTargets, EFFECT_1, TARGET_UNIT_CONE_ENEMY_104);
+    }
+};
+
+// Shield Wall - 871
+class spell_warr_shield_wall : public SpellScriptLoader
+{
+public:
+    spell_warr_shield_wall() : SpellScriptLoader("spell_warr_shield_wall") { }
+
+    class spell_warr_shield_wall_AuraScript : public AuraScript
+    {
+        PrepareAuraScript(spell_warr_shield_wall_AuraScript);
+
+        void OnApply(const AuraEffect* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+        {
+            if (!GetCaster())
+                return;
+
+            if (Player* _player = GetCaster()->ToPlayer())
+            {
+                if (_player->GetShield())
+                    _player->AddAura(WARRIOR_SPELL_SHIELD_OF_WALL_NOSHIELD, _player);
+                else
+                {
+                    if (_player->GetTeam() == HORDE)
+                        _player->AddAura(WARRIOR_SPELL_SHIELD_OF_WALL_HORDE, _player);
+                    else
+                        _player->AddAura(WARRIOR_SPELL_SHIELD_OF_WALL_ALLIANCE, _player);
+                }
+            }
+        }
+
+        void OnRemove(const AuraEffect* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+        {
+            if (!GetCaster())
+                return;
+
+            if (Player* _player = GetCaster()->ToPlayer())
+            {
+                if (_player->HasAura(WARRIOR_SPELL_SHIELD_OF_WALL_NOSHIELD))
+                    _player->RemoveAura(WARRIOR_SPELL_SHIELD_OF_WALL_NOSHIELD);
+                else if (_player->HasAura(WARRIOR_SPELL_SHIELD_OF_WALL_HORDE))
+                    _player->RemoveAura(WARRIOR_SPELL_SHIELD_OF_WALL_HORDE);
+                else
+                    _player->RemoveAura(WARRIOR_SPELL_SHIELD_OF_WALL_ALLIANCE);
+            }
+        }
+
+        void Register()
+        {
+            OnEffectApply += AuraEffectApplyFn(spell_warr_shield_wall_AuraScript::OnApply, EFFECT_0, SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN, AURA_EFFECT_HANDLE_REAL);
+            OnEffectRemove += AuraEffectRemoveFn(spell_warr_shield_wall_AuraScript::OnRemove, EFFECT_0, SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN, AURA_EFFECT_HANDLE_REAL);
+        }
+    };
+
+    AuraScript* GetAuraScript() const
+    {
+        return new spell_warr_shield_wall_AuraScript();
+    }
+};
+
 void AddSC_warrior_spell_scripts()
 {
     new spell_warr_berzerker_rage();
@@ -3497,6 +3588,7 @@ void AddSC_warrior_spell_scripts()
 	new PlayerScript_into_the_fray();
 	new spell_misc_concordance_of_the_legionfall();
 	new spell_warr_touch_of_zakajz();
+    new spell_warr_shield_wall();
 
     RegisterCreatureAI(npc_warr_ravager);
 	new spell_warr_revenge_trigger();
@@ -3504,4 +3596,5 @@ void AddSC_warrior_spell_scripts()
 	new spell_warr_soul_of_the_slaughter();
 	new spell_warr_corrupted_blood_of_zakajz();
 	new spell_warr_execute_fury();
+	RegisterSpellScript(spell_warr_cleave_SpellScript);
 }

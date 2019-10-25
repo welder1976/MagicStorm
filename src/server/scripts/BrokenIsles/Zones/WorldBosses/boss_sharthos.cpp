@@ -2,7 +2,7 @@
 * Copyright (C) 2016-2017 ColossusWoW <https://colossuswow.com/>
 *
 * Este codigo es de uso exclusivo y privado para la red de gaming
-* ColossusWoW está totalmente prohibida su distribución y
+* ColossusWoW est? totalmente prohibida su distribuci?n y
 * uso en proyectos ajenos, si has obtenido o encontrado este codigo
 * publicamente envianos un email a administracion@colossuswow.com
 * indicandonos como y donde has obtenido este codigo
@@ -20,6 +20,7 @@
 #include "Player.h"
 #include "AreaTriggerTemplate.h"
 #include "AreaTriggerAI.h"
+#include "AreaTrigger.h"
 #include "MotionMaster.h"
 
 enum Spells

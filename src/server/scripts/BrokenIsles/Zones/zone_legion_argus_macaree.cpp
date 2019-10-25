@@ -16,9 +16,18 @@
  */
 
 
-#include "ScriptMgr.h"
+#include "Creature.h"
+#include "GameObject.h"
+#include "MotionMaster.h"
+#include "ObjectAccessor.h"
 #include "Player.h"
+#include "SceneMgr.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
+#include "SpellScript.h"
 #include "SpellMgr.h"
+#include "TemporarySummon.h"
+#include "PhasingHandler.h"
 
 enum
 {

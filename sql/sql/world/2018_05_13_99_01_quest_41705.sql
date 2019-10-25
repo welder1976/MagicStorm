@@ -1,4 +1,4 @@
-# TrinityCore - WowPacketParser
+﻿# TrinityCore - WowPacketParser
 # File name: 7.3.5_26365_五月-11-1604 - aimilan.awps.pkt
 # Detected build: V7_3_5_26365
 # Detected locale: zhCN 至高岭保卫世界任务  使用镜像
@@ -47,7 +47,7 @@ UPDATE `quest_poi` SET `AlwaysAllowMergingBlobs`=1, `VerifiedBuild`=26365 WHERE 
 SET @CGUID = 453905;
 SET @OGUID = 103151;
 DELETE FROM `creature` WHERE `guid` BETWEEN @CGUID+0 AND @CGUID+152;
-INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `PhaseId`, `PhaseGroup`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `VerifiedBuild`) VALUES
+INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `PhaseGroup`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `VerifiedBuild`) VALUES
 (@CGUID+0, 111184, 1220, 7731, 0, 1, '8395', 0, 0, 0, 4281.25, 4272.94, 736.6445, 2.71727, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- Greystone Shardcaster (Area: 0 - Difficulty: 1) (Auras: )
 (@CGUID+1, 99708, 1220, 7731, 0, 1, '8395', 0, 0, 0, 4282.235, 4262.01, 735.1722, 6.008182, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- 至高岭保卫者 (Area: 0 - Difficulty: 1) (Auras: )
 (@CGUID+2, 131953, 1220, 7731, 0, 1, '8395', 0, 0, 0, 4265.749, 4236.59, 738.9908, 1.8639, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- 鲜血图腾幸存者 (Area: 0 - Difficulty: 1)
@@ -360,7 +360,7 @@ INSERT INTO `creature_addon` (`guid`, `path_id`, `mount`, `bytes1`, `bytes2`, `e
 (@CGUID+152, 0, 0, 0, 1, 0, 0, 0, 0, ''); -- Greystone Flanker
 
 DELETE FROM `gameobject` WHERE `guid` BETWEEN @OGUID+0 AND @OGUID+27;
-INSERT INTO `gameobject` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `PhaseId`, `PhaseGroup`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`, `VerifiedBuild`) VALUES
+INSERT INTO `gameobject` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `PhaseGroup`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`, `VerifiedBuild`) VALUES
 (@OGUID+0, 245330, 1220, 7731, 0, 1, '8395', 0, 4343.351, 4302.701, 659.0723, 6.275536, 0.03128052, 0.0649519, -0.005839348, 0.9973809, 7200, 255, 1, 26365), -- Barrel o' Fish (Area: 0 - Difficulty: 1)
 (@OGUID+1, 245331, 1220, 7731, 0, 1, '8395', 0, 4351.015, 4330.44, 658.6837, 0.8440618, 0.05146456, 0.1260643, 0.397254, 0.9075508, 7200, 255, 1, 26365), -- Bucket o' Fish (Area: 0 - Difficulty: 1)
 (@OGUID+2, 248422, 1220, 7731, 0, 1, '8395', 0, 4110.437, 4299.589, 768.1293, 0, 0, 0, 0, 1, 7200, 255, 1, 26365), -- Stack of Bandages (Area: 0 - Difficulty: 1)

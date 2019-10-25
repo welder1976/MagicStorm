@@ -35,6 +35,26 @@
 #include "MotionMaster.h"
 #include "PhasingHandler.h"
 #include "SpellInfo.h"
+#include "Log.h"
+#include "Map.h"
+#include "Transport.h"
+#include "DBCEnums.h"
+#include "LFGMgr.h"
+#include "LFGQueue.h"
+#include "LFGPackets.h"
+#include "DynamicObject.h"
+#include "CreatureTextMgr.h"
+#include "MiscPackets.h"
+#include "Creature.h"
+#include "Vehicle.h"
+#include "TemporarySummon.h"
+#include "CombatAI.h"
+
+
+
+
+#define GOSSIP_ACCEPT_DUEL      "Let''s duel"
+#define EVENT_SPECIAL 20
 
 class scene_azsuna_runes : public SceneScript
 {
@@ -102,42 +122,165 @@ public:
     }
 };
 
+// 93326
+class npc_archmage_khadgar_93337 : public CreatureScript
+{
+public:
+    npc_archmage_khadgar_93337() : CreatureScript("npc_archmage_khadgar_93337") { }
+
+    enum eNpc
+    {
+        QUEST_INTO_THE_FRAY_DH = 44137,
+        QUEST_INTO_THE_FRAY = 38834,
+        SPELL_TRANSFORM_KHADGAR_RAVEN = 165291,
+        EVENT_SAY_HURRY = 11,
+        EVENT_TRANSFORM = 12,
+        EVENT_MOVE_CAMP = 13,
+        EVENT_DESPAWN = 14,
+        DATA_DO_SOMETHING = 21,
+    };
+
+    bool OnQuestAccept(Player* /*player*/, Creature* creature, Quest const* quest) override
+    {
+        if (quest->GetQuestId() == QUEST_INTO_THE_FRAY)
+        {
+            creature->GetAI()->SetData(DATA_DO_SOMETHING, DATA_DO_SOMETHING);
+        }
+        return true;
+    }
+
+    struct npc_archmage_khadgar_93337_AI : public ScriptedAI
+    {
+        npc_archmage_khadgar_93337_AI(Creature* creature) : ScriptedAI(creature) {
+            Initialize();
+        }
+
+        void Initialize() {}
+
+        void Reset() override
+        {
+            me->SetWalk(false);
+            me->SetSpeed(MOVE_RUN, 1.0f);
+            me->SetHomePosition(me->GetPosition());
+            _events.Reset();            
+            Initialize();
+        }
+
+        void SetData(uint32 id, uint32 /*value*/) override
+        {
+            switch (id)
+            {
+            case DATA_DO_SOMETHING:
+                _events.ScheduleEvent(EVENT_SAY_HURRY, 300);
+                break;
+            default:
+                break;
+            }
+        }
+
+        void MovementInform(uint32 type, uint32 id) override
+        {
+            if (type == WAYPOINT_MOTION_TYPE)
+            {
+                switch (id)
+                {
+                case 6:
+                    _events.ScheduleEvent(EVENT_DESPAWN, 1000);
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+
+        void UpdateAI(uint32 diff) override
+        {
+            _events.Update(diff);
+
+            while (uint32 eventId = _events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                case EVENT_SAY_HURRY:
+                    me->AI()->Talk(1);
+                    _events.ScheduleEvent(EVENT_TRANSFORM, 1000);
+                    break;
+                case EVENT_TRANSFORM:
+                    DoCast(me, SPELL_TRANSFORM_KHADGAR_RAVEN, true);
+                    _events.ScheduleEvent(EVENT_MOVE_CAMP, 300);
+                    break;
+                case EVENT_MOVE_CAMP:
+                    me->GetMotionMaster()->MovePath(9332600, false);
+                    break;
+                case EVENT_DESPAWN:
+                    me->RemoveAurasDueToSpell(SPELL_TRANSFORM_KHADGAR_RAVEN);
+                    me->GetMotionMaster()->MoveTargetedHome();
+                    me->DespawnOrUnsummon();
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+
+    private:
+        EventMap _events;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_archmage_khadgar_93337_AI(creature);
+    }
+};
+
 struct questnpc_soul_gem : public ScriptedAI
 {
     questnpc_soul_gem(Creature* creature) : ScriptedAI(creature) { }
 
+    ObjectGuid _playerGUID;
+
     void Reset() override
-    {
-        CheckForDeadDemons(me);
+    {   
+        _playerGUID = ObjectGuid::Empty;
     }
 
-    void CheckForDeadDemons(Creature* creature)
+    void GetTargets()
     {
-        if (!creature->GetOwner() || !creature->GetOwner()->IsPlayer())
-            return;
+        /*if (!me->GetOwner() || !me->GetOwner()->IsPlayer())
+            return;*/
 
-        std::list<Creature*> targets = creature->FindAllCreaturesInRange(15.0f);
-        Player* owner = creature->GetOwner()->ToPlayer();
+        std::list<Creature*> targets = me->FindAllCreaturesInRange(100.0f);
 
-        for (Creature* target : targets)
+        if (Player* player = ObjectAccessor::GetPlayer(*me, _playerGUID))
         {
-            if(!target->IsAlive())
-            { 
-                switch (target->GetEntry())
+            for (auto itr : targets)
+            {
+                if (itr->isDead())
                 {
+                    switch (itr->GetEntry())
+                    {
                     case 90230:
                     case 90241:
-                    case 93556:
                     case 93619:
                     case 101943:
-                    case 103180:
-                        target->DespawnOrUnsummon();
-                        owner->KilledMonsterCredit(90298);
+                        me->CastSpell(itr, 178753, true);
+                        me->CastSpell(itr, 178752, true);
+                        itr->DespawnOrUnsummon();
+                        player->KilledMonsterCredit(90298, ObjectGuid::Empty);
                         break;
                     default:
                         break;
+                    }
                 }
             }
+        }
+    }
+
+    void IsSummonedBy(Unit* summoner) override
+    {
+        if (Player* player = summoner->ToPlayer()) {
+            _playerGUID = player->GetGUID();
+            GetTargets();
         }
     }
 };
@@ -242,6 +385,9 @@ enum PrinceSpells
 {
     SPELL_FIREBALL = 178784,
     SPELL_METEOR_STORM = 179215,
+    SPELL_DUEL = 52996,
+    SPELL_DUEL_FLAG = 52991,
+    SPELL_DUEL_VICTORY = 52994,
 };
 
 class npc_prince_farondis : public CreatureScript
@@ -258,6 +404,7 @@ public:
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Please, show me where the Tidestone lies.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
         SendGossipMenuFor(player, 26247, creature->GetGUID());
+        
 
         return true;
     }
@@ -489,6 +636,7 @@ public:
     }
 };
 
+
 // 250361
 class go_sabotaged_portal_stabilizer : public GameObjectScript
 {
@@ -502,6 +650,13 @@ public:
 
         return true;
     }
+};
+
+enum
+{
+    NPC_WALPLAUZE_BESIEGT = 89050,
+    QUEST_42159 = 42159,
+    FACTION_HOSTILE = 2068,
 };
 
 // 214482 - Radiant Ley Crystal
@@ -654,6 +809,439 @@ public:
     };
 };
 
+// quest local
+// 210543 - Rally the Nightwatchers
+class spell_rally_the_nightwatchers : public SpellScript
+{
+    PrepareSpellScript(spell_rally_the_nightwatchers);
+
+    void HandleDummy(SpellEffIndex /*effIndex*/)
+    {
+
+        if (Unit* caster = GetCaster())
+            if (Unit* target = GetHitUnit())
+                if (target->GetTypeId() == TYPEID_UNIT)
+                    if (target->GetEntry() == 88782)
+                        caster->ToPlayer()->KilledMonsterCredit(106273, ObjectGuid::Empty);
+    }
+
+    void Register()
+    {
+        OnEffectHitTarget += SpellEffectFn(spell_rally_the_nightwatchers::HandleDummy, EFFECT_0, SPELL_EFFECT_APPLY_AURA);
+    }
+};
+
+class ps_quest_rally_the_nightwatchers : public PlayerScript
+{
+public:
+    ps_quest_rally_the_nightwatchers() : PlayerScript("ps_quest_rally_the_nightwatchers") { }
+
+    void OnQuestAccept(Player* player, Quest const* quest)
+    {
+        if (quest->GetQuestId() == 42108)
+            player->CastSpell(player, 210554, true);
+    }
+
+    void OnUpdateArea(Player* player, Area* newArea, Area* /*oldArea*/)
+    {
+        switch (newArea->GetId())
+        {
+        case 7357:
+        case 7355:
+            if (player->HasQuest(42108))
+                player->CastSpell(player, 210554, true);
+            break;
+        default:
+            break;
+        }
+    }
+};
+
+//QQQ
+class merayl_q42159 : public CreatureScript
+{
+public:
+    merayl_q42159(const std::string str) : CreatureScript(str.c_str()) { }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        if (action == GOSSIP_ACTION_INFO_DEF)
+        {
+            CloseGossipMenuFor(player);
+            if (player->IsInCombat() || creature->IsInCombat())
+                return true;
+
+            if (merayl_q42159AI* pInitiateAI = CAST_AI(merayl_q42159::merayl_q42159AI, creature->AI()))
+            {
+                if (pInitiateAI->m_bIsDuelInProgress)
+                    return true;
+            }
+            creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+            creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_15);
+
+            player->CastSpell(creature, SPELL_DUEL, false);
+            player->CastSpell(player, SPELL_DUEL_FLAG, true);
+        }
+        return true;
+    }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if ((player->GetQuestStatus(QUEST_42159) == QUEST_STATUS_INCOMPLETE ||
+            player->GetQuestStatus(QUEST_42159) == QUEST_STATUS_INCOMPLETE)
+            && creature->IsFullHealth())
+        {
+            if (player->HealthBelowPct(10))
+                return true;
+
+            if (player->IsInCombat() || creature->IsInCombat())
+                return true;
+
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, GOSSIP_ACCEPT_DUEL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+            SendGossipMenuFor(player, player->GetGossipTextId(creature), creature->GetGUID());
+        }
+        return true;
+    }
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new merayl_q42159AI(creature);
+    }
+
+    struct merayl_q42159AI : public CombatAI
+    {
+        merayl_q42159AI(Creature* creature) : CombatAI(creature)
+        {
+            m_bIsDuelInProgress = false;
+        }
+
+        bool lose;
+        ObjectGuid m_uiDuelerGUID;
+        uint32 m_uiDuelTimer;
+        bool m_bIsDuelInProgress;
+        uint32 spelltimer;
+
+        void Reset() override
+        {
+            lose = false;
+            me->RestoreFaction();
+            CombatAI::Reset();
+
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_15);
+
+            m_uiDuelerGUID.Clear();
+            m_uiDuelTimer = 5000;
+            spelltimer = 2000;
+            m_bIsDuelInProgress = false;
+        }
+
+        void SpellHit(Unit* pCaster, const SpellInfo* spell) override
+        {
+            if (!m_bIsDuelInProgress && spell->Id == SPELL_DUEL)
+            {
+                m_uiDuelerGUID = pCaster->GetGUID();
+                m_bIsDuelInProgress = true;
+            }
+        }
+
+        void DamageTaken(Unit* pDoneBy, uint32 &uiDamage/*, DamageEffectType dmgType*/) override
+        {
+            if (m_bIsDuelInProgress && pDoneBy->IsControlledByPlayer())
+            {
+                if (pDoneBy->GetGUID() != m_uiDuelerGUID && pDoneBy->GetOwnerGUID() != m_uiDuelerGUID) // other players cannot help
+                    uiDamage = 0;
+                else if (uiDamage >= me->GetHealth())
+                {
+                    uiDamage = 0;
+
+                    if (!lose)
+                    {
+                        if (Player* plr = pDoneBy->ToPlayer())
+                            plr->KilledMonsterCredit(106552);
+
+                        pDoneBy->RemoveGameObject(SPELL_DUEL_FLAG, true);
+                        pDoneBy->AttackStop();
+                        me->CastSpell(pDoneBy, SPELL_DUEL_VICTORY, true);
+                        lose = true;
+                        me->CastSpell(me, 7267, true);
+                        me->RestoreFaction();
+                    }
+                }
+            }
+        }
+
+        void UpdateAI(uint32 uiDiff) override
+        {
+            if (!UpdateVictim())
+            {
+                if (m_bIsDuelInProgress)
+                {
+                    if (m_uiDuelTimer <= uiDiff)
+                    {
+                        me->setFaction(FACTION_HOSTILE);
+
+                        if (Unit* unit = ObjectAccessor::GetUnit(*me, m_uiDuelerGUID))
+                            AttackStart(unit);
+                    }
+                    else
+                        m_uiDuelTimer -= uiDiff;
+                }
+                return;
+            }
+
+            if (m_bIsDuelInProgress)
+            {
+                if (lose)
+                {
+                    if (!me->HasAura(7267))
+                        EnterEvadeMode();
+                    return;
+                }
+                else if (me->GetVictim() && me->GetVictim()->GetTypeId() == TYPEID_PLAYER && me->GetVictim()->HealthBelowPct(10))
+                {
+                    me->GetVictim()->CastSpell(me->GetVictim(), 7267, true); // beg
+                    me->GetVictim()->RemoveGameObject(SPELL_DUEL_FLAG, true);
+                    EnterEvadeMode();
+                    return;
+                }
+
+                if (!UpdateVictim() || me->HasUnitState(UNIT_STATE_CASTING))
+                    return;
+
+                if (spelltimer <= uiDiff)
+                {
+                    uint32 spell = 0;
+                    switch (me->GetEntry())
+                    {
+                    case 108752:
+                        spell = 172673;
+                        spelltimer = 2000;
+                        break;
+                    case 108765:
+                        spell = 198623;
+                        spelltimer = 2000;
+                        break;
+                    case 108767:
+                    case 108750:
+                        spell = 172757;
+                        spelltimer = 11000;
+                        break;
+                    case 108723:
+                        spell = 171777;
+                        spelltimer = 5500;
+                        break;
+                    default:
+                        break;
+                    }
+                    if (spell > 0)
+                        DoCast(spell);
+                }
+                else
+                    spelltimer -= uiDiff;
+            }
+
+            // TODO: spells
+
+            CombatAI::UpdateAI(uiDiff);
+        }
+    };
+};
+
+class npc_q44281 : public merayl_q42159
+{
+public:
+    npc_q44281() : merayl_q42159("npc_q44281") { }
+};
+
+// quest 37538
+class npc_kimmruder_88911 : public CreatureScript
+{
+public:
+    npc_kimmruder_88911() : CreatureScript("npc_kimmruder_88911") { }
+     struct npc_kimmruder_88911AI : public ScriptedAI
+    {
+        npc_kimmruder_88911AI(Creature* creature) : ScriptedAI(creature) { }
+         void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(37538) == QUEST_STATUS_INCOMPLETE)
+                {    
+                    if (player->IsInDist(me, 28.0f))
+                    {
+                       if (!me->FindNearestCreature(89056, 50.0f, true))
+				        {
+                           if (!me->FindNearestCreature(89050, 50.0f, true))
+                       
+					        {
+                               me->SummonCreature(89056, Position(-356.077f, 6655.04f, 0.539664f, 0.215275f), TEMPSUMMON_MANUAL_DESPAWN);
+                            }
+					    }
+                    }
+                }
+            }
+        }
+    };
+     CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_kimmruder_88911AI(creature);
+    }
+};
+
+// quest 38015
+struct cedonu_107962 : public ScriptedAI
+{
+    cedonu_107962(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    {
+        if (Player* player = clicker->ToPlayer())
+        {
+            if (player->GetQuestStatus(38015) == QUEST_STATUS_INCOMPLETE)
+            {
+                me->SetAIAnimKitId(4061);
+                player->KilledMonsterCredit(107962);
+            }
+		}
+	}
+};
+
+struct kharmeera_107963 : public ScriptedAI
+{
+    kharmeera_107963(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    {
+        if (Player* player = clicker->ToPlayer())
+        {
+            if (player->GetQuestStatus(38015) == QUEST_STATUS_INCOMPLETE)
+            {
+                me->SetAIAnimKitId(4061);
+                player->KilledMonsterCredit(107963);
+            }
+		}
+	}
+};
+
+struct emmigosa_107961 : public ScriptedAI
+{
+    emmigosa_107961(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    {
+        if (Player* player = clicker->ToPlayer())
+        {
+            if (player->GetQuestStatus(38015) == QUEST_STATUS_INCOMPLETE)
+            {
+                me->SetAIAnimKitId(4061);
+                player->KilledMonsterCredit(107961);
+            }
+		}
+	}
+};
+
+struct berazus_107964 : public ScriptedAI
+{
+    berazus_107964(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    {
+        if (Player* player = clicker->ToPlayer())
+        {
+            if (player->GetQuestStatus(38015) == QUEST_STATUS_INCOMPLETE)
+            {
+                me->SetAIAnimKitId(4061);
+                player->KilledMonsterCredit(107964);
+            }
+		}
+	}
+};
+
+// quest 42756
+class npc_summon_91155 : public CreatureScript
+{
+public:
+    npc_summon_91155() : CreatureScript("npc_summon_91155") { }
+     struct npc_summon_91155AI : public ScriptedAI
+    {
+        npc_summon_91155AI(Creature* creature) : ScriptedAI(creature) { }
+         void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(42756) == QUEST_STATUS_INCOMPLETE)
+                {    
+                    if (player->IsInDist(me, 28.0f))
+                    {
+                           if (!me->FindNearestCreature(91155, 40.0f, true))
+							   
+						{
+							 if (!me->FindNearestCreature(108721, 40.0f, true)) 
+                       
+					        {
+                               me->SummonCreature(91155, Position(620.386f, 6650.63f, 60.0061f, 1.01631f), TEMPSUMMON_MANUAL_DESPAWN);
+                            }
+						}
+                    }
+                }
+            }
+        }
+    };
+     CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_summon_91155AI(creature);
+    }
+};
+
+class spell_Wand_Practice : public SpellScript
+{
+    PrepareSpellScript(spell_Wand_Practice);
+
+    void HandleDummy(SpellEffIndex /*effIndex*/)
+    {
+
+        if (Unit* caster = GetCaster())
+            if (Unit* target = GetHitUnit())
+                if (target->GetTypeId() == TYPEID_UNIT)
+                    if (target->GetEntry() == 107279)
+                    {
+                        caster->ToPlayer()->KilledMonsterCredit(107279, ObjectGuid::Empty);
+                    }
+
+    }
+
+    void Register()
+    {
+        OnEffectHitTarget += SpellEffectFn(spell_Wand_Practice::HandleDummy, EFFECT_0, SPELL_EFFECT_APPLY_AURA);
+    }
+};
+
+class ps_quest_Wandering : public PlayerScript
+{
+public:
+    ps_quest_Wandering() : PlayerScript("ps_quest_Wanderings") { }
+
+    void OnQuestAccept(Player* player, Quest const* quest)
+    {
+        if (quest->GetQuestId() == 42370)
+            player->CastSpell(player, 212782, true);
+    }
+
+    void OnUpdateArea(Player* player, Area* newArea, Area* /*oldArea*/)
+    {
+        switch (newArea->GetId())
+        {
+        case 7358:
+            if (player->HasQuest(42370))
+                player->CastSpell(player, 212782, true);
+            break;
+        default:
+            break;
+        }
+    }
+};
+
 void AddSC_azsuna()
 {
     new scene_azsuna_runes();
@@ -666,4 +1254,16 @@ void AddSC_azsuna()
     new spell_gen_radiant_ley_crystal();
     new npc_quest_43521();
     new npc_quest_43520();
+    new npc_archmage_khadgar_93337();
+    RegisterSpellScript(spell_rally_the_nightwatchers);
+    new ps_quest_rally_the_nightwatchers();
+    new merayl_q42159("merayl_q42159");
+    new npc_kimmruder_88911();
+    new npc_summon_91155();
+    RegisterCreatureAI(cedonu_107962);
+    RegisterCreatureAI(kharmeera_107963);
+    RegisterCreatureAI(emmigosa_107961);
+    RegisterCreatureAI(berazus_107964);
+    RegisterSpellScript(spell_Wand_Practice);
+    new ps_quest_Wandering();
 }

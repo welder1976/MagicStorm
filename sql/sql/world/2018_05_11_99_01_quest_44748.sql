@@ -1,4 +1,4 @@
-# TrinityCore - WowPacketParser
+﻿# TrinityCore - WowPacketParser
 # File name: 7.3.5_26365_五月-11-1529 - kongzhongweixie44748.awps.pkt
 # Detected build: V7_3_5_26365
 # Detected locale: zhCN
@@ -76,7 +76,7 @@ UPDATE `creature_model_info` SET `BoundingRadius`=0.5056454, `VerifiedBuild`=263
 
 
 
-UPDATE `conversation_line_template` SET `Unk`=16448, `VerifiedBuild`=26365 WHERE `Id`=10201;
+UPDATE `conversation_line_template` SET `flags`=16448, `VerifiedBuild`=26365 WHERE `Id`=10201;
 
 
 UPDATE `gameobject_template_addon` SET `flags`=2113540 WHERE `entry`=265554; -- Shipwrecked Supplies
@@ -94,8 +94,8 @@ SET @CGUID= 453612; -- 158
 SET @OGUID= 105275; -- 54
 
 DELETE FROM `creature` WHERE `guid` BETWEEN @CGUID+0 AND @CGUID+157;
-INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `PhaseId`, `PhaseGroup`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `VerifiedBuild`) VALUES
-(@CGUID+0, 120311, 1220, 7543, 8554, 1, '0', 0, 0, 0, -1723.49, 3232.728, 114.9656, 4.173349, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- 剧毒飞蛾 (Area: -Unknown- - Difficulty: 1)
+INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `PhaseGroup`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `VerifiedBuild`) VALUES
+(@CGUID+0, 120311, 1220, 7543, 8554, 1, '0', 0, 0, 0, m, 4.173349, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- 剧毒飞蛾 (Area: -Unknown- - Difficulty: 1)
 (@CGUID+1, 117754, 1220, 7543, 8588, 1, '0', 0, 0, 0, -1755.983, 3158.678, 12.3416, 3.730407, 7200, 10, 0, 0, 0, 1, 0, 0, 0, 26365), -- 石化蟹 (Area: -Unknown- - Difficulty: 1) (possible waypoints or random movement)
 (@CGUID+2, 120311, 1220, 7543, 8588, 1, '0', 0, 0, 0, -1765.726, 3188.095, 70.61742, 4.637851, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- 剧毒飞蛾 (Area: -Unknown- - Difficulty: 1)
 (@CGUID+3, 115056, 1220, 7543, 8590, 1, '0', 0, 0, 0, -1688.775, 3079.318, 41.39329, 6.118871, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26365), -- 邪翼吞噬者 (Area: -Unknown- - Difficulty: 1)
@@ -403,7 +403,7 @@ INSERT INTO `creature_addon` (`guid`, `path_id`, `mount`, `bytes1`, `bytes2`, `e
 -- (@CGUID+157, 0, 0, 50331648, 1, 0, 0, 0, 0, ''); -- 邪翼吞噬者
 
 DELETE FROM `gameobject` WHERE `guid` BETWEEN @OGUID+0 AND @OGUID+53;
-INSERT INTO `gameobject` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `PhaseId`, `PhaseGroup`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`, `VerifiedBuild`) VALUES
+INSERT INTO `gameobject` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `PhaseGroup`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`, `VerifiedBuild`) VALUES
 (@OGUID+0, 268435, 1220, 7543, 8590, 1, '0', 0, -1789.304, 3145.814, 13.56332, 0.0611744, 0, 0, 0.03058243, 0.9995323, 7200, 255, 1, 26365), -- Ancient Shrine (Area: -Unknown- - Difficulty: 1)
 -- (@OGUID+1, 265572, 1220, 7543, 8590, 1, '0', 0, -1722.207, 3275.417, 30.73859, 0.5090845, 0, 0, 0.2518024, 0.9677787, 7200, 255, 1, 26365), -- Prison Cage (Area: -Unknown- - Difficulty: 1)
 (@OGUID+2, 268527, 1220, 7543, 8590, 1, '0', 0, -1731.575, 3077.718, 18.60085, 3.179367, 0.1840429, 0.15973, -0.9686422, 0.04844331, 7200, 255, 1, 26365), -- 掩饰灌木丛 (Area: -Unknown- - Difficulty: 1)

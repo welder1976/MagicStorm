@@ -296,6 +296,26 @@ public:
     }
 };
 
+class npc_92850: public CreatureScript
+{
+public:
+    npc_92850() : CreatureScript("npc_92850") { }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        switch (action)
+        {
+        case 1:
+            player->CastSpell(player, 229829, true);
+            player->PlayerTalkClass->ClearMenus();
+            CloseGossipMenuFor(player);
+            break;
+        }
+
+        return true;
+    }
+};
+
 void AddSC_valsharah()
 {
     new npc_malfurion_valshara();
@@ -305,4 +325,5 @@ void AddSC_valsharah()
     new spell_return_valshara();
     new npc_subdued_nightwing();
     new npc_tele_q39702();
+    new npc_92850();
 }

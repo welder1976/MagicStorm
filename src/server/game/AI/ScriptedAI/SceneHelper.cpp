@@ -16,7 +16,7 @@ void SceneActionWhisper::DoAction()
 {
     if (Creature* actor = GetActor())
     {
-        if (Player* player = ObjectAccessor::GetPlayer(*actor, whisperGuid))
+        if (Player* player = GetPlayer())
             actor->AI()->Talk(talkIndex, player);
     }
 }
@@ -86,14 +86,11 @@ void SceneActionKillCreditMonster::DoAction()
 {
     if (Creature* actor = GetActor())
     {
-        if (target)
+        if (Player* player = GetPlayer())
         {
-            if (Player* player = target->ToPlayer())
+            for (int i = 0; i < amount; i++)
             {
-                for (int i = 0; i < amount; i++)
-                {
-                    player->KilledMonsterCredit(creditEntry);
-                }
+                player->KilledMonsterCredit(creditEntry);
             }
         }
     }
@@ -137,5 +134,47 @@ void SceneActionRemoveFlag::DoAction()
     if (Creature* actor = GetActor())
     {
         actor->RemoveFlag(index, oldFlag);
+    }
+}
+
+void SceneActionSay::DoAction()
+{
+    if (Creature* actor = GetActor())
+    {
+        if (Player* player = GetPlayer())
+            actor->Say(sayIndex, player);
+        else
+            actor->Say(sayIndex);
+    }
+}
+
+void SceneActionYell::DoAction()
+{
+    if (Creature* actor = GetActor())
+    {
+        if (Player* player = GetPlayer())
+            actor->Yell(yellIndex, player);
+        else
+            actor->Yell(yellIndex);
+    }
+}
+
+void SceneActionSetPhase::DoAction()
+{
+    if (Creature* actor = GetActor())
+    {
+        PhasingHandler::AddPhase(actor, newPhase);
+        if (Player* player = GetPlayer())
+            PhasingHandler::AddPhase(player, newPhase);
+    }
+}
+
+void SceneActionRemovePhase::DoAction()
+{
+    if (Creature* actor = GetActor())
+    {
+        PhasingHandler::RemovePhase(actor, oldPhase);
+        if (Player* player = GetPlayer())
+            PhasingHandler::RemovePhase(player, oldPhase);
     }
 }

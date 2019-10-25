@@ -39,12 +39,12 @@ void AddSC_shadopan_monastery();
 void AddSC_instance_shadopan_monastery();
 
 // Siege of The Niuzao Temple
-void AddSC_boss_vojak();
+void AddSC_boss_commander_vojak();
 void AddSC_boss_general_pavalak();
-void AddSC_boss_jinbak();
-void AddSC_wing_leader_neronok();
-void AddSC_siege_of_the_niuzao_temple();
-void AddSC_instance_siege_of_the_niuzao_temple();
+void AddSC_boss_vizier_jinbak();
+void AddSC_boss_wing_leader_neronok();
+void AddSC_siege_of_niuzao_temple();
+void AddSC_instance_siege_of_niuzao_temple();
 
 // Stormstout Brewery
 void AddSC_boss_hoptallus();
@@ -150,12 +150,12 @@ void AddPandariaScripts()
     AddSC_instance_shadopan_monastery();
 
     // Siege of The Niuzao Temple
-    AddSC_boss_vojak();
+    AddSC_boss_commander_vojak();
     AddSC_boss_general_pavalak();
-    AddSC_boss_jinbak();
-    AddSC_wing_leader_neronok();
-    AddSC_siege_of_the_niuzao_temple();
-    AddSC_instance_siege_of_the_niuzao_temple();
+    AddSC_boss_vizier_jinbak();
+    AddSC_boss_wing_leader_neronok();
+    AddSC_siege_of_niuzao_temple();
+    AddSC_instance_siege_of_niuzao_temple();
 
     // Stormstout Brewery
     AddSC_boss_hoptallus();

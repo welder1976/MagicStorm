@@ -3,7 +3,9 @@
 #include "AreaTriggerTemplate.h"
 #include "AreaTriggerAI.h"
 #include "eye_of_azshara.h"
+#include "AreaTrigger.h"
 #include "Vehicle.h"
+#include <G3D/Vector3.h>
 
 enum Spells
 {

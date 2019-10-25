@@ -23,6 +23,7 @@
 #include "Common.h"
 #include "Optional.h"
 #include "Position.h"
+#include "CriteriaHandler.h"
 #include "DB2Structure.h"
 #include <map>
 #include <memory>
@@ -221,6 +222,8 @@ class TC_GAME_API InstanceScript : public ZoneScript
         void OnPlayerExit(Player*) override;
         void OnPlayerDeath(Player*) override;
 
+        virtual void OnCompletedCriteriaTree(CriteriaTree const* /*tree*/) { }
+
         // Handle open / close objects
         // * use HandleGameObject(0, boolen, GO); in OnObjectCreate in instance scripts
         // * use HandleGameObject(GUID, boolen, NULL); in any other script
@@ -275,6 +278,9 @@ class TC_GAME_API InstanceScript : public ZoneScript
         // Cast spell on all players in instance
         void DoCastSpellOnPlayers(uint32 spell, Unit* caster = nullptr, bool triggered = true);
 
+        // Play scene by Id on all players in instance
+        void DoPlaySceneOnPlayers(uint32 sceneId);
+
         // Play scene by packageId on all players in instance
         void DoPlayScenePackageIdOnPlayers(uint32 scenePackageId);
 
@@ -305,6 +311,9 @@ class TC_GAME_API InstanceScript : public ZoneScript
 		
 		// Add aura on all players in instance
         void DoAddAuraOnPlayers(uint32 spell);
+
+        /// Do combat stop on all players in instance
+        void DoCombatStopOnPlayers();
 
         // Start movie for all players in instance
         void DoStartMovie(uint32 movieId);
@@ -372,6 +381,7 @@ class TC_GAME_API InstanceScript : public ZoneScript
         void SendEncounterEnd();
 
         void SendBossKillCredit(uint32 encounterId);
+		void SendCompleteDungeonEncounter(uint32 encounterId);
 
         virtual void FillInitialWorldStates(WorldPackets::WorldState::InitWorldStates& /*packet*/) { }
 		
@@ -545,11 +555,15 @@ class TC_GAME_API InstanceScript : public ZoneScript
         uint32 GetCombatResurrectionChargeInterval() const;
 
         // Challenge Modes
-        void StartChallengeMode(uint8 level);
+        void StartChallengeMode(uint8 modeid, uint8 level, uint8 affix1, uint8 affix2, uint8 affix3);
         void CompleteChallengeMode();
 
         bool IsChallengeModeStarted() const { return _challengeModeStarted; }
+        uint8 GetChallengeModeId() const { return _challengeModeId; }
         uint8 GetChallengeModeLevel() const { return _challengeModeLevel; }
+        uint8 GetChallengeModeAffix1() const { return _challengeModeAffix1; }
+        uint8 GetChallengeModeAffix2() const { return _challengeModeAffix2; }
+        uint8 GetChallengeModeAffix3() const { return _challengeModeAffix3; }
         uint32 GetChallengeModeCurrentDuration() const;
 
         void SendChallengeModeStart(Player* player = nullptr) const;
@@ -620,7 +634,11 @@ class TC_GAME_API InstanceScript : public ZoneScript
         bool _combatResurrectionTimerStarted;
 
         bool _challengeModeStarted;
+        uint8 _challengeModeId;
         uint8 _challengeModeLevel;
+        uint8 _challengeModeAffix1;
+        uint8 _challengeModeAffix2;
+        uint8 _challengeModeAffix3;
         uint32 _challengeModeStartTime;
         uint32 _challengeModeDeathCount;
         Optional<Position> _challengeModeDoorPosition;

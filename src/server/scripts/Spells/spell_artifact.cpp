@@ -25,6 +25,7 @@
 #include "ScriptedCreature.h"
 #include "ScriptMgr.h"
 #include "Spell.h"
+#include "item.h"
 #include "SpellScript.h"
 #include "SpellMgr.h"
 #include "SpellAuraEffects.h"
@@ -1190,9 +1191,9 @@ class aura_concordance_of_the_legionfall : public AuraScript
     enum Spells
     {
         SPELL_VERSATILITY = 243096,
-        SPELL_STRENGTH    = 242583,
-        SPELL_AGILITY     = 242584,
-        SPELL_INTELLECT   = 242586,
+        SPELL_STRENGTH = 242583,
+        SPELL_AGILITY = 242584,
+        SPELL_INTELLECT = 242586,
     };
     bool CheckProc(ProcEventInfo& eventInfo)
     {
@@ -1202,19 +1203,26 @@ class aura_concordance_of_the_legionfall : public AuraScript
         return false;
     }
 
-    void HandleProc(AuraEffect const* /*aurEff*/, ProcEventInfo& /*eventInfo*/)
+    void HandleProc(AuraEffect const* aurEff, ProcEventInfo& /*eventInfo*/)
     {
         PreventDefaultAction();
 
         if (Unit* caster = GetCaster())
         {
+            _rank = 0;
+            if (Item* artifact = GetOwner()->ToPlayer()->GetItemByGuid(GetAura()->GetCastItemGUID()))               
+                if (artifact->GetTotalPurchasedArtifactPowers() >= 52)
+                    _rank = artifact->GetTotalPurchasedArtifactPowers() - 52;
+
+            _amount = 4000 + 300 * _rank;
+
             switch (caster->ToPlayer()->GetSpecializationId())
             {
             case TALENT_SPEC_MAGE_ARCANE:
-            case TALENT_SPEC_MAGE_FIRE: 
+            case TALENT_SPEC_MAGE_FIRE:
             case TALENT_SPEC_MAGE_FROST:
             case TALENT_SPEC_PRIEST_DISCIPLINE:
-            case TALENT_SPEC_PRIEST_HOLY: 
+            case TALENT_SPEC_PRIEST_HOLY:
             case TALENT_SPEC_PRIEST_SHADOW:
             case TALENT_SPEC_SHAMAN_RESTORATION:
             case TALENT_SPEC_SHAMAN_ELEMENTAL:
@@ -1227,16 +1235,16 @@ class aura_concordance_of_the_legionfall : public AuraScript
             case TALENT_SPEC_MONK_BATTLEDANCER:
                 caster->CastSpell(caster, SPELL_INTELLECT, true);
                 break;
-            case TALENT_SPEC_WARRIOR_ARMS: 
+            case TALENT_SPEC_WARRIOR_ARMS:
             case TALENT_SPEC_WARRIOR_FURY:
             case TALENT_SPEC_DEATHKNIGHT_FROST:
             case TALENT_SPEC_DEATHKNIGHT_UNHOLY:
             case TALENT_SPEC_PALADIN_RETRIBUTION:
-                caster->CastSpell(caster, SPELL_STRENGTH, true);
+                caster->CastCustomSpell(SPELL_STRENGTH, SPELLVALUE_BASE_POINT0, _amount, caster, true, nullptr, aurEff);
                 break;
             case TALENT_SPEC_HUNTER_BEASTMASTER:
-            case TALENT_SPEC_HUNTER_MARKSMAN: 
-            case TALENT_SPEC_HUNTER_SURVIVAL:            
+            case TALENT_SPEC_HUNTER_MARKSMAN:
+            case TALENT_SPEC_HUNTER_SURVIVAL:
             case TALENT_SPEC_ROGUE_ASSASSINATION:
             case TALENT_SPEC_ROGUE_COMBAT:
             case TALENT_SPEC_ROGUE_SUBTLETY:
@@ -1252,11 +1260,11 @@ class aura_concordance_of_the_legionfall : public AuraScript
             case TALENT_SPEC_DRUID_BEAR:
             case TALENT_SPEC_DEATHKNIGHT_BLOOD:
             case TALENT_SPEC_MONK_BREWMASTER:
-                caster->CastSpell(caster, SPELL_VERSATILITY, true);
+                caster->CastCustomSpell(SPELL_VERSATILITY, SPELLVALUE_BASE_POINT0, _amount, caster, true, nullptr, aurEff);
                 break;
             default:
                 break;
-            }          
+            }
         }
     }
 
@@ -1265,8 +1273,9 @@ class aura_concordance_of_the_legionfall : public AuraScript
         //DoCheckProc += AuraCheckProcFn(aura_concordance_of_the_legionfall::CheckProc);
         OnEffectProc += AuraEffectProcFn(aura_concordance_of_the_legionfall::HandleProc, EFFECT_0, SPELL_AURA_PROC_TRIGGER_SPELL);
     }
+    uint32 _rank;
+    int64 _amount;
 };
-
 void AddSC_artifact_spell_scripts()
 {
     RegisterSpellScript(spell_arti_dru_new_moon);

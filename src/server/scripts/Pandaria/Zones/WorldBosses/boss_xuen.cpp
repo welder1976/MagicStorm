@@ -24,8 +24,6 @@
 #include "SpellAuraEffects.h"
 #include "../../scripts/Pandaria/Zones/zone_pandaria_timeless_isle.h"
 
-#define BOSS_XUEN 0
-
 #define MAX_HEALTH 360000000
 #define INITIAL_HEALTH_POINTS 93100000
 #define MAX_HEALTH_POINTS 392000000
@@ -42,60 +40,60 @@ public:
 
 enum XuenSpells
 {
-    SPELL_AGILITY                       = 144631,
+    SPELL_AGILITY                           = 144631,
 
-    SPELL_CHI_BARRAGE                   = 144642,
-    SPELL_CHI_BARRAGE_MISSILE           = 144643,
-    SPELL_CHI_BARRAGE_DMG               = 144644,
+    SPELL_CHI_BARRAGE                       = 144642,
+    SPELL_CHI_BARRAGE_MISSILE               = 144643,
+    SPELL_CHI_BARRAGE_DMG                   = 144644,
 
-    SPELL_CRACKLING_LIGHTNING_DMG       = 144633,
-    SPELL_CRACKLING_LIGHTNING_AOE       = 144634,
-    SPELL_CRACKLING_LIGHTNING_PERIODIC  = 144635,
+    SPELL_CRACKLING_LIGHTNING_DMG           = 144633,
+    SPELL_CRACKLING_LIGHTNING_AOE           = 144634,
+    SPELL_CRACKLING_LIGHTNING_PERIODIC      = 144635,
 
-    SPELL_LEAP                          = 144640,
+    SPELL_LEAP                              = 144640,
 
-    SPELL_SPECTRAL_SWIPE                = 144638,
-    SPELL_SPECTRAL_SWIPE_TRIGGER        = 144652
+    SPELL_SPECTRAL_SWIPE                    = 144638,
+    SPELL_SPECTRAL_SWIPE_TRIGGER            = 144652
 };
 
 enum XuenEvents
 {
-    EVENT_SPECTRAL_SWIPES               = 1,
-    EVENT_CHI_BARRAGE_AOE               = 2,
-    EVENT_CRACKLING_LIGHTNING           = 3,
-    EVENT_AGILITY_SELF_BUFF             = 4,
-    EVENT_LEAP                          = 5,
-    EVENT_DEFEATED                      = 6,
-    EVENT_DEATH                         = 7,
-    EVENT_SHAO_DO_INTRO                 = 8,
-    EVENT_SHAO_DO_INTRO_ATTACKABLE      = 9,
-    EVENT_SHAO_DO_OUTRO                 = 10
+    EVENT_SPECTRAL_SWIPES                   = 1,
+    EVENT_CHI_BARRAGE_AOE                   = 2,
+    EVENT_CRACKLING_LIGHTNING               = 3,
+    EVENT_AGILITY_SELF_BUFF                 = 4,
+    EVENT_LEAP                              = 5,
+    EVENT_DEFEATED                          = 6,
+    EVENT_DEATH                             = 7,
+    EVENT_SHAO_DO_INTRO                     = 8,
+    EVENT_SHAO_DO_INTRO_ATTACKABLE          = 9,
+    EVENT_SHAO_DO_OUTRO                     = 10
 };
 
 enum XuenTimers
 {
-    TIMER_SPECTRAL_SWIPES               = 5000,
-    TIMER_CHI_BARRAGE_AOE               = 20000,
-    TIMER_CRACKLING_LIGHTNING           = 30000,
-    TIMER_AGILITY_SELF_BUFF             = 40000,
-    TIMER_LEAP                          = 30000,
-    TIMER_DEFEATED                      = 1000
+    TIMER_SPECTRAL_SWIPES                   = 5000,
+    TIMER_CHI_BARRAGE_AOE                   = 20000,
+    TIMER_CRACKLING_LIGHTNING               = 30000,
+    TIMER_AGILITY_SELF_BUFF                 = 40000,
+    TIMER_LEAP                              = 30000,
+    TIMER_DEFEATED                          = 1000
 };
 
 enum XuenActions
 {
-    ACTION_DEFEATED                     = 0
+    ACTION_DEFEATED                         = 0
 };
 
 enum XuenTexts
 {
-    SAY_AGGRO                           = 0,
-    SAY_INTRO                           = 1,
-    SAY_DEATH                           = 2,
-    SAY_KILL                            = 3,
-    SAY_AGILITY                         = 4,
-    SAY_CHI                             = 5,
-    SAY_CRACKLING                       = 6
+    SAY_AGGRO                               = 0,
+    SAY_INTRO                               = 1,
+    SAY_DEATH                               = 2,
+    SAY_KILL                                = 3,
+    SAY_AGILITY                             = 4,
+    SAY_CHI                                 = 5,
+    SAY_CRACKLING                           = 6
 };
 
 class boss_xuen_celestial : public CreatureScript
@@ -177,6 +175,8 @@ class boss_xuen_celestial : public CreatureScript
                     me->SetFacingTo(MIDDLE_FACING_ANGLE);
                     me->setFaction(FACTION_HOSTILE_NEUTRAL);
                     me->SetHomePosition(_timelessIsleMiddle);
+                    me->SetMaxHealth(INITIAL_HEALTH_POINTS);
+                    me->SetHealth(me->GetMaxHealth());
                 }
             }
 
@@ -197,6 +197,7 @@ class boss_xuen_celestial : public CreatureScript
                     return;
 
                 uint8 count = 0;
+
                 for (auto itr = threatlist.begin(); itr != threatlist.end(); ++itr)
                     if (Unit* unit = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid()))
                         if (unit->IsWithinDist(me, 100.0f))
@@ -204,6 +205,7 @@ class boss_xuen_celestial : public CreatureScript
 
                 uint32 hp = me->GetMaxHealth() - me->GetHealth();
                 uint32 newhp = std::min<uint32>((INCREMENTAL * count), MAX_HEALTH_POINTS);
+
                 if (newhp != me->GetMaxHealth() && newhp > INITIAL_HEALTH_POINTS)
                 {
                     me->SetMaxHealth(std::min<uint32>((me->GetMaxHealth() * count), MAX_HEALTH_POINTS));
@@ -231,7 +233,6 @@ class boss_xuen_celestial : public CreatureScript
                         case EVENT_SHAO_DO_INTRO_ATTACKABLE:
                         {
                             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-                            me->SetMaxHealth(INITIAL_HEALTH_POINTS);
                             break;
                         }
                         case EVENT_SPECTRAL_SWIPES:

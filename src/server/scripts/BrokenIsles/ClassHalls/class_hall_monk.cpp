@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2017-2018 AshamaneProject <https://github.com/AshamaneProject>
  * Copyright (C) 2008-2017 TrinityCore <http://www.trinitycore.org/>
  *
@@ -60,7 +60,6 @@ struct npc_initiate_da_nel : public ScriptedAI
 private:
     bool SayHi;
 };
-
 
 void AddSC_class_hall_monk()
 {

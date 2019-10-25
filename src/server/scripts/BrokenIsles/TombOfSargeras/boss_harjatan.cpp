@@ -1,8 +1,8 @@
 /*
-* Copyright (C) 2016-2017 ColossusWoW <https://colossuswow.com/>
+* Copyright (C) 2016-2019 MagicStorm
 *
 * Este codigo es de uso exclusivo y privado para la red de gaming
-* ColossusWoW está totalmente prohibida su distribución y
+* ColossusWoW est? totalmente prohibida su distribuci?n y
 * uso en proyectos ajenos, si has obtenido o encontrado este codigo
 * publicamente envianos un email a administracion@colossuswow.com
 * indicandonos como y donde has obtenido este codigo
@@ -11,6 +11,13 @@
 * lugar publico, usa siempre nuestros repositorios Git!
 */
 
+#include "AreaTriggerTemplate.h"
+#include "AreaTrigger.h"
+#include "AreaTriggerAI.h"
+#include "SpellAuraEffects.h"
+#include "ScriptMgr.h"
+#include "GameObject.h"
+#include "ScriptedCreature.h"
 #include "tomb_of_sargeras.h"
 #include "SpellMgr.h"
 
@@ -59,7 +66,7 @@ public:
         {
             instance->SetBossState(DATA_HARJATAN, NOT_STARTED);
 
-            me->setPowerType(POWER_ENERGY);
+            //me->setPowerType(POWER_ENERGY);
             me->SetMaxPower(POWER_ENERGY, 100);
             me->SetPower(POWER_ENERGY, 100);
         }
@@ -84,7 +91,7 @@ public:
 
             me->RemoveAurasDueToSpell(SPELL_GATHER_ENERGY);
 
-            me->setPowerType(POWER_ENERGY);
+            //me->setPowerType(POWER_ENERGY);
             me->SetMaxPower(POWER_ENERGY, 100);
             me->SetPower(POWER_ENERGY, 0);
 

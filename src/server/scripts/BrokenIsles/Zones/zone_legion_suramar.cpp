@@ -42,6 +42,7 @@
 enum SPELLS
 {
     QUEST_MASQUERADE = 42079,
+    QUEST_A_Way_Back_In = 40401,
     LEARN_MASQUERADE = 211086,
     SPELL_MASQUERADE = 211135,
 };
@@ -116,23 +117,22 @@ enum
 {
 ///Quest
 	MAKE_YOUR_MARK = 42792,
+    The_Gondolier=41878,
 };
 
 struct npc_cyrille_107350 : public ScriptedAI
 {
     npc_cyrille_107350(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
 
-    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    void sGossipSelect(Player* player, uint32 menuId, uint32 gossipListId)
     {
-        if (Player* player = clicker->ToPlayer())
+        if (player->HasQuest(MAKE_YOUR_MARK))
         {
-            if (player->HasQuest(MAKE_YOUR_MARK))
-            {
-                player->KilledMonsterCredit(107350);//52391
-            }
-            if (player->HasQuest(MAKE_YOUR_MARK))
+            if (gossipListId == 0)
             {
                 player->KilledMonsterCredit(107350);
+                CloseGossipMenuFor(player);
+                Talk(0);
             }
         }
     }
@@ -154,17 +154,15 @@ struct npc_lorin_107349 : public ScriptedAI
 {
     npc_lorin_107349(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
 
-    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    void sGossipSelect(Player* player, uint32 menuId, uint32 gossipListId)
     {
-        if (Player* player = clicker->ToPlayer())
+        if (player->HasQuest(MAKE_YOUR_MARK))
         {
-            if (player->HasQuest(MAKE_YOUR_MARK))
+            if (gossipListId == 0)
             {
                 player->KilledMonsterCredit(107349);
-            }
-            if (player->HasQuest(MAKE_YOUR_MARK))
-            {
-                player->KilledMonsterCredit(107349);
+                CloseGossipMenuFor(player);
+                Talk(0);
             }
         }
     }
@@ -186,17 +184,15 @@ struct npc_sylessa_107348 : public ScriptedAI
 {
     npc_sylessa_107348(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
 
-    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    void sGossipSelect(Player* player, uint32 menuId, uint32 gossipListId)
     {
-        if (Player* player = clicker->ToPlayer())
+        if (player->HasQuest(MAKE_YOUR_MARK))
         {
-            if (player->HasQuest(MAKE_YOUR_MARK))
+            if (gossipListId == 0)
             {
                 player->KilledMonsterCredit(107348);
-            }
-            if (player->HasQuest(MAKE_YOUR_MARK))
-            {
-                player->KilledMonsterCredit(107348);
+                CloseGossipMenuFor(player);
+                Talk(0);
             }
         }
     }
@@ -215,30 +211,21 @@ struct npc_sylessa_107348 : public ScriptedAI
 };
 
 // quest 41878
-class npc_gondolier_107225 : public CreatureScript
+struct npc_gondolier_107225 : public ScriptedAI
 {
-public:
-    npc_gondolier_107225() : CreatureScript("npc_gondolier_107225") { }
-     struct npc_gondolier_107225AI : public ScriptedAI
+    npc_gondolier_107225(Creature* creature) : ScriptedAI(creature) {  }
+
+    void sGossipSelect(Player* player, uint32 menuId, uint32 gossipListId)
     {
-        npc_gondolier_107225AI(Creature* creature) : ScriptedAI(creature) { }
-         void MoveInLineOfSight(Unit* who) override
+        if (player->HasQuest(The_Gondolier))
         {
-            if (Player* player = who->ToPlayer())
+            if (gossipListId == 0)
             {
-                if (player->GetQuestStatus(41878) == QUEST_STATUS_INCOMPLETE)
-                {    
-                    if (player->IsInDist(me, 9.0f))
-                    {
-                       player->KilledMonsterCredit(107225);
-                    }
-                }
+                player->KilledMonsterCredit(107225);
+                CloseGossipMenuFor(player);
+                Talk(0);
             }
         }
-    };
-     CreatureAI* GetAI(Creature* creature) const override
-    {
-        return new npc_gondolier_107225AI(creature);
     }
 };
 
@@ -341,14 +328,34 @@ public:
 	}
 };
 
+struct npc_astoril : public ScriptedAI
+{
+   npc_astoril(Creature* creature) : ScriptedAI(creature) {  }
+
+    void sGossipSelect(Player* player, uint32 menuId, uint32 gossipListId)
+    {
+        if (player->HasQuest(QUEST_A_Way_Back_In))
+        {
+            if (gossipListId == 0)
+            {
+                player->KilledMonsterCredit(100226);
+                CloseGossipMenuFor(player);
+            }
+        }
+    }
+};
+
+//fly spell 215595,
+
 void AddSC_suramar()
 {
 
      new Player_Spell_Masquerade();
      RegisterCreatureAI(npc_cyrille_107350);
+     RegisterCreatureAI(npc_astoril);
 	RegisterCreatureAI(npc_lorin_107349);
 	RegisterCreatureAI(npc_sylessa_107348);
-	new npc_gondolier_107225();
+    RegisterCreatureAI(npc_gondolier_107225);
 	new npc_thallyssra_97140();
 	new npc_zoneexplorer_113893();
 	new npc_zoneexplorer_113894();

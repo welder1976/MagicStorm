@@ -788,6 +788,17 @@ void InstanceScript::DoPlayScenePackageIdOnPlayers(uint32 scenePackageId)
             if (Player* player = i->GetSource())
                 player->GetSceneMgr().PlaySceneByPackageId(scenePackageId);
 }
+
+void InstanceScript::DoPlaySceneOnPlayers(uint32 sceneId)
+{
+    Map::PlayerList const &PlayerList = instance->GetPlayers();
+
+    if (!PlayerList.isEmpty())
+        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+            if (Player* player = i->GetSource())
+                player->GetSceneMgr().PlayScene(sceneId);
+}
+
 void InstanceScript::DoRemoveForcedMovementsOnPlayers(ObjectGuid forceGuid)
 {
     Map::PlayerList const &PlayerList = instance->GetPlayers();
@@ -929,32 +940,36 @@ void InstanceScript::DoAddAuraOnPlayers(uint32 spell)
                 player->AddAura(spell, player);
 }
 
+void InstanceScript::DoCombatStopOnPlayers()
+{
+    Map::PlayerList const& PlayerList = instance->GetPlayers();
+    if (PlayerList.isEmpty())
+        return;
+
+    for (Map::PlayerList::const_iterator Iter = PlayerList.begin(); Iter != PlayerList.end(); ++Iter)
+    {
+        if (Player* Player = Iter->GetSource())
+        {
+            if (!Player->IsInCombat())
+                continue;
+
+            Player->CombatStop();
+        }
+    }
+}
+
 void InstanceScript::RespawnCreature(uint64 p_Guid /*= 0*/)
 {
-    TC_LOG_ERROR("scripts", "RespawnCreature start %s", "");
-
-
-
     Map::PlayerList const& playerList = instance->GetPlayers();
     if (!playerList.isEmpty())
     {
         Map::PlayerList::const_iterator i = playerList.begin();
-
-            if (Player* player = i->GetSource()) {
-               // TC_LOG_ERROR("scripts", "DoSendDiffcultyOnPlayers SendDungeonDifficulty %s", player->GetName());
-                Trinity::RespawnDo u_do;
-                Trinity::WorldObjectWorker<Trinity::RespawnDo> worker(player, u_do);
-                Cell::VisitGridObjects(player, worker, player->GetGridActivationRange()*1000);
-
-
-            }
-
+        if (Player* player = i->GetSource()) {
+            Trinity::RespawnDo u_do;
+            Trinity::WorldObjectWorker<Trinity::RespawnDo> worker(player, u_do);
+            Cell::VisitGridObjects(player, worker, player->GetGridActivationRange() * 1000);
+        }      
     }
-    else
-    {
-        TC_LOG_ERROR("scripts", "RespawnCreature playerList.isEmpty %s", "");
-    }
-    TC_LOG_ERROR("scripts", "RespawnCreature end %s", "");
 }
 
 bool InstanceScript::CheckAchievementCriteriaMeet(uint32 criteria_id, Player const* /*source*/, Unit const* /*target*/ /*= NULL*/, uint32 /*miscvalue1*/ /*= 0*/)
@@ -1037,6 +1052,16 @@ void InstanceScript::SendBossKillCredit(uint32 encounterId)
     instance->SendToPlayers(bossKillCreditMessage.Write());
 }
 
+void InstanceScript::SendCompleteDungeonEncounter(uint32 encounterId)
+{
+    if (InstanceScenario* scenario = instance->ToInstanceMap()->GetInstanceScenario())
+    {
+        Map::PlayerList const& players = instance->GetPlayers();
+
+        if (players.begin() != players.end())
+            scenario->UpdateCriteria(CRITERIA_TYPE_COMPLETE_DUNGEON_ENCOUNTER, encounterId, 0, 0, nullptr, players.begin()->GetSource());
+    }
+}
 void InstanceScript::CompleteScenario()
 {
     if (InstanceScenario* inScenario = instance->GetInstanceScenario())
@@ -1186,13 +1211,10 @@ void InstanceScript::UpdateEncounterState(EncounterCreditType type, uint32 credi
         {
             completedEncounters |= 1 << encounter->dbcEntry->Bit;
 
-            if (InstanceScenario* scenario = instance->ToInstanceMap()->GetInstanceScenario())
-            {
-                Map::PlayerList const& players = instance->GetPlayers();
+            if (type == ENCOUNTER_CREDIT_KILL_CREATURE)
+                SendBossKillCredit(encounter->dbcEntry->ID);
 
-                if (players.begin() != players.end())
-                    scenario->UpdateCriteria(CRITERIA_TYPE_COMPLETE_DUNGEON_ENCOUNTER, encounter->dbcEntry->ID, 0, 0, nullptr, players.begin()->GetSource());
-            }
+            SendCompleteDungeonEncounter(encounter->dbcEntry->ID);
 
             if (encounter->lastEncounterDungeon)
             {
@@ -1341,9 +1363,10 @@ private:
     InstanceScript* _instance;
 };
 
-void InstanceScript::StartChallengeMode(uint8 level)
+void InstanceScript::StartChallengeMode(uint8 modeid, uint8 level, uint8 affix1, uint8 affix2, uint8 affix3)
 {
-    MapChallengeModeEntry const* mapChallengeModeEntry = sChallengeModeMgr->GetMapChallengeModeEntry(instance->GetId());
+    _challengeModeId = modeid;
+    MapChallengeModeEntry const* mapChallengeModeEntry = sChallengeModeMgr->GetMapChallengeModeEntryByModeId(GetChallengeModeId());
     if (!mapChallengeModeEntry)
         return;
 
@@ -1355,6 +1378,9 @@ void InstanceScript::StartChallengeMode(uint8 level)
 
     _challengeModeStarted = true;
     _challengeModeLevel = level;
+    _challengeModeAffix1 = affix1;
+    _challengeModeAffix2 = affix2;
+    _challengeModeAffix3 = affix3;
 
     instance->SendToPlayers(WorldPackets::ChallengeMode::ChangePlayerDifficultyResult(5).Write());
 
@@ -1412,7 +1438,7 @@ void InstanceScript::StartChallengeMode(uint8 level)
 
 void InstanceScript::CompleteChallengeMode()
 {
-    MapChallengeModeEntry const* mapChallengeModeEntry = sChallengeModeMgr->GetMapChallengeModeEntry(instance->GetId());
+    MapChallengeModeEntry const* mapChallengeModeEntry = sChallengeModeMgr->GetMapChallengeModeEntryByModeId(GetChallengeModeId());
     if (!mapChallengeModeEntry)
         return;
 
@@ -1428,7 +1454,7 @@ void InstanceScript::CompleteChallengeMode()
 
     Map::PlayerList const &players = instance->GetPlayers();
     for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
-        itr->GetSource()->AddChallengeKey(sChallengeModeMgr->GetRandomChallengeId(), std::max(_challengeModeLevel + mythicIncrement, 1));
+        itr->GetSource()->AddChallengeKey(sChallengeModeMgr->GetRandomChallengeId(), std::max(_challengeModeLevel + mythicIncrement, 2));
 
     WorldPackets::ChallengeMode::Complete complete;
     complete.Duration = totalDuration;
@@ -1469,7 +1495,7 @@ uint32 InstanceScript::GetChallengeModeCurrentDuration() const
 
 void InstanceScript::SendChallengeModeStart(Player* player/* = nullptr*/) const
 {
-    MapChallengeModeEntry const* mapChallengeModeEntry = sChallengeModeMgr->GetMapChallengeModeEntry(instance->GetId());
+    MapChallengeModeEntry const* mapChallengeModeEntry = sChallengeModeMgr->GetMapChallengeModeEntryByModeId(GetChallengeModeId());
     if (!mapChallengeModeEntry)
         return;
 
@@ -1515,19 +1541,21 @@ void InstanceScript::CastChallengeCreatureSpell(Creature* creature)
     values.AddSpellMod(SPELLVALUE_BASE_POINT1, sChallengeModeMgr->GetDamageMultiplier(_challengeModeLevel));
 
     // Affixes
-    values.AddSpellMod(SPELLVALUE_BASE_POINT2,  0); // 6 Raging
-    values.AddSpellMod(SPELLVALUE_BASE_POINT3,  0); // 7 Bolstering
-    values.AddSpellMod(SPELLVALUE_BASE_POINT4,  0); // 9 Tyrannical
-    values.AddSpellMod(SPELLVALUE_BASE_POINT5,  0); //
-    values.AddSpellMod(SPELLVALUE_BASE_POINT6,  0); //
-    values.AddSpellMod(SPELLVALUE_BASE_POINT7,  0); // 3 Volcanic
-    values.AddSpellMod(SPELLVALUE_BASE_POINT8,  0); // 4 Necrotic
-    values.AddSpellMod(SPELLVALUE_BASE_POINT9,  0); // 10 Fortified
-    values.AddSpellMod(SPELLVALUE_BASE_POINT10, 0); // 8 Sanguine
-    values.AddSpellMod(SPELLVALUE_BASE_POINT11, 0); // 14 Quaking
-    values.AddSpellMod(SPELLVALUE_BASE_POINT12, 0); // 13 Explosive
-    values.AddSpellMod(SPELLVALUE_BASE_POINT13, 0); // 11 Bursting
-
+    values.AddSpellMod(SPELLVALUE_BASE_POINT2, GetChallengeModeAffix1() == 6 ? 1 : 0); // 6 Raging
+    values.AddSpellMod(SPELLVALUE_BASE_POINT3, GetChallengeModeAffix1() == 7 ? 1 : 0); // 7 Bolstering
+    values.AddSpellMod(SPELLVALUE_BASE_POINT4, GetChallengeModeAffix3() == 9 ? 1 : 0); // 9 Tyrannical
+    values.AddSpellMod(SPELLVALUE_BASE_POINT5, 1); //
+    values.AddSpellMod(SPELLVALUE_BASE_POINT6, 1); //
+    values.AddSpellMod(SPELLVALUE_BASE_POINT7, GetChallengeModeAffix2() == 3 ? 1 : 0); // 3 Volcanic
+    values.AddSpellMod(SPELLVALUE_BASE_POINT8, GetChallengeModeAffix2() == 4 ? 1 : 0); // 4 Necrotic
+    values.AddSpellMod(SPELLVALUE_BASE_POINT9, GetChallengeModeAffix3() == 10 ? 1 : 0); // 10 Fortified
+    values.AddSpellMod(SPELLVALUE_BASE_POINT10, GetChallengeModeAffix1() == 8 ? 1 : 0); // 8 Sanguine
+    values.AddSpellMod(SPELLVALUE_BASE_POINT11, GetChallengeModeAffix2() == 14 ? 1 : 0); // 14 Quaking
+    values.AddSpellMod(SPELLVALUE_BASE_POINT12, GetChallengeModeAffix2() == 13 ? 1 : 0); // 13 Explosive
+    values.AddSpellMod(SPELLVALUE_BASE_POINT13, GetChallengeModeAffix1() == 11 ? 1 : 0); // 11 Bursting
+    //5 11 15
+    //values.AddSpellMod(SPELLVALUE_BASE_POINT14, 0); //
+    //values.AddSpellMod(SPELLVALUE_BASE_POINT15, 0); //
     creature->CastCustomSpell(SPELL_CHALLENGER_MIGHT, values, creature, TRIGGERED_FULL_MASK);
 }
 
@@ -1536,8 +1564,8 @@ void InstanceScript::CastChallengePlayerSpell(Player* player)
     CustomSpellValues values;
 
     // Affixes
-    values.AddSpellMod(SPELLVALUE_BASE_POINT1,  0); // 12 Grievous
-    values.AddSpellMod(SPELLVALUE_BASE_POINT2,  0); // 2 Skittish
+    values.AddSpellMod(SPELLVALUE_BASE_POINT1, GetChallengeModeAffix2() == 12 ? 1 : 0); // 12 Grievous
+    values.AddSpellMod(SPELLVALUE_BASE_POINT2, GetChallengeModeAffix2() == 2 ? 1 : 0); // 2 Skittish
     values.AddSpellMod(SPELLVALUE_BASE_POINT3,  0); //
 
     player->CastCustomSpell(SPELL_CHALLENGER_BURDEN, values, player, TRIGGERED_FULL_MASK);

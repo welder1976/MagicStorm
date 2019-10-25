@@ -2072,12 +2072,12 @@ void ObjectMgr::LoadCreatures()
 {
     uint32 oldMSTime = getMSTime();
 
-    //                                               0              1   2    3       4        5             6           7           8           9            10             11
+    //                                                      0        1   2     3        4          5            6           7           8            9            10           11
     QueryResult result = WorldDatabase.Query("SELECT creature.guid, id, map, areaId, modelid, equipment_id, position_x, position_y, position_z, orientation, spawntimesecs, spawndist, "
-    //   12               13         14       15            16                 17          18          19                20                   21                    22
+    //         12            13        14          15              16              17          18            19                  20                   21                    22
         "currentwaypoint, curhealth, curmana, MovementType, spawnDifficulties, eventEntry, pool_entry, creature.npcflag, creature.unit_flags, creature.unit_flags2, creature.unit_flags3, "
-    //   23                     24                      25                26                   27                       28
-        "creature.dynamicflags, creature.phaseUseFlags, creature.phaseid, creature.phasegroup, creature.terrainSwapMap, creature.ScriptName "
+    //            23                     24                    25                26                      27                      28                 29
+        "creature.dynamicflags, creature.phaseUseFlags, creature.phaseid, creature.phasegroup, creature.terrainSwapMap, creature.ScriptName, creature.movementmode "
         "FROM creature "
         "LEFT OUTER JOIN game_event_creature ON creature.guid = game_event_creature.guid "
         "LEFT OUTER JOIN pool_creature ON creature.guid = pool_creature.guid");
@@ -2141,6 +2141,7 @@ void ObjectMgr::LoadCreatures()
         data.phaseGroup     = fields[26].GetUInt32();
         data.terrainSwapMap = fields[27].GetInt32();
         data.ScriptId       = GetScriptId(fields[28].GetString());
+        data.movementmode   = fields[29].GetFloat();
 
         MapEntry const* mapEntry = sMapStore.LookupEntry(data.mapid);
         if (!mapEntry)
@@ -2228,6 +2229,18 @@ void ObjectMgr::LoadCreatures()
         {
             TC_LOG_ERROR("sql.sql", "Table `creature` has creature (GUID: " UI64FMTD " Entry: %u) with abs(`orientation`) > 2*PI (orientation is expressed in radians), normalized.", guid, data.id);
             data.orientation = Position::NormalizeOrientation(data.orientation);
+        }
+
+        if (data.movementmode < 0.0f)
+        {
+            TC_LOG_ERROR("sql.sql", "Table `creature` has creature (GUID: %u Entry: %u) with `movementmode`< 0, set to 0.", guid, data.id);
+            data.movementmode = 0.0f;
+        }
+
+        if (data.movementmode > 1.0f)
+        {
+            TC_LOG_ERROR("sql.sql", "Table `creature` has creature (GUID: %u Entry: %u) with `movementmode` > 1, set to 1.", guid, data.id);
+            data.movementmode = 1.0f;
         }
 
         if (data.phaseUseFlags & ~PHASE_USE_FLAGS_ALL)
@@ -2410,6 +2423,7 @@ ObjectGuid::LowType ObjectMgr::AddCreatureData(uint32 entry, uint32 mapId, float
     data.npcflag = cInfo->npcflag;
     data.unit_flags = cInfo->unit_flags;
     data.dynamicflags = cInfo->dynamicflags;
+    data.movementmode = 0;
 
     AddCreatureToGrid(guid, &data);
 

@@ -1,9 +1,9 @@
-UPDATE creature SET spawntimesecs = 3600 WHERE id = 72775;
+UPDATE `creature` SET `spawntimesecs` = 3600 WHERE `id` = 72775;
 
-UPDATE creature SET position_x = -741.8226, position_y = -5075.0253, position_z = -6.2773, orientation = 0.7702 WHERE guid = 10574987 AND id = 71955;
+UPDATE `creature` SET `position_x` = -741.8226, `position_y` = -5075.0253, `position_z` = -6.2773, `orientation` = 0.7702 WHERE `guid` = 10574987 AND `id` = 71955;
 UPDATE `creature_template` SET `faction` = 35, `unit_flags` = 256 WHERE `entry` IN (71952, 71955, 71953, 71954);
-DELETE FROM creature WHERE guid = 10655823 AND id = 73082;
-UPDATE creature SET spawndist = 10, MovementType = 1 WHERE id IN (72777);
+DELETE FROM `creature` WHERE `guid` = 10655823 AND `id` = 73082;
+UPDATE `creature` SET `spawndist` = 10, `MovementType` = 1 WHERE `id` IN (72777);
 
 UPDATE `creature_template` SET `ScriptName` = "npc_emperor_shaohao" WHERE `entry` = 73303;
 UPDATE `creature_template` SET `ScriptName` = "boss_chi_ji_celestial" WHERE `entry` = 71952;
@@ -12,11 +12,11 @@ UPDATE `creature_template` SET `ScriptName` = "boss_xuen_celestial" WHERE `entry
 UPDATE `creature_template` SET `ScriptName` = "boss_yu_lon_celestial" WHERE `entry` = 71955;
 UPDATE `creature_template` SET `ScriptName` = "boss_ordos" WHERE entry = 72057;
 
-UPDATE creature_template SET faction = 16, ScriptName = "npc_child_of_chi_ji" WHERE entry = 71990;
-UPDATE creature_template SET ScriptName = "npc_jadefire_wall" WHERE entry = 72020;
+UPDATE `creature_template` SET `faction` = 16, `ScriptName` = "npc_child_of_chi_ji" WHERE `entry` = 71990;
+UPDATE `creature_template` SET `ScriptName` = "npc_jadefire_wall" WHERE `entry` = 72020;
 
-DELETE FROM spell_script_names WHERE spell_id IN (144608, 144610, 144475, 144688, 144689, 144691, 144634, 144642);
-INSERT INTO spell_script_names (spell_id, ScriptName) VALUES
+DELETE FROM `spell_script_names` WHERE `spell_id` IN (144608, 144610, 144475, 144688, 144689, 144691, 144634, 144642);
+INSERT INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES
 (144608, "spell_niuzao_charge"),
 (144610, "spell_niuzao_headbutt"),
 (144475, "spell_chi_ji_beacon_of_hope"),
@@ -82,8 +82,8 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 (72057, 9, 0, "Your pain will be endless.", 14, 0, 100, 0, 0, 38979, "Ordos", 76162);
 
 -- Loot Rework
-DELETE FROM creature_loot_template WHERE Entry IN (72775);
-INSERT INTO creature_loot_template (Entry, Item, Reference, Chance, QuestRequired, LootMode, GroupId, MinCount, MaxCount) VALUES
+DELETE FROM `creature_loot_template` WHERE `Entry` IN (72775);
+INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`) VALUES
 (72775, 105715, 0, 25, 0, 1, 0, 1, 1),
 (72775, 103982, 0, 4, 0, 1, 0, 1, 1),
 (72775, 103642, 0, 4, 0, 1, 0, 1, 1),
@@ -274,3 +274,48 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 -- 72245
 -- 71919
 -- 73704
+
+UPDATE `creature_template` SET `gossip_menu_id` = 15879 WHERE `entry` = 73343;
+DELETE FROM `gossip_menu` WHERE `MenuId` = 15879;
+INSERT INTO `gossip_menu` (`MenuId`, `TextId`, `VerifiedBuild`) VALUES
+(15879, 22858, 28153);
+
+UPDATE `creature_template` SET `gossip_menu_id` = 15832 WHERE `entry` = 73019;
+DELETE FROM `gossip_menu` WHERE `MenuId` = 15832;
+INSERT INTO `gossip_menu` (`MenuId`, `TextId`, `VerifiedBuild`) VALUES
+(15832, 22764, 28153);
+
+UPDATE `creature_template` SET `gossip_menu_id` = 15831 WHERE `entry` = 73016;
+DELETE FROM `gossip_menu` WHERE `MenuId` = 15831;
+INSERT INTO `gossip_menu` (`MenuId`, `TextId`, `VerifiedBuild`) VALUES
+(15831, 22763, 28153);
+
+UPDATE `creature_template` SET `gossip_menu_id` = 15829 WHERE `entry` = 73017;
+DELETE FROM `gossip_menu` WHERE `MenuId` = 15829;
+INSERT INTO `gossip_menu` (`MenuId`, `TextId`, `VerifiedBuild`) VALUES
+(15829, 22761, 28153);
+
+UPDATE `creature_template` SET `gossip_menu_id` = 15828 WHERE `entry` = 73020;
+DELETE FROM `gossip_menu` WHERE `MenuId` = 15828;
+INSERT INTO `gossip_menu` (`MenuId`, `TextId`, `VerifiedBuild`) VALUES
+(15828, 22760, 28153);
+
+UPDATE `creature_template` SET `gossip_menu_id` = 15884 WHERE `entry` = 73434;
+DELETE FROM `gossip_menu` WHERE `MenuId` = 15884;
+INSERT INTO `gossip_menu` (`MenuId`, `TextId`, `VerifiedBuild`) VALUES
+(15884, 22876, 28153);
+
+UPDATE `creature_template` SET `gossip_menu_id` = 15883 WHERE `entry` = 73433;
+DELETE FROM `gossip_menu` WHERE `MenuId` = 15883;
+INSERT INTO `gossip_menu` (`MenuId`, `TextId`, `VerifiedBuild`) VALUES
+(15883, 23009, 28153);
+
+UPDATE `creature_template` SET `gossip_menu_id` = 15993 WHERE `entry` = 73820;
+DELETE FROM `gossip_menu` WHERE `MenuId` = 15993;
+INSERT INTO `gossip_menu` (`MenuId`, `TextId`, `VerifiedBuild`) VALUES
+(15993, 23044, 28153);
+
+UPDATE `creature_template` SET `gossip_menu_id` = 15827 WHERE `entry` = 72994;
+DELETE FROM `gossip_menu` WHERE `MenuId` = 15827;
+INSERT INTO `gossip_menu` (`MenuId`, `TextId`, `VerifiedBuild`) VALUES
+(15827, 22759, 28153);

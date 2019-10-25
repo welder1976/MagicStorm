@@ -192,7 +192,7 @@ bool ForcedDespawnDelayEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
 Creature::Creature(bool isWorldObject): Unit(isWorldObject), MapObject(),
 m_groupLootTimer(0), m_PlayerDamageReq(0),
 _pickpocketLootRestore(0), m_corpseRemoveTime(0), m_respawnTime(0),
-m_respawnDelay(300), m_corpseDelay(60), m_respawnradius(0.0f), m_boundaryCheckTime(2500), m_combatPulseTime(0), m_combatPulseDelay(0), m_reactState(REACT_AGGRESSIVE),
+m_respawnDelay(300), m_corpseDelay(60), m_respawnradius(0.0f), m_boundaryCheckTime(2500), m_combatPulseTime(0), m_combatPulseDelay(0), m_movementmode(0.0f), m_reactState(REACT_AGGRESSIVE),
 m_defaultMovementType(IDLE_MOTION_TYPE), m_spawnId(UI64LIT(0)), m_equipmentId(0), m_originalEquipmentId(0), m_AlreadyCallAssistance(false),
 m_AlreadySearchedAssistance(false), m_regenHealth(true), m_cannotReachTarget(false), m_cannotReachTimer(0), m_AI_locked(false), m_meleeDamageSchoolMask(SPELL_SCHOOL_MASK_NORMAL),
 m_originalEntry(0), m_homePosition(), m_transportHomePosition(), m_creatureInfo(nullptr), m_creatureData(nullptr), m_waypointID(0), m_path_id(0), m_formation(nullptr),
@@ -1222,6 +1222,7 @@ void Creature::SaveToDB(uint32 mapid, std::vector<Difficulty> const& spawnDiffic
     data.unit_flags2 = unitFlags2;
     data.unit_flags3 = unitFlags3;
     data.dynamicflags = dynamicflags;
+    data.movementmode = m_movementmode;
 
     data.phaseId = GetDBPhase() > 0 ? GetDBPhase() : data.phaseId;
     data.phaseGroup = GetDBPhase() < 0 ? -GetDBPhase() : data.phaseGroup;
@@ -1259,6 +1260,7 @@ void Creature::SaveToDB(uint32 mapid, std::vector<Difficulty> const& spawnDiffic
     stmt->setUInt32(index++, unitFlags2);
     stmt->setUInt32(index++, unitFlags3);
     stmt->setUInt32(index++, dynamicflags);
+    stmt->setFloat(index++, m_movementmode);
     trans->Append(stmt);
 
     WorldDatabase.CommitTransaction(trans);
@@ -1514,6 +1516,7 @@ bool Creature::LoadCreatureFromDB(ObjectGuid::LowType spawnId, Map* map, bool ad
     m_respawnradius = data->spawndist;
 
     m_respawnDelay = data->spawntimesecs;
+    m_movementmode = data->movementmode;
     m_deathState = ALIVE;
 
     m_respawnTime  = GetMap()->GetCreatureRespawnTime(m_spawnId);

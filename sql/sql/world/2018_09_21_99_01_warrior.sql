@@ -160,7 +160,7 @@ SET @CGUID = 452067;
 DELETE FROM `creature` WHERE `guid` BETWEEN @CGUID+0 AND @CGUID+83;
 INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `PhaseId`, `PhaseGroup`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `VerifiedBuild`) VALUES
 -- 6811 - 7201 - 7300 - 7302 - 7304 - 7313 - 7314 - 7318 - 7319 - 7334 - 7342 - 4592 - 4590 - 4588 - 4586
-(@CGUID+83, 93773, 1220, 7505, 7502, 3, '7300', 0, 0, 0, -836.988, 4255.25, 746.362, 4.65065, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26124), -- High Overlord Saurfang (Area: -Unknown- - Difficulty: 0)
+(@CGUID+83, 93773, 1220, 7505, 7502, 3, '7300', 0, 0, 0, -836.988,   4255.25,   746.362, 4.65065, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26124), -- High Overlord Saurfang (Area: -Unknown- - Difficulty: 0)
 (@CGUID+0, 100519, 1220, 7505, 7502, 3, '7300', 0, 0, 0, -842.042, 4255.39, 746.363, 4.75103, 7200, 0, 0, 0, 0, 0, 0, 0, 0, 26124), -- Makka (Area: -Unknown- - Difficulty: 0)
 
 -- 6811 - 6815 - 7201 - 7300 - 7302 - 7304 - 7313 - 7314 - 7318 - 7319 - 7334 - 7342 - 4592 - 4590 - 4588 - 4586
@@ -790,7 +790,7 @@ INSERT INTO `gossip_menu_option_action` (`MenuId`, `OptionIndex`, `ActionMenuId`
 (19874, 0, 19875, 0);
 
 UPDATE `creature_template` SET `minlevel`=100, `maxlevel`=100, `npcflag`=16777216, `BaseAttackTime`=2000, `RangeAttackTime`=2000, `unit_flags`=33536, `unit_flags2`=18432 WHERE `entry`=100519; -- Makka
-UPDATE `creature_template` SET `gossip_menu_id`=19874, `faction`=2714, `npcflag`=3, `BaseAttackTime`=2000, `RangeAttackTime`=2000, `unit_flags`=33536, `unit_flags2`=18432 WHERE `entry`=93773; -- High Overlord Saurfang
+UPDATE `creature_template` SET `gossip_menu_id`=19874, `faction`=2714, `minlevel`=100, `maxlevel`=100, `npcflag`=3, `BaseAttackTime`=2000, `RangeAttackTime`=2000, `unit_flags`=33536, `unit_flags2`=18432 WHERE `entry`=93773; -- High Overlord Saurfang
 UPDATE `creature_template` SET `InhabitType`=4 WHERE `entry`=103608;
 
 

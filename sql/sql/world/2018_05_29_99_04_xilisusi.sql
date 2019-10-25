@@ -1,4 +1,4 @@
-# TrinityCore - WowPacketParser
+﻿# TrinityCore - WowPacketParser
 # File name: 7.3.5_26654_五月-29-2057 - bl_xilisusi_2.awps.pkt
 # Detected build: V7_3_5_26654
 # Detected locale: zhCN
@@ -11,7 +11,7 @@ INSERT INTO `conversation_actors` (`ConversationId`, `ConversationActorId`, `Idx
 
 
 DELETE FROM `conversation_line_template` WHERE `Id`=15028;
-INSERT INTO `conversation_line_template` (`Id`, `StartTime`, `UiCameraID`, `ActorIdx`, `Unk`, `VerifiedBuild`) VALUES
+INSERT INTO `conversation_line_template` (`Id`, `StartTime`, `UiCameraID`, `ActorIdx`, `flags`, `VerifiedBuild`) VALUES
 (15028, 0, 0, 0, 0, 26654);
 
 
@@ -74,13 +74,13 @@ INSERT INTO `quest_offer_reward_locale` (`ID`, `locale`, `RewardText`, `Verified
 (50341, 'zhCN', '黑暗女王命令你亲自监督希利苏斯的工程。', 26654); -- a-recent-discovery
 SET NAMES 'latin1';
 DELETE FROM `quest_poi` WHERE (`QuestID`=49982 AND `BlobIndex`=0 AND `Idx1`=1) OR (`QuestID`=49982 AND `BlobIndex`=0 AND `Idx1`=0);
-INSERT INTO `quest_poi` (`QuestID`, `BlobIndex`, `Idx1`, `ObjectiveIndex`, `QuestObjectiveID`, `QuestObjectID`, `MapID`, `WorldMapAreaId`, `Floor`, `Priority`, `Flags`, `WorldEffectID`, `PlayerConditionID`, `WoDUnk1`, `AlwaysAllowMergingBlobs`, `VerifiedBuild`) VALUES
+INSERT INTO `quest_poi` (`QuestID`, `BlobIndex`, `Idx1`, `ObjectiveIndex`, `QuestObjectiveID`, `QuestObjectID`, `MapID`, `WorldMapAreaId`, `Floor`, `Priority`, `Flags`, `WorldEffectID`, `PlayerConditionID`, `WoDflags1`, `AlwaysAllowMergingBlobs`, `VerifiedBuild`) VALUES
 (49982, 0, 1, 32, 0, 0, 1, 321, 0, 0, 0, 0, 0, 1446848, 0, 26654), -- Witness to the Wound
 (49982, 0, 0, -1, 0, 0, 1, 1206, 0, 0, 0, 0, 0, 1444430, 0, 26654); -- Witness to the Wound
 
-UPDATE `quest_poi` SET `AlwaysAllowMergingBlobs`=0 WHERE (`QuestID`=50341 AND `BlobIndex`=0 AND `Idx1`=2); -- -Unknown-
-UPDATE `quest_poi` SET `AlwaysAllowMergingBlobs`=0 WHERE (`QuestID`=50341 AND `BlobIndex`=0 AND `Idx1`=1); -- -Unknown-
-UPDATE `quest_poi` SET `AlwaysAllowMergingBlobs`=0 WHERE (`QuestID`=50341 AND `BlobIndex`=0 AND `Idx1`=0); -- -Unknown-
+UPDATE `quest_poi` SET `AlwaysAllowMergingBlobs`=0 WHERE (`QuestID`=50341 AND `BlobIndex`=0 AND `Idx1`=2); -- -flagsnown-
+UPDATE `quest_poi` SET `AlwaysAllowMergingBlobs`=0 WHERE (`QuestID`=50341 AND `BlobIndex`=0 AND `Idx1`=1); -- -flagsnown-
+UPDATE `quest_poi` SET `AlwaysAllowMergingBlobs`=0 WHERE (`QuestID`=50341 AND `BlobIndex`=0 AND `Idx1`=0); -- -flagsnown-
 UPDATE `quest_poi` SET `AlwaysAllowMergingBlobs`=0 WHERE (`QuestID`=49473 AND `BlobIndex`=0 AND `Idx1`=1); -- A Titanic Effort
 UPDATE `quest_poi` SET `AlwaysAllowMergingBlobs`=0 WHERE (`QuestID`=49473 AND `BlobIndex`=0 AND `Idx1`=0); -- A Titanic Effort
 UPDATE `quest_poi` SET `AlwaysAllowMergingBlobs`=0 WHERE (`QuestID`=49293 AND `BlobIndex`=1 AND `Idx1`=17); -- Invasion Onslaught

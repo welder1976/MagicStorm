@@ -6,7 +6,7 @@ INSERT INTO `zone_scripts` (zoneId, scriptname) VALUES
 UPDATE `creature_template` SET `minlevel`=98,`maxlevel`=110,`npcflag`=2 WHERE `entry`=101061;
 UPDATE `creature_template` SET `minlevel`=98,`maxlevel`=110 WHERE `entry`=101064;
 
-#UPDATE `creature_template` SET `ScriptName`='npc_archdruid_hamuul_runetotem' WHERE `entry`=101061;
+UPDATE `creature_template` SET `ScriptName`='npc_archdruid_hamuul_runetotem' WHERE `entry`=101061;
 UPDATE `creature_template` SET `ScriptName`='npc_archdruid_hamuul_runetotem' WHERE `entry`=101064;
 INSERT IGNORE INTO `creature_queststarter` (`id`, `quest`) VALUES (101061, 40643);
 

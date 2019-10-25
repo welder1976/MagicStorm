@@ -5464,5 +5464,5 @@ static bool HandleExportCreatureAllCommand(ChatHandler* aHandler, const char* aA
 
 void AddSC_export_commandscript()
 {
-    new export_commandscript();
+    //new export_commandscript();
 }

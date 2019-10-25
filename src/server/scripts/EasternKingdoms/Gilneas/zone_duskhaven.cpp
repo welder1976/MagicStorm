@@ -155,44 +155,6 @@ enum eDuskHaven
     SPELL_PHASE_QUEST_ZONE_SPECIFIC_19          = 74096  // 194
 };
 
-// Player
-class player_zone_duskhaven : public PlayerScript
-{
-public:
-    player_zone_duskhaven() : PlayerScript("player_zone_duskhaven") { }
-
-    void OnQuestStatusChange(Player* player, uint32 questId) override
-    {
-        if (player->GetQuestStatus(questId) == QUEST_STATUS_INCOMPLETE ||
-            player->GetQuestStatus(questId) == QUEST_STATUS_COMPLETE)
-            return;
-
-        switch (questId)
-        {
-            case QUEST_TO_GREYMANE_MANOR:
-            case QUEST_THE_KINGS_OBSERVATORY:
-            case QUEST_ALAS_GILNEAS:
-                player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_06);
-                player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_07);
-                player->AddAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_08, player);
-                player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_09);
-                player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_10);
-                player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_11);
-                player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_12);
-                break;
-            case QUEST_EXODUS:
-                player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_06);
-                player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_07);
-                player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_08);
-                player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_09);
-                player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_10);
-                player->AddAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_11, player);
-                player->RemoveAura(SPELL_PHASE_QUEST_ZONE_SPECIFIC_12);
-                break;
-        }
-    }
-};
-
 // Phase 1/169
 // Phase 4096/181 is used from reward quest 14222 and forward
 
@@ -798,7 +760,7 @@ public:
             else if (Creature* target = obj->ToCreature())
                 return target->GetEntry() != _entry;
 
-            return true;
+            return false;
         }
 
     private:
@@ -813,14 +775,15 @@ public:
         void CheckTargets(std::list<WorldObject*>& targets)
         {
             targets.remove_if(IsNotEntryButPlayer(GetCaster(), NPC_GENERIC_TRIGGER_LAB_AOI));
-            WorldObject* target = Trinity::Containers::SelectRandomContainerElement(targets);
-            if (!target)
-                this->FinishCast(SPELL_CAST_OK);
-            else
+
+            if (!targets.empty())
             {
-                std::list<WorldObject*>::iterator itr = targets.begin();
-                GetCaster()->SetFacingToObject(*itr);
-            }
+                WorldObject* target = Trinity::Containers::SelectRandomContainerElement(targets);
+                if (target)
+                    GetCaster()->SetFacingToObject(target);
+                else
+                    this->FinishCast(SPELL_CAST_OK);
+            }    
         }
 
         void Register() override
@@ -834,7 +797,6 @@ public:
         return new spell_fire_boulder_68591_SpellScript();
     }
 };
-
 // 36409
 class npc_mastiff_36409 : public CreatureScript
 {
@@ -3407,7 +3369,6 @@ public:
 
 void AddSC_zone_gilneas_duskhaven()
 {
-    new player_zone_duskhaven();
     new npc_slain_watchman_36205();
     new npc_krennan_aranas_36331();
     new npc_king_genn_greymane_36332();

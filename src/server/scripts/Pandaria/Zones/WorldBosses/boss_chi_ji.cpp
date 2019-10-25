@@ -22,78 +22,76 @@
 #include "MapManager.h"
 #include "../../scripts/Pandaria/Zones/zone_pandaria_timeless_isle.h"
 
-#define BOSS_CHI_JI 0
-
 #define MAX_HEALTH_POINTS 349000000
 #define INITIAL_HEALTH_POINTS 87250000
 #define INCREMENTAL 2800000
 
 enum ChiJiSpells
 {
-    SPELL_INSPIRING_SONG              = 144468,
+    SPELL_INSPIRING_SONG                    = 144468,
 
-    SPELL_FIRESTORM_SUMMON            = 144461,
-    SPELL_FIRESTORM_DMG               = 144462,
-    SPELL_FIRESTORM_AURA              = 144463,
+    SPELL_FIRESTORM_SUMMON                  = 144461,
+    SPELL_FIRESTORM_DMG                     = 144462,
+    SPELL_FIRESTORM_AURA                    = 144463,
 
-    SPELL_BEACON_OF_HOPE_SUMMON       = 144473,
-    SPELL_BEACON_OF_HOPE_AURA         = 144474,
-    SPELL_BEACON_OF_HOPE_BUFF         = 144475,
+    SPELL_BEACON_OF_HOPE_SUMMON             = 144473,
+    SPELL_BEACON_OF_HOPE_AURA               = 144474,
+    SPELL_BEACON_OF_HOPE_BUFF               = 144475,
 
-    SPELL_BLAZING_SONG                = 144471,
-    SPELL_BLAZING_SONG_DMG            = 144472,
+    SPELL_BLAZING_SONG                      = 144471,
+    SPELL_BLAZING_SONG_DMG                  = 144472,
 
-    SPELL_CRANE_RUSH                  = 144470,
-    SPELL_CRANE_RUSH_SUMMON           = 144495,
+    SPELL_CRANE_RUSH                        = 144470,
+    SPELL_CRANE_RUSH_SUMMON                 = 144495,
 
-    SPELL_BLAZING_NOVA_AURA           = 144493,
-    SPELL_BLAZING_NOVA                = 144494
+    SPELL_BLAZING_NOVA_AURA                 = 144493,
+    SPELL_BLAZING_NOVA                      = 144494
 };
 
 enum ChiJiEvents
 {
-    EVENT_FIRESTORM                   = 1,
-    EVENT_INSPIRING_SONG,
-    EVENT_BEACON_OF_HOPE,
-    EVENT_HEALTH_66_PERCENT,
-    EVENT_HEALTH_33_PERCENT,
-    EVENT_SHAO_DO_OUTRO,
-    EVENT_DEATH,
-    EVENT_SHAO_DO_INTRO,
-    EVENT_SHAO_DO_INTRO_ATTACKABLE,
-    EVENT_HEALTH_POOL_TIMER
+    EVENT_FIRESTORM                         = 1,
+    EVENT_INSPIRING_SONG                    = 2,
+    EVENT_BEACON_OF_HOPE                    = 3,
+    EVENT_HEALTH_66_PERCENT                 = 4,
+    EVENT_HEALTH_33_PERCENT                 = 5,
+    EVENT_SHAO_DO_OUTRO                     = 6,
+    EVENT_DEATH                             = 7,
+    EVENT_SHAO_DO_INTRO                     = 8,
+    EVENT_SHAO_DO_INTRO_ATTACKABLE          = 9,
+    EVENT_HEALTH_POOL_TIMER                 = 10
 };
 
 enum ChiJiTexts
 {
-    SAY_AGGRO                         = 0,
-    SAY_INTRO                         = 1,
-    SAY_DEATH                         = 2,
-    SAY_KILL                          = 3,
-    SAY_SPELL                         = 4,
-    SAY_SPELL_2                       = 5,
-    SAY_SPELL_3                       = 6
+    SAY_AGGRO                               = 0,
+    SAY_INTRO                               = 1,
+    SAY_DEATH                               = 2,
+    SAY_KILL                                = 3,
+    SAY_SPELL                               = 4,
+    SAY_SPELL_2                             = 5,
+    SAY_SPELL_3                             = 6
 };
 
 enum ChiJiActions
 {
-    ACTION_CHILDREN_OF_CHIJI_33       = 1,
-    ACTION_CHILDREN_OF_CHIJI_66       = 2
+    ACTION_CHILDREN_OF_CHIJI_33             = 1,
+    ACTION_CHILDREN_OF_CHIJI_66             = 2
 };
 
 enum ChiJiChildEvents
 {
-    CHILD_EVENT_RUN                   = 1
+    CHILD_EVENT_RUN                         = 1
 };
 
 enum ChiJiChildMovement
 {
-    CHILD_MOVEMENT                    = 1
+    CHILD_MOVEMENT                          = 1
 };
 
 enum ChiJiChildAction
 {
-    CHILD_ACTION_RUN_FORWARD          = 1
+    CHILD_ACTION_RUN_FORWARD                = 1
 };
 
 class boss_chi_ji_celestial : public CreatureScript
@@ -176,6 +174,7 @@ class boss_chi_ji_celestial : public CreatureScript
                         return;
 
                     ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+
                     for (auto itr = threatlist.begin(); itr != threatlist.end(); ++itr)
                         if (Unit* unit = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid()))
                             if (unit->IsWithinDist(me, 100.0f))
@@ -215,6 +214,8 @@ class boss_chi_ji_celestial : public CreatureScript
                     me->SetFacingTo(MIDDLE_FACING_ANGLE);
                     me->setFaction(FACTION_HOSTILE_NEUTRAL);
                     me->SetHomePosition(_timelessIsleMiddle);
+                    me->SetMaxHealth(INITIAL_HEALTH_POINTS);
+                    me->SetHealth(me->GetMaxHealth());
                 }
             }
 
@@ -231,10 +232,12 @@ class boss_chi_ji_celestial : public CreatureScript
                     return;
 
                 ThreatContainer::StorageType threatlist = me->getThreatManager().getThreatList();
+
                 if (threatlist.empty())
                     return;
 
                 uint8 count = 0;
+
                 for (auto itr = threatlist.begin(); itr != threatlist.end(); ++itr)
                     if (Unit* unit = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid()))
                         if (unit->IsWithinDist(me, 100.0f))
@@ -242,6 +245,7 @@ class boss_chi_ji_celestial : public CreatureScript
 
                 uint32 hp = me->GetMaxHealth() - me->GetHealth();
                 uint32 newhp = std::min<uint32>((INCREMENTAL * count), MAX_HEALTH_POINTS);
+
                 if (newhp != me->GetMaxHealth() && newhp > INITIAL_HEALTH_POINTS)
                 {
                     me->SetMaxHealth(std::min<uint32>((me->GetMaxHealth() * count), MAX_HEALTH_POINTS));
@@ -267,7 +271,6 @@ class boss_chi_ji_celestial : public CreatureScript
                     case EVENT_SHAO_DO_INTRO_ATTACKABLE:
                     {
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-                        me->SetMaxHealth(INITIAL_HEALTH_POINTS);
                         break;
                     }
                     case EVENT_INSPIRING_SONG:
@@ -391,6 +394,7 @@ class npc_child_of_chi_ji : public CreatureScript
                         Position pos;
                         float x, y;
                         GetPositionWithDistInOrientation(me, 15.0f, me->GetOrientation(), x, y);
+
                         if (MapManager::IsValidMapCoord(me->GetMapId(), x, y))
                         {
                             if (me->IsWithinLOS(x, y, me->GetPositionZ()))

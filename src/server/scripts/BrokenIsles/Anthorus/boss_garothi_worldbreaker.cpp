@@ -287,7 +287,7 @@ struct boss_garothi_worldbreaker : public BossAI
                     events.Reset();
                 events.ScheduleEvent(EVENT_REENGAGE_PLAYERS, 3s + 500ms);
                 HideCannons();
-                me->RemoveUnitFlag(UNIT_FLAG_NOT_SELECTABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 break;
             default:
                 break;
@@ -352,7 +352,7 @@ struct boss_garothi_worldbreaker : public BossAI
             case NPC_ANNIHILATOR:
                 me->InterruptNonMeleeSpells(true);
                 me->RemoveAurasDueToSpell(SPELL_APOCALYPSE_DRIVE);
-                me->RemoveUnitFlag(UNIT_FLAG_NOT_SELECTABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
                 if (summon->GetEntry() == NPC_ANNIHILATOR)
                     _searingBarrageSpellId = SPELL_SEARING_BARRAGE_ANNIHILATOR;
@@ -407,20 +407,20 @@ struct boss_garothi_worldbreaker : public BossAI
                     DoCastSelf(SPELL_APOCALYPSE_DRIVE_FINAL_DAMAGE);
                     Talk(SAY_ANNOUNCE_APOCALYPSE_DRIVE);
                     Talk(SAY_APOCALYPSE_DRIVE);
-                    me->AddUnitFlag(UNIT_FLAG_NOT_SELECTABLE);
+                    me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
                     if (Creature* decimator = instance->GetCreature(DATA_DECIMATOR))
                     {
                         instance->SendEncounterUnit(ENCOUNTER_FRAME_ENGAGE, decimator, 2);
-                        decimator->AddUnitFlag(UNIT_FLAG_IN_COMBAT);
-                        decimator->RemoveUnitFlag(UNIT_FLAG_NOT_SELECTABLE);
+                        decimator->SetFlag(UNIT_NPC_FLAGS, UNIT_FLAG_IN_COMBAT);
+                        decimator->RemoveFlag(UNIT_NPC_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     }
 
                     if (Creature* annihilator = instance->GetCreature(DATA_ANNIHILATOR))
                     {
                         instance->SendEncounterUnit(ENCOUNTER_FRAME_ENGAGE, annihilator, 2);
-                        annihilator->AddUnitFlag(UNIT_FLAG_IN_COMBAT);
-                        annihilator->RemoveUnitFlag(UNIT_FLAG_NOT_SELECTABLE);
+                        annihilator->SetFlag(UNIT_NPC_FLAGS, UNIT_FLAG_IN_COMBAT);
+                        annihilator->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     }
                     break;
                 case EVENT_REENGAGE_PLAYERS:
@@ -496,13 +496,13 @@ struct boss_garothi_worldbreaker : public BossAI
          if (Creature* decimator = instance->GetCreature(DATA_DECIMATOR))
          {
              instance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, decimator);
-             decimator->AddUnitFlag(UnitFlags(UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_UNK_31));
+             decimator->SetFlag(UNIT_NPC_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_UNK_31);
          }
 
          if (Creature* annihilator = instance->GetCreature(DATA_ANNIHILATOR))
          {
              instance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, annihilator);
-             annihilator->AddUnitFlag(UnitFlags(UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_UNK_31));
+             annihilator->SetFlag(UNIT_NPC_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_UNK_31);
          }
      }
 };

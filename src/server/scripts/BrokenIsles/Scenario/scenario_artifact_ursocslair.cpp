@@ -1,4 +1,4 @@
-﻿/*
+/*
 scenario_artifact_ursocslair
 lyosky
 */
@@ -132,44 +132,8 @@ struct scenario_artifact_ursocslair : public InstanceScript
         SetBossNumber(DATA_MAX_ENCOUNTERS);
         //events.ScheduleEvent(DATA_STEP_1, 3s);
         SetData(DATA_CLAWS_OF_URSOC, NOT_STARTED);
-        isIntr = false;
-        needKillCount = 0;
-        KillCount = 0;
         StepID = EVENT_STEP_1;
         isComplete = false;
-    }
-
-    uint32 GetStepID()
-    {
-        switch (StepID)
-        {
-        case EVENT_STEP_1:
-            return DATA_STEP_1;
-            break;
-        case EVENT_STEP_2:
-            return DATA_STEP_2;
-            break;
-        case EVENT_STEP_3:
-            return DATA_STEP_3;
-            break;
-        case EVENT_STEP_4:
-            return DATA_STEP_4;
-            break;
-        case EVENT_STEP_5:
-            return DATA_STEP_5;
-            break;
-        case EVENT_STEP_6:
-            return DATA_STEP_6;
-            break;
-        case EVENT_STEP_7:
-            return DATA_STEP_7;
-            break;
-        case EVENT_STEP_8:
-            return DATA_STEP_8;
-            break;
-        default:
-            break;
-        }
     }
 
     void LoadNPC(uint32 event, const SpawnData* data)
@@ -185,7 +149,6 @@ struct scenario_artifact_ursocslair : public InstanceScript
             }
             ++data;
         }
-        //KillCount = 0;
         needKillCount = m_targetMobs.size();
         TC_LOG_ERROR("server.worldserver", "LoadNPC needKillCount = %u;KillCount = %u;", needKillCount, KillCount);
     }
@@ -204,33 +167,13 @@ struct scenario_artifact_ursocslair : public InstanceScript
 
     void NextStep()
     {
-        
-        TC_LOG_ERROR("server.worldserver", "====================scenario_artifact_ursocslair  NextStep  %u====================== ", StepID);
-        if (StepID < EVENT_STEP_8)
+      switch (StepID)
         {
-            ++StepID;
-            if(Scenario* scenario=instance->GetInstanceScenario())
-                scenario->CompleteCurrStep();
-
-            //SendScenarioState(ScenarioData(SCENARIO_ID, GetStepID()));                
-        }
-        else if(StepID == EVENT_STEP_8)
-        {
-            if(!isComplete)
-                if (Scenario* scenario = instance->GetInstanceScenario())
-                    scenario->CompleteCurrStep();
-               // SendScenarioState(ScenarioData(SCENARIO_ID, GetStepID()));
-            if (GameObject* go =instance->GetGameObject(GUID_CYLINDER_COLLISION))
-            {
-                TC_LOG_ERROR("server.worldserver", "====================scenario_artifact_ursocslair  TEST_EVENT GO_CYLINDER_COLLISION====================== ");
-                //go->GetPhaseShift().AddPhase(170, PhaseFlags::None, nullptr);
-                go->DestroyForNearbyPlayers();
-            }
-            ///COMPLETE SCENARIO
-            if (Scenario* scenario = instance->GetInstanceScenario())
-                scenario->CompleteScenario();
-        }
-
+          case EVENT_STEP_1:
+            break;
+         default:
+            break;
+        }  
     }
 
     void OnPlayerEnter(Player* player) override
@@ -260,7 +203,6 @@ struct scenario_artifact_ursocslair : public InstanceScript
             //if (players.begin() != players.end())
             //    scenario->UpdateCriteria(CRITERIA_TYPE_COMPLETE_DUNGEON_ENCOUNTER, encounter->dbcEntry->ID, 0, 0, nullptr, players.begin()->GetSource());
        }
-
     }
 
     void LeaveMap()

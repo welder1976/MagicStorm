@@ -447,7 +447,8 @@ enum PlayerFlags
 enum PlayerFlagsEx
 {
     PLAYER_FLAGS_EX_REAGENT_BANK_UNLOCKED   = 0x0001,
-    PLAYER_FLAGS_EX_MERCENARY_MODE          = 0x0002
+    PLAYER_FLAGS_EX_MERCENARY_MODE          = 0x0002,
+    PLAYER_FLAGS_EX_ARTIFACT_FORGE_CHEAT    = 0x0004
 };
 
 enum PlayerLocalFlags
@@ -1026,6 +1027,41 @@ struct ResurrectionData
     uint32 Aura;
 };
 
+struct CompletedChallenge
+{
+    CompletedChallenge()
+    {
+        MapID = 0;
+        BestCompletion = 0;
+        LastCompletion = 0;
+        BestMedal = 0;
+        BestMedalDate = 0;
+    }
+
+    uint32 MapID = 0;
+    uint32 BestCompletion = 0;
+    uint32 LastCompletion = 0;
+    uint32 BestMedal = 0;
+    uint32 BestMedalDate = 0;
+};
+
+/// MapID
+typedef std::map<uint32, CompletedChallenge> CompletedChallengesMap;
+
+struct ChallengeAffix
+{
+    ChallengeAffix()
+    {
+        affix_1 = 0;
+        affix_2 = 0;
+        affix_3 = 0;
+    }
+
+    uint32 affix_1 = 0;
+    uint32 affix_2 = 0;
+    uint32 affix_3 = 0;
+};
+
 struct GroupUpdateCounter
 {
     ObjectGuid GroupGuid;
@@ -1180,8 +1216,12 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         void SetCommandStatusOff(uint32 command) { _activeCheats &= ~command; }
 
         // TimeIsMoneyFriend
-	uint32 ptr_Interval;
-	uint32 ptr_Money;
+        uint32 ptr_Interval;
+        uint32 ptr_Money;
+
+        // KeystoneAffix
+        uint32 m_affix_stauts;
+        ChallengeAffix m_ChallengeAffix;
 
         // Played Time Stuff
         time_t m_logintime;
@@ -2586,6 +2626,7 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
                 }
             });
         }
+	void _LoadChallengesAffix();
 
     protected:
         // Gamemaster whisper whitelist

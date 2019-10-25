@@ -131,6 +131,143 @@ public:
     }
 };
 
+class npc_darkspear_jailor : public CreatureScript
+{
+public:
+    npc_darkspear_jailor() : CreatureScript("npc_darkspear_jailor"){ }
+
+    enum TrollQuests
+    {
+        // Proving Pit
+        QUEST_PROVING_PIT_ROGU = 24774,
+        QUEST_PROVING_PIT_MAGE = 24754,
+        QUEST_PROVING_PIT_SHAM = 24762,
+        QUEST_PROVING_PIT_HUNT = 24780,
+        QUEST_PROVING_PIT_PRIE = 24786,
+        QUEST_PROVING_PIT_WARR = 24642,
+        QUEST_PROVING_PIT_DRUI = 24768,
+        QUEST_PROVING_PIT_WARL = 26276,
+    };
+
+    enum Events
+    {
+        // Darkspear Jailor
+        EVENT_MOVE_TO_CAGE_1 = 1,
+        EVENT_MOVE_TO_CAGE_2,
+        EVENT_OPEN_CAGE,
+        EVENT_MOVE_BACK_1,
+        EVENT_MOVE_BACK_2,
+        EVENT_SUMMON_SPITESCALE_SCOUT,
+        EVENT_RESET_POS,
+    };
+
+    bool OnGossipHello(Player* player, Creature* creature)
+    {
+        if (player->GetQuestStatus(QUEST_PROVING_PIT_ROGU) == QUEST_STATUS_INCOMPLETE ||
+            player->GetQuestStatus(QUEST_PROVING_PIT_MAGE) == QUEST_STATUS_INCOMPLETE ||
+            player->GetQuestStatus(QUEST_PROVING_PIT_SHAM) == QUEST_STATUS_INCOMPLETE ||
+            player->GetQuestStatus(QUEST_PROVING_PIT_HUNT) == QUEST_STATUS_INCOMPLETE ||
+            player->GetQuestStatus(QUEST_PROVING_PIT_PRIE) == QUEST_STATUS_INCOMPLETE ||
+            player->GetQuestStatus(QUEST_PROVING_PIT_WARR) == QUEST_STATUS_INCOMPLETE ||
+            player->GetQuestStatus(QUEST_PROVING_PIT_DRUI) == QUEST_STATUS_INCOMPLETE ||
+            player->GetQuestStatus(QUEST_PROVING_PIT_WARL) == QUEST_STATUS_INCOMPLETE)
+        {
+            //player->ADD_GOSSIP_ITEM_DB(10974, 0, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+        }
+        //player->SEND_GOSSIP_MENU(15251, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
+    {
+        printf("OnGossipSelect: action %u \n", action);
+        if (action == GOSSIP_ACTION_INFO_DEF + 1)
+        {
+            player->PlayerTalkClass->ClearMenus();
+            player->KilledMonsterCredit(NPC_DARKSPEAR_JAILOR);
+            CAST_AI(npc_darkspear_jailorAI, creature->GetAI())->StartEvents();
+        }
+
+        return true;
+    }
+
+struct npc_darkspear_jailorAI : public ScriptedAI
+    {
+        npc_darkspear_jailorAI(Creature* creature) : ScriptedAI(creature) { }
+
+        uint8 m_JailorIndex;
+        bool m_activated;
+        EventMap events;
+
+        void Reset() override
+        {
+            me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+            m_JailorIndex = 0;
+            m_activated = false;
+        }
+
+        void StartEvents()
+        {
+            if (Creature* npc = me->FindNearestCreature(NPC_LEGATI_ROGUE_TRAINER, 30.0f, true))
+                m_JailorIndex = 4;
+
+            if (!m_activated)
+            {
+                Talk(0);
+                me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+                m_activated = true;
+                events.ScheduleEvent(EVENT_MOVE_TO_CAGE_1, 100);
+            }
+        }
+
+        void UpdateAI(uint32 diff) override
+        {
+            events.Update(diff);
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                case EVENT_MOVE_TO_CAGE_1:
+                    me->GetMotionMaster()->MovePoint(20, TrollwayPos[m_JailorIndex + 0]);
+                    events.ScheduleEvent(EVENT_MOVE_TO_CAGE_2, 4000);
+                    break;
+                case EVENT_MOVE_TO_CAGE_2:
+                    me->GetMotionMaster()->MovePoint(21, TrollwayPos[m_JailorIndex + 1]);
+                    events.ScheduleEvent(EVENT_OPEN_CAGE, 6000);
+                    break;
+                case EVENT_OPEN_CAGE:
+                    events.ScheduleEvent(EVENT_SUMMON_SPITESCALE_SCOUT, 500);
+                    events.ScheduleEvent(EVENT_MOVE_BACK_1, 2500);
+                    break;
+                case EVENT_MOVE_BACK_1:
+                    me->GetMotionMaster()->MovePoint(22, TrollwayPos[m_JailorIndex + 0]);
+                    events.ScheduleEvent(EVENT_MOVE_BACK_2, 6000);
+                    break;
+                case EVENT_MOVE_BACK_2:
+                    me->GetMotionMaster()->MoveTargetedHome();
+                    events.ScheduleEvent(EVENT_RESET_POS, 3000);
+                    break;
+                case EVENT_RESET_POS:
+                    me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+                    Reset();
+                    break;
+                case EVENT_SUMMON_SPITESCALE_SCOUT:
+                    if (Creature* creature = me->SummonCreature(NPC_SPITESCALE_SCOUT, TrollwayPos[m_JailorIndex + 2], TEMPSUMMON_CORPSE_DESPAWN))
+                    {
+                        CAST_AI(npc_captive_spitescale_scout::npc_captive_spitescale_scoutAI, creature->AI())->StartEvents(m_JailorIndex);
+                    }
+                    break;
+                }
+            }
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_darkspear_jailorAI(creature);
+    }
+};
+
 // #########################################################  Quest 24626 Young and Vicious
 
 class npc_swiftclaw_38002 : public CreatureScript
@@ -456,6 +593,7 @@ public:
 void AddSC_zone_echo_isles()
 {
     new npc_captive_spitescale_scout();
+    new npc_darkspear_jailor();
     new npc_swiftclaw_37989();
     new npc_swiftclaw_38002();
     new npc_spitescale_showfight();

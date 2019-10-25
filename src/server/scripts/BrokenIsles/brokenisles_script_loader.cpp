@@ -85,7 +85,6 @@ void AddSC_boss_shade_of_xavius();
 
 // Eye of Azshara
 void AddSC_instance_eye_of_azshara();
-void AddSC_eye_of_azshara();
 void AddSC_boss_warlord_parjesh();
 void AddSC_boss_lady_hatecoil();
 void AddSC_boss_serpentrix();
@@ -187,7 +186,6 @@ void AddSC_boss_harjatan();
 void AddSC_boss_tos_kiljaeden();
 void AddSC_boss_maiden_of_vigilance();
 void AddSC_boss_sasszine();
-void AddSC_boss_sisters_of_the_moon_debug();
 void AddSC_tomb_of_sargeras();
 void AddSC_instance_tomb_of_sargeras();
 
@@ -199,20 +197,20 @@ void AddSC_boss_chronomatic_anomaly();
 void AddSC_boss_trilliax();
 void AddSC_boss_aluriel();
 
-// New Karazhan
-void AddSC_instance_new_karazhan();
-void AddSC_new_karazhan();
-void AddSC_boss_new_maiden_of_virtue();
-void AddSC_boss_new_curator();
-void AddSC_boss_new_mana_devourer();
-void AddSC_boss_new_shade_of_medivh();
-void AddSC_boss_new_moroes();
-void AddSC_boss_new_attumen();
-void AddSC_boss_new_opera();
-void AddSC_boss_new_vizaduum();
-void AddSC_boss_new_nightbane();
+// Karazhan Legion
+void AddSC_instance_karazhan_legion();
+void AddSC_karazhan_legion();
+void AddSC_boss_maiden_of_virtue_karazhan_legion();
+void AddSC_boss_curator_karazhan_legion();
+void AddSC_boss_mana_devourer_karazhan_legion();
+void AddSC_boss_shade_of_medivh_karazhan_legion();
+void AddSC_boss_moroes_karazhan_legion();
+void AddSC_boss_attumen_karazhan_legion();
+void AddSC_boss_opera_karazhan_legion();
+void AddSC_boss_vizaduum_karazhan_legion();
+void AddSC_boss_nightbane_karazhan_legion();
 
-//scenario
+// Scenario
 void AddSC_scenario_the_violet_hold();
 void AddSC_scenario_artifact_ursocslair();
 void AddSC_scenario_artifact_restoacqusition();
@@ -220,6 +218,8 @@ void AddSC_scenario_artifact_ruins_of_falanaar();
 void AddSC_scenario_artifact_karazhan_catacombs();
 void AddSC_scenario_artifact_brokenshore();
 void AddSC_scenario_artifact_tirisfal_glades();
+void AddSC_scenario_the_violet_hold_dh();
+void AddSC_scenario_mage_art();
 
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
@@ -292,7 +292,6 @@ void AddBrokenIslesScripts()
 
     // Eye of Azshara
     AddSC_instance_eye_of_azshara();
-    AddSC_eye_of_azshara();
     AddSC_boss_warlord_parjesh();
     AddSC_boss_lady_hatecoil();
     AddSC_boss_serpentrix();
@@ -387,7 +386,6 @@ void AddBrokenIslesScripts()
     AddSC_boss_tos_kiljaeden();
     AddSC_boss_maiden_of_vigilance();
     AddSC_boss_sasszine();
-    AddSC_boss_sisters_of_the_moon_debug();
     AddSC_tomb_of_sargeras();
     AddSC_instance_tomb_of_sargeras();
 
@@ -399,20 +397,20 @@ void AddBrokenIslesScripts()
     AddSC_boss_trilliax();
     AddSC_boss_aluriel();
   
-    // New Karazhan
-    AddSC_instance_new_karazhan();
-    AddSC_new_karazhan();
-    AddSC_boss_new_maiden_of_virtue();
-    AddSC_boss_new_curator();
-    AddSC_boss_new_mana_devourer();
-    AddSC_boss_new_shade_of_medivh();
-    AddSC_boss_new_moroes();
-    AddSC_boss_new_attumen();
-    AddSC_boss_new_opera();
-    AddSC_boss_new_vizaduum();
-    AddSC_boss_new_nightbane();
+    // Karazhan Legion
+    AddSC_instance_karazhan_legion();
+    AddSC_karazhan_legion();
+    AddSC_boss_maiden_of_virtue_karazhan_legion();
+    AddSC_boss_curator_karazhan_legion();
+    AddSC_boss_mana_devourer_karazhan_legion();
+    AddSC_boss_shade_of_medivh_karazhan_legion();
+    AddSC_boss_moroes_karazhan_legion();
+    AddSC_boss_attumen_karazhan_legion();
+    AddSC_boss_opera_karazhan_legion();
+    AddSC_boss_vizaduum_karazhan_legion();
+    AddSC_boss_nightbane_karazhan_legion();
 
-    //scenario
+    // Scenario
     AddSC_scenario_the_violet_hold();
     AddSC_scenario_artifact_ursocslair();
     AddSC_scenario_artifact_restoacqusition();
@@ -420,4 +418,6 @@ void AddBrokenIslesScripts()
     AddSC_scenario_artifact_karazhan_catacombs();
     AddSC_scenario_artifact_brokenshore();
     AddSC_scenario_artifact_tirisfal_glades();
+    AddSC_scenario_the_violet_hold_dh();
+    AddSC_scenario_mage_art();
 }

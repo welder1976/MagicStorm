@@ -2376,6 +2376,299 @@ public:
     }
 };
 
+// Valiance Keep recruiting event
+enum EventStuff
+{
+    NPC_MAIN_TRIGGER        = 25219,
+    NPC_CIVILIAN_RECRUIT    = 25220,
+    NPC_RECRUIT_OFFICER     = 25222,
+    NPC_QUEUE_TRIGGER       = 15800,
+
+    EVENT_TIMER             = 1,
+
+    SAY_CIVIL               = 0,
+    SAY_OFFI_NEXT           = 3,
+    SAY_OFFI_ASK_PROF       = 0,
+    SAY_OFFI_CIVIL          = 1,
+    SAY_OFFI_SOLDIER        = 2,
+};
+
+const Position PosSpecial[4] =
+{
+    // Spawn
+    { 2254.100f, 5196.359f, 11.468f },
+    // Talk
+    { 2297.262f, 5241.838f, 11.387f },
+
+    // End of Path
+    { 2320.83f, 5259.26f, 11.2558f },
+    { 2125.46f, 5331.81f, 24.6419f },
+};
+
+const Position PosTrigger[9] =
+{
+    // Spawn
+    { 2277.82f, 5238.72f, 11.451f, 1.06f },
+    { 2279.22f, 5241.41f, 11.451f, 1.08f },
+    { 2280.84f, 5244.22f, 11.457f, 0.17f },
+    { 2282.6f , 5245.74f, 11.363f, 5.86f },
+    { 2284.87f, 5246.3f , 11.451f, 5.93f },
+    { 2287.47f, 5245.93f, 11.451f, 5.86f },
+    { 2289.47f, 5244.9f , 11.451f, 5.86f },
+    { 2291.77f, 5243.93f, 11.451f, 5.89f },
+    { 2294.13f, 5242.71f, 11.451f, 5.89f },
+};
+
+struct npc_borean_queue_civil_recruit : public ScriptedAI
+{
+    npc_borean_queue_civil_recruit(Creature* creature) : ScriptedAI(creature)
+    {
+        _myStatus = 0;
+    }
+
+    void InitializeAI() override
+    {
+        me->setActive(true);
+    }
+
+    void DoAction(int32 action) override
+    {
+        _myStatus = _myStatus + action;
+        DoSomething();
+    }
+
+    void SetData(uint32 type, uint32 /*data*/) override
+    {
+        _myStatus = type;
+    }
+
+    void MoveInLineOfSight(Unit* who) override
+    {
+        if (who && who->ToCreature() && who->ToCreature()->GetEntry() == NPC_QUEUE_TRIGGER)
+            if (who->GetDistance(me) <= 3.0f)
+            {
+                me->StopMoving();
+                me->DespawnOrUnsummon(3 * IN_MILLISECONDS);
+            }
+    }
+
+    void DoSomething()
+    {
+        switch (_myStatus)
+        {
+            case 101:
+                me->GetMotionMaster()->MovePoint(1, PosTrigger[1]);
+                break;
+            case 102:
+                me->GetMotionMaster()->MovePoint(1, PosTrigger[2]);
+                break;
+            case 103:
+                me->GetMotionMaster()->MovePoint(1, PosTrigger[3]);
+                break;
+            case 104:
+                me->GetMotionMaster()->MovePoint(1, PosTrigger[4]);
+                break;
+            case 105:
+                me->GetMotionMaster()->MovePoint(1, PosTrigger[5]);
+                break;
+            case 106:
+                me->GetMotionMaster()->MovePoint(1, PosTrigger[6]);
+                break;
+            case 107:
+                me->GetMotionMaster()->MovePoint(1, PosTrigger[7]);
+                break;
+            case 108:
+                me->GetMotionMaster()->MovePoint(1, PosTrigger[8]);
+                break;
+            case 109:
+                me->GetMotionMaster()->MovePoint(1, PosSpecial[1]);
+                if (Creature* offi = me->FindNearestCreature(NPC_MAIN_TRIGGER, 50.0f, true))
+                    offi->AI()->SetGUID(me->GetGUID(), 1);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private:
+        uint32  _myStatus;
+};
+
+struct npc_borean_queue_main_trigger : public ScriptedAI
+{
+    npc_borean_queue_main_trigger(Creature* creature) : ScriptedAI(creature) { }
+
+    void InitializeAI() override
+    {
+        me->setActive(true);
+        Reset();
+        PrepareEvent();
+    }
+
+    void Reset() override
+    {
+        _events.Reset();
+        _events.ScheduleEvent(EVENT_TIMER, Seconds(10));
+
+        _stepCount = 0;
+    }
+
+    void PrepareEvent()
+    {
+        y = 100;
+        for (i = 0; i < 9; ++i)
+            if (Creature* recruit = DoSummon(NPC_CIVILIAN_RECRUIT, PosTrigger[i]))
+            {
+                recruit->SetWalk(true);
+                recruit->AI()->DoAction(y);
+                y = y + 1;
+                _recruitGUID[i] = recruit->GetGUID();
+            }
+
+        for (i = 2; i < 4; ++i)
+            DoSummon(NPC_QUEUE_TRIGGER, PosSpecial[i]);
+    }
+
+    void StartMovement()
+    {
+        for (uint32 i = 0; i < 18; ++i)
+            if (Creature* recruit = ObjectAccessor::GetCreature(*me, _recruitGUID[i]))
+                recruit->AI()->DoAction(1);
+    }
+
+    void SetGUID(ObjectGuid guid, int32 dataId) override
+    {
+        if (dataId == 1)
+        {
+            _talkRecruit = guid;
+
+            for (i = 0; i < 18; ++i)
+            {
+                if (Creature* recruit = ObjectAccessor::GetCreature(*me, _recruitGUID[i]))
+                {
+                    if (recruit->GetGUID() == guid)
+                    {
+                        if (Creature* recruit = DoSummon(NPC_CIVILIAN_RECRUIT, PosSpecial[0]))
+                        {
+                            recruit->SetWalk(true);
+                            recruit->LoadEquipment(1, true);
+                            recruit->GetMotionMaster()->MovePoint(1, PosTrigger[0]);
+                            recruit->SetVisible(true);
+                            recruit->AI()->SetData(100, 1);
+                            _recruitGUID[i] = recruit->GetGUID();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void UpdateAI(uint32 diff) override
+    {
+        _events.Update(diff);
+
+        while (uint32 eventId = _events.ExecuteEvent())
+        {
+            switch (eventId)
+            {
+                case EVENT_TIMER:
+                    switch (_stepCount)
+                    {
+                        case 0:
+                            if (Creature* offi = me->FindNearestCreature(NPC_RECRUIT_OFFICER, 50.0f, true))
+                                offi->AI()->Talk(SAY_OFFI_NEXT);
+                            ++_stepCount;
+                            _events.ScheduleEvent(EVENT_TIMER, Seconds(3));
+                            break;
+                        case 1:
+                            StartMovement();
+                            ++_stepCount;
+                            _events.ScheduleEvent(EVENT_TIMER, Seconds(8));
+                            break;
+                        case 2:
+                            if (Creature* offi = me->FindNearestCreature(NPC_RECRUIT_OFFICER, 50.0f, true))
+                                offi->AI()->Talk(SAY_OFFI_ASK_PROF);
+                            ++_stepCount;
+                            _events.ScheduleEvent(EVENT_TIMER, Seconds(5));
+                            break;
+                        case 3:
+                            if (Creature* recruit = ObjectAccessor::GetCreature(*me, _talkRecruit))
+                                recruit->AI()->Talk(SAY_CIVIL);
+                            ++_stepCount;
+                            _events.ScheduleEvent(EVENT_TIMER, Seconds(5));
+                            break;
+                        case 4:
+                            _profession = urand(1, 10);
+
+                            if (_profession < 6)
+                            {
+                                if (Creature* offi = me->FindNearestCreature(NPC_RECRUIT_OFFICER, 50.0f, true))
+                                    offi->AI()->Talk(SAY_OFFI_CIVIL);
+                            }
+                            else
+                            {
+                                if (Creature* offi = me->FindNearestCreature(NPC_RECRUIT_OFFICER, 50.0f, true))
+                                    offi->AI()->Talk(SAY_OFFI_SOLDIER);
+                            }
+
+                            ++_stepCount;
+                            _events.ScheduleEvent(EVENT_TIMER, Seconds(5));
+                            break;
+                        case 5:
+                            if (_profession > 5)
+                                if (Creature* recruit = ObjectAccessor::GetCreature(*me, _talkRecruit))
+                                    recruit->LoadEquipment(2, true);
+
+                            _events.ScheduleEvent(EVENT_TIMER, Seconds(5));
+                            ++_stepCount;
+                            break;
+                        case 6:
+                            if (Creature* recruit = ObjectAccessor::GetCreature(*me, _talkRecruit))
+                                recruit->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
+
+                            _events.ScheduleEvent(EVENT_TIMER, Seconds(2));
+                            ++_stepCount;
+                            break;
+                        case 7:
+                            if (Creature* recruit = ObjectAccessor::GetCreature(*me, _talkRecruit))
+                            {
+                                if (_profession < 6)
+                                {
+                                    recruit->GetMotionMaster()->MovePath(recruit->GetEntry(), false);
+                                    recruit->AI()->SetData(1, 0);
+                                }
+                                        
+                                else
+                                {
+                                    recruit->GetMotionMaster()->MovePath(me->GetEntry(), false);
+                                    recruit->AI()->SetData(2, 0);
+                                }
+                            }
+                            _events.ScheduleEvent(EVENT_TIMER, Seconds(5));
+                            _stepCount = 0;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            if (!UpdateVictim())
+                return;
+        }
+    }
+    private:
+        EventMap    _events;
+        uint8       _stepCount;
+        uint8       _profession;
+        ObjectGuid  _recruitGUID[18];
+        ObjectGuid  _talkRecruit;
+        uint32      i;
+        uint32      y;
+};
+
 void AddSC_borean_tundra()
 {
     new npc_sinkhole_kill_credit();
@@ -2401,4 +2694,6 @@ void AddSC_borean_tundra()
     new npc_warmage_coldarra();
     new npc_hidden_cultist();
     new spell_windsoul_totem_aura();
+    RegisterCreatureAI(npc_borean_queue_civil_recruit);
+    RegisterCreatureAI(npc_borean_queue_main_trigger);
 }

@@ -87,6 +87,8 @@ struct npc_legionfall_construction_table_119305 : public ScriptedAI
 };
 
 
+//fly 233134, 232728, 
+
 void AddSC_broken_shore()
 {
     RegisterCreatureAI(npc_legionfall_soldier_119141);
