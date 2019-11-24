@@ -111,6 +111,11 @@ void Scenario::OnPlayerExit(Player* player)
     SendBootPlayer(player);
 }
 
+ ScenarioEntry const* Scenario::GetEntry() const
+{
+    return _data->Entry;
+}
+
 bool Scenario::IsComplete()
 {
     for (auto step : _data->Steps)

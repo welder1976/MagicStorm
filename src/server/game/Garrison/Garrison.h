@@ -40,6 +40,7 @@ public:
     struct Follower
     {
         uint32 GetItemLevel() const;
+        bool HasAbility(uint32 garrAbilityId) const;
         void EarnXP(Player* owner, uint32 xp);
         uint32 _EarnXP(uint32 xp);
         uint32 GetRequiredLevelUpXP() const;
@@ -85,6 +86,16 @@ public:
     // Followers
     void AddFollower(uint32 garrFollowerId);
     Follower* GetFollower(uint64 dbId);
+    template<typename Predicate>
+    uint32 CountFollowers(Predicate&& predicate) const
+    {
+        uint32 count = 0;
+        for (auto itr = _followers.begin(); itr != _followers.end(); ++itr)
+            if (predicate(itr->second))
+                ++count;
+
+         return count;
+    }
     std::unordered_map<uint64 /*dbId*/, Garrison::Follower> const& GetFollowers() const { return _followers; }
     uint32 GetActiveFollowersCount() const;
     uint32 GetAverageFollowerILevel() const;

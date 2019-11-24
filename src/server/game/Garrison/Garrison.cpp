@@ -862,3 +862,11 @@ uint32 Garrison::Follower::GetRequiredLevelUpXP() const
 
     return 0;
 }
+
+bool Garrison::Follower::HasAbility(uint32 garrAbilityId) const
+{
+    return std::find_if(PacketInfo.AbilityID.begin(), PacketInfo.AbilityID.end(), [garrAbilityId](GarrAbilityEntry const* garrAbility)
+    {
+        return garrAbility->ID == garrAbilityId;
+    }) != PacketInfo.AbilityID.end();
+}
