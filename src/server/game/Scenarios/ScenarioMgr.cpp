@@ -29,7 +29,7 @@ ScenarioMgr* ScenarioMgr::Instance()
     return &instance;
 }
 
-InstanceScenario* ScenarioMgr::CreateInstanceScenario(Map* map, TeamId team, uint32 zoneId) const
+InstanceScenario* ScenarioMgr::CreateInstanceScenario(Map const* map, TeamId team, uint32 zoneId) const
 {
     auto dbDataItr = _scenarioDBData.find(std::make_pair(map->GetId(), map->GetDifficultyID()));
     // No scenario registered for this map and difficulty in the database
@@ -109,6 +109,9 @@ InstanceScenario * ScenarioMgr::CreateInstanceScenarioByID(Map const * map, uint
         {
             scenarioID = dbDataItr->second.Scenario_A;
         }
+
+
+    
 
     auto itr = _scenarioData.find(scenarioID);
     if (itr == _scenarioData.end())

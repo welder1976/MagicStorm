@@ -11,5 +11,3 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 
 UPDATE `creature_template` SET `ScriptName`='npc_illidari_fel_bat_94324' WHERE `entry`=94324;
 UPDATE `creature_template` SET `ScriptName`='npc_105155' WHERE `entry`=105155;
-
-UPDATE `gameobject_template` SET `ScriptName`='npc_105155' WHERE `entry`=250677;

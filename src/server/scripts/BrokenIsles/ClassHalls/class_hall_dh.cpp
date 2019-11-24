@@ -165,7 +165,6 @@ public:
     }
 };
 
-
 void AddSC_class_hall_dh()
 {
     RegisterCreatureAI(npc_korvas_bloodthorn_99343);

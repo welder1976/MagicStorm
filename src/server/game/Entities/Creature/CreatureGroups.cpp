@@ -22,6 +22,7 @@
 #include "DatabaseEnv.h"
 #include "Log.h"
 #include "Map.h"
+#include "InstanceScript.h"
 #include "MotionMaster.h"
 #include "ObjectMgr.h"
 
@@ -265,4 +266,15 @@ void CreatureGroup::LeaderMoveTo(float x, float y, float z)
         member->GetMotionMaster()->MovePoint(0, dx, dy, dz);
         member->SetHomePosition(dx, dy, dz, pathangle);
     }
+}
+
+void CreatureGroup::CheckWipe(Creature* killed)
+{
+    // Check if we have at least one member alive
+    for (auto member : m_members)
+        if (member.first->IsAlive())
+            return;
+
+    if (InstanceScript* instanceScript = killed->GetInstanceScript())
+        instanceScript->OnCreatureGroupWipe(GetId());
 }

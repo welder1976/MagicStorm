@@ -49,6 +49,8 @@
 #include "Vehicle.h"
 #include "TemporarySummon.h"
 #include "CombatAI.h"
+#include "Unit.h"
+
 
 
 
@@ -287,7 +289,13 @@ struct questnpc_soul_gem : public ScriptedAI
 
 enum eManaDrainedWhelpling
 {
-    NPC_AZUREWING_WHELPLING = 90336
+    NPC_AZUREWING_WHELPLING = 90336,
+    NPC_WALPLAUZE_BESIEGT = 89050,
+    QUEST_42159 = 42159,
+    FACTION_HOSTILE = 2068,
+    POINT_HOME = 4,
+    ALLARI_SOUL = 89398,
+    EAY_KILLROGA = 4277,
 };
 
 // 90167
@@ -654,9 +662,7 @@ public:
 
 enum
 {
-    NPC_WALPLAUZE_BESIEGT = 89050,
-    QUEST_42159 = 42159,
-    FACTION_HOSTILE = 2068,
+    NPC_AGAPANT = 90543,
 };
 
 // 214482 - Radiant Ley Crystal
@@ -1242,6 +1248,609 @@ public:
     }
 };
 
+// 89978
+class npc_senegosa_89978 : public CreatureScript
+{
+public:
+    npc_senegosa_89978() : CreatureScript("npc_senegosa_89978") { }
+    struct npc_senegosa_89978AI : public ScriptedAI
+    {
+        npc_senegosa_89978AI(Creature* creature) : ScriptedAI(creature) { }
+        void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(37957) == QUEST_STATUS_INCOMPLETE)
+                {
+                    if (player->IsInDist(me, 15.0f))
+                    {
+                        player->KilledMonsterCredit(90479);
+                    }
+                }
+            }
+        }
+    };
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_senegosa_89978AI(creature);
+    }
+};
+
+class go_pylon_mana245572 : public GameObjectScript
+{
+public:
+    go_pylon_mana245572() : GameObjectScript("go_pylon_mana245572") { }
+
+    bool OnGossipHello(Player* player, GameObject* go) override
+    {
+        go->UseDoorOrButton();
+        if (player->GetQuestStatus(37860) == QUEST_STATUS_INCOMPLETE)
+        {
+            player->KilledMonsterCredit(100383);
+            go->GetPhaseShift().AddPhase(-169, PhaseFlags::None, nullptr);
+            return true;
+        }
+        return false;
+    }
+};
+
+class go_pylon_mana245573 : public GameObjectScript
+{
+public:
+    go_pylon_mana245573() : GameObjectScript("go_pylon_mana245573") { }
+
+    bool OnGossipHello(Player* player, GameObject* go) override
+    {
+        go->UseDoorOrButton();
+        if (player->GetQuestStatus(37860) == QUEST_STATUS_INCOMPLETE)
+        {
+            player->KilledMonsterCredit(100384);
+            go->GetPhaseShift().AddPhase(-169, PhaseFlags::None, nullptr);
+            return true;
+        }
+        return false;
+    }
+};
+
+class go_pylon_mana239959 : public GameObjectScript
+{
+public:
+    go_pylon_mana239959() : GameObjectScript("go_pylon_mana239959") { }
+
+    bool OnGossipHello(Player* player, GameObject* go) override
+    {
+        go->UseDoorOrButton();
+        if (player->GetQuestStatus(37860) == QUEST_STATUS_INCOMPLETE)
+        {
+            player->KilledMonsterCredit(90263);
+            go->GetPhaseShift().AddPhase(-169, PhaseFlags::None, nullptr);
+            return true;
+        }
+        return false;
+    }
+};
+
+class go_pylon_mana245574 : public GameObjectScript
+{
+public:
+    go_pylon_mana245574() : GameObjectScript("go_pylon_mana245574") { }
+
+    bool OnGossipHello(Player* player, GameObject* go) override
+    {
+        go->UseDoorOrButton();
+        if (player->GetQuestStatus(37860) == QUEST_STATUS_INCOMPLETE)
+        {
+            player->KilledMonsterCredit(100385);
+            go->GetPhaseShift().AddPhase(-169, PhaseFlags::None, nullptr);
+            return true;
+        }
+        return false;
+    }
+};
+
+class go_fel_power_run244706 : public GameObjectScript
+{
+public:
+    go_fel_power_run244706() : GameObjectScript("go_fel_power_run244706") { }
+
+    bool OnGossipHello(Player* player, GameObject* go) override
+    {
+        go->UseDoorOrButton();
+        if (player->GetQuestStatus(39940) == QUEST_STATUS_INCOMPLETE)
+        {
+            player->KilledMonsterCredit(244706);
+            go->GetPhaseShift().AddPhase(-169, PhaseFlags::None, nullptr);
+            return true;
+        }
+        return false;
+    }
+};
+
+// 211441 - drop-stone
+class spell_drop_stone : public SpellScript
+{
+    PrepareSpellScript(spell_drop_stone);
+
+    void HandleDummy(SpellEffIndex /*effIndex*/)
+    {
+        if (Unit* caster = GetCaster())
+            if (caster->FindNearestCreature(106625, 10.0f, true))
+            {
+                caster->ToPlayer()->KilledMonsterCredit(106625, ObjectGuid::Empty);
+            }
+    }
+
+    void Register()
+    {
+        OnEffectHitTarget += SpellEffectFn(spell_drop_stone::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
+    }
+};
+
+
+// quest 37991
+class npc_agapant_90543 : public CreatureScript
+{
+public:
+    npc_agapant_90543() : CreatureScript("npc_agapant_90543") { }
+    struct npc_agapant_90543AI : public ScriptedAI
+    {
+        npc_agapant_90543AI(Creature* creature) : ScriptedAI(creature) { }
+        void Reset()
+        {
+            say = false;
+        }
+        void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(37991) == QUEST_STATUS_INCOMPLETE)
+                {
+                    if (player->IsInDist(me, 15.0f))
+                    {
+                        player->KilledMonsterCredit(90543);
+                    }
+                }
+            }
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestObjectiveData(42271, 4))
+                    if (Creature* Agapant = me->FindNearestCreature(NPC_AGAPANT, 20.0f, true))
+                    {
+                        if (!say)
+                        {
+                            say = true;
+                            Agapant->GetScheduler().Schedule(2s, [Agapant](TaskContext context)
+                            {
+                                Agapant->AI()->Talk(0);
+                            });
+                        }
+                    }
+            }
+        }
+    private:
+        bool say;
+    };
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_agapant_90543AI(creature);
+    }
+};
+
+// quest 43519
+class npc_lucid_strength_89939 : public CreatureScript
+{
+public:
+    npc_lucid_strength_89939() : CreatureScript("npc_lucid_strength_89939") { }
+    struct npc_lucid_strength_89939AI : public ScriptedAI
+    {
+        npc_lucid_strength_89939AI(Creature* creature) : ScriptedAI(creature) { }
+        void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(43519) == QUEST_STATUS_INCOMPLETE)
+                {
+                    if (player->IsInDist(me, 15.0f))
+                    {
+                        player->KilledMonsterCredit(111223);
+                    }
+                }
+            }
+        }
+    };
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_lucid_strength_89939AI(creature);
+    }
+};
+
+struct mana_drained_90880 : public ScriptedAI
+{
+    mana_drained_90880(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    {
+        if (Player* player = clicker->ToPlayer())
+        {
+            if (player->GetQuestStatus(42271) == QUEST_STATUS_INCOMPLETE)
+            {
+                if (player->GetQuestObjectiveData(42271, 3))
+
+                {
+                    me->SetAIAnimKitId(4061);
+                    player->KilledMonsterCredit(90880);
+                    me->RemoveByteFlag(UNIT_FIELD_BYTES_1, 0, 0x01);
+                    me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                }
+            }
+        }
+    }
+    void MoveInLineOfSight(Unit* who) override
+    {
+        if (Player* player = who->ToPlayer())
+        {
+            if (player->GetQuestStatus(42271) == QUEST_STATUS_INCOMPLETE)
+            {
+                if (player->IsInDist(me, 15.0f))
+                {
+                    if (player->GetQuestObjectiveData(42271, 4))
+                    {
+                        if (!me->FindNearestCreature(900880, 70.0f))
+                        {
+                            {
+                                me->SummonCreature(900880, Position(642.059f, 6607.97f, 60.1522f, 1.73476f), TEMPSUMMON_MANUAL_DESPAWN);
+                            }
+                        }
+                    }
+                }
+            }
+            if (player->GetQuestStatus(42271) == QUEST_STATUS_INCOMPLETE)
+            {
+                if (player->GetQuestObjectiveData(42271, 3))
+                {
+                    me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+                }
+            }
+        }
+    }
+};
+
+struct mana_drained_900880 : public ScriptedAI
+{
+    mana_drained_900880(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void OnSpellClick(Unit* clicker, bool& /*result*/)
+    {
+        if (Player* player = clicker->ToPlayer())
+        {
+            if (player->GetQuestStatus(42271) == QUEST_STATUS_INCOMPLETE)
+            {
+                if (player->GetQuestObjectiveData(42271, 4))
+
+                {
+                    me->SetAIAnimKitId(4061);
+                    player->KilledMonsterCredit(122292);
+                    me->RemoveByteFlag(UNIT_FIELD_BYTES_1, 0, 0x01);
+                    me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                }
+            }
+        }
+    }
+    void MoveInLineOfSight(Unit* who) override
+    {
+        if (Player* player = who->ToPlayer())
+        {
+            if (player->GetQuestStatus(42271) == QUEST_STATUS_INCOMPLETE)
+            {
+                if (player->GetQuestObjectiveData(42271, 4))
+                {
+                    {
+                        me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+                    }
+                }
+            }
+        }
+    }
+};
+
+struct npc_quest_1970196 : public ScriptedAI
+{
+    npc_quest_1970196(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void MoveInLineOfSight(Unit* who) override
+    {
+        if (Player* player = who->ToPlayer())
+        {
+            if (player->GetQuestStatus(40130) == QUEST_STATUS_INCOMPLETE)
+            {
+                if (player->IsInDist(me, 45.0f))
+                {
+                    if (!me->FindNearestCreature(98698, 70.0f))
+                    {
+                        {
+                            me->SummonCreature(98698, Position(311.416f, 7424.86f, 144.469f, 4.66642f), TEMPSUMMON_MANUAL_DESPAWN);
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+
+class npc_demon_86963 : public CreatureScript
+{
+public:
+    npc_demon_86963() : CreatureScript("npc_demon_86963") { }
+
+    struct npc_demon_86963AI : public WorldBossAI
+    {
+        npc_demon_86963AI(Creature* creature) : WorldBossAI(creature) { }
+        void JustDied(Unit* who/*killer*/) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(37653) == QUEST_STATUS_INCOMPLETE)
+                {
+                    if (me->FindNearestCreature(86963, 15.0f))
+                    {
+                        player->KilledMonsterCredit(90298);
+                    }
+                }
+            }
+        }
+    };
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_demon_86963AI(creature);
+    }
+};
+
+class npc_demon_89398: public CreatureScript
+{
+public:
+    npc_demon_89398() : CreatureScript("npc_demon_89398") { }
+
+    bool OnGossipHello(Player* player, Creature* Creature) override
+    {
+        if (player->GetQuestStatus(37660) == QUEST_STATUS_INCOMPLETE)
+        {
+            player->SummonCreature(90401, Position(-91.4928977f, 6978.054199f, 12.537963f, 3.945533f), TEMPSUMMON_MANUAL_DESPAWN);
+            return true;
+        }
+        return false;
+    }
+};
+
+class npc_demon_90402 : public CreatureScript
+{
+public:
+    npc_demon_90402() : CreatureScript("npc_demon_90402") { }
+
+    struct npc_demon_90402AI : public WorldBossAI
+    {
+        npc_demon_90402AI(Creature* creature) : WorldBossAI(creature) { }
+        void JustDied(Unit* who/*killer*/) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(37660) == QUEST_STATUS_INCOMPLETE)
+                {
+                    player->SummonGameObject(239332, -163.918f, 6917.27f, 12.6521f, 5.33958f, QuaternionData(), 0);
+                }
+            }
+        }
+    };
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_demon_90402AI(creature);
+    }
+};
+
+class npc_demon_89276 : public CreatureScript
+{
+public:
+    npc_demon_89276() : CreatureScript("npc_demon_89276") { }
+
+    struct npc_demon_89276AI : public WorldBossAI
+    {
+        npc_demon_89276AI(Creature* creature) : WorldBossAI(creature) { }
+        void JustDied(Unit* who/*killer*/) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(37660) == QUEST_STATUS_INCOMPLETE)
+                {
+                    player->SummonGameObject(237017, -157.634f, 6904.87f, 13.3225f, 5.30559f, QuaternionData(), 0);
+                }
+            }
+        }
+        void MoveInLineOfSight(Unit* who) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(37660) == QUEST_STATUS_INCOMPLETE)
+                {
+                    if (player->IsInDist(me, 35.0f))
+                    {
+                        {
+                            player->KilledMonsterCredit(239332);
+                        }
+                    }
+                }
+            }
+        }
+    };
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_demon_89276AI(creature);
+    }
+};
+
+class go_soul_gem239338 : public GameObjectScript
+{
+public:
+    go_soul_gem239338() : GameObjectScript("go_soul_gem239338") { }
+
+    bool OnGossipHello(Player* player, GameObject* go) override
+    {
+        go->UseDoorOrButton();
+        if (player->GetQuestStatus(37660) == QUEST_STATUS_INCOMPLETE)
+        {
+            player->KilledMonsterCredit(239338);
+            player->SummonCreature(90402, Position(-154.604f, 6893.52f, 14.6885f, 1.85288f), TEMPSUMMON_MANUAL_DESPAWN);
+            return true;
+        }
+        return false;
+    }
+};
+
+class go_soul_gem239332 : public GameObjectScript
+{
+public:
+    go_soul_gem239332() : GameObjectScript("go_soul_gem239332") { }
+
+    bool OnGossipHello(Player* player, GameObject* go) override
+    {
+        go->UseDoorOrButton();
+        if (player->GetQuestStatus(37660) == QUEST_STATUS_INCOMPLETE)
+        {
+            player->KilledMonsterCredit(239332);
+            player->SummonCreature(89276, Position(-166.148f, 6914.08f, 11.6642f, 6.21969f), TEMPSUMMON_MANUAL_DESPAWN);
+            go->GetPhaseShift().AddPhase(-169, PhaseFlags::None, nullptr);
+            return true;
+        }
+        return false;
+    }
+};
+
+class go_soul_gem237017 : public GameObjectScript
+{
+public:
+    go_soul_gem237017() : GameObjectScript("go_soul_gem237017") { }
+
+    bool OnGossipHello(Player* player, GameObject* go) override
+    {
+        go->UseDoorOrButton();
+        if (player->GetQuestStatus(37660) == QUEST_STATUS_INCOMPLETE)
+        {
+            player->KilledMonsterCredit(237017);
+            player->SummonCreature(89673, Position(-161.554f, 6903.05f, 13.3184f, 0.476697f), TEMPSUMMON_MANUAL_DESPAWN);
+            go->GetPhaseShift().AddPhase(-169, PhaseFlags::None, nullptr);
+            return true;
+        }
+        return false;
+    }
+};
+
+const Position AllariWaypoints[45] =
+{
+    { -139.941f, 6418.82f, 27.5658f, 4.11514f },
+};
+
+class npc_demon_89673 : public CreatureScript
+{
+public:
+    npc_demon_89673() : CreatureScript("npc_demon_89673") { }
+
+    struct npc_demon_89673AI : public WorldBossAI
+    {
+        npc_demon_89673AI(Creature* creature) : WorldBossAI(creature) { }
+        void JustDied(Unit* who/*killer*/) override
+        {
+            if (Player* player = who->ToPlayer())
+            {
+                if (player->GetQuestStatus(37660) == QUEST_STATUS_INCOMPLETE)
+                {
+                    player->KilledMonsterCredit(240012);
+                }
+                if (Creature* Allari = me->FindNearestCreature(ALLARI_SOUL, 65.0f, true))
+                {
+                    Allari->GetMotionMaster()->MovePoint(POINT_HOME, Position(-90.0801f, 6978.73f, 12.4473f, 1.90998f), true);
+                }
+            }
+        }
+    };
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_demon_89673AI(creature);
+    }
+};
+
+struct npc_quest_1970197 : public ScriptedAI
+{
+    npc_quest_1970197(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void MoveInLineOfSight(Unit* who) override
+    {
+        if (Player* player = who->ToPlayer())
+        {
+            if (player->GetQuestStatus(37660) == QUEST_STATUS_INCOMPLETE)
+            {
+                if (player->IsInDist(me, 25.0f))
+                {
+                    if (player->GetQuestObjectiveData(37660, 8))
+                    {
+                        {
+                            player->KilledMonsterCredit(89398);
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+
+struct npc_quest_107242 : public ScriptedAI
+{
+    npc_quest_107242(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void MoveInLineOfSight(Unit* Unit) override
+    {
+        if (Player* player = Unit->ToPlayer())
+        {
+            if ((player->GetQuestStatus(37660) == QUEST_STATUS_INCOMPLETE) && (player->HasAura (212754)))
+            {
+                  if (player->GetDistance(me) < 20.0f)
+                    player->KilledMonsterCredit(107242);
+            }
+        }
+    }
+};
+
+struct npc_quest_107241 : public ScriptedAI
+{
+    npc_quest_107241(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void MoveInLineOfSight(Unit* Creature) override
+    {
+        if (Player* player = Creature->ToPlayer())
+        {
+            if ((player->GetQuestStatus(37660) == QUEST_STATUS_INCOMPLETE) && (player->HasAura(212754)))
+            {
+                    if (player->GetDistance(me) < 20.0f)
+                        player->KilledMonsterCredit(107241);
+            }
+        }
+    }
+};
+
+struct npc_quest_107243 : public ScriptedAI
+{
+    npc_quest_107243(Creature* creature) : ScriptedAI(creature) { me->SetAIAnimKitId(0); }
+
+    void MoveInLineOfSight(Unit* Creature) override
+    {
+        if (Player* player = Creature->ToPlayer())
+        {
+            if ((player->GetQuestStatus(37660) == QUEST_STATUS_INCOMPLETE) && (player->HasAura(212754)))
+            {
+                    if (player->GetDistance(me) < 20.0f)
+                        player->KilledMonsterCredit(107243);
+            }
+        }
+    }
+};
+
 void AddSC_azsuna()
 {
     new scene_azsuna_runes();
@@ -1266,4 +1875,29 @@ void AddSC_azsuna()
     RegisterCreatureAI(berazus_107964);
     RegisterSpellScript(spell_Wand_Practice);
     new ps_quest_Wandering();
+    new npc_senegosa_89978();
+    new go_pylon_mana245572();
+    new go_pylon_mana245573();
+    new go_pylon_mana239959();
+    new go_pylon_mana245574();
+    new go_fel_power_run244706();
+    RegisterSpellScript(spell_drop_stone);
+    new npc_agapant_90543();
+    new npc_lucid_strength_89939();
+    RegisterCreatureAI(mana_drained_90880);
+    RegisterCreatureAI(mana_drained_900880);
+    RegisterCreatureAI(npc_quest_1970196);
+    new npc_demon_86963();
+    new npc_demon_90402();
+    new npc_demon_89276();
+    new go_soul_gem239338();
+    new go_soul_gem239332();
+    new go_soul_gem237017();
+    new npc_demon_89673();
+    RegisterCreatureAI(npc_quest_1970197);
+    RegisterCreatureAI(npc_quest_107242);
+    RegisterCreatureAI(npc_quest_107241);
+    RegisterCreatureAI(npc_quest_107243);
+
+    new merayl_q42159("merayl_q42159");
 }

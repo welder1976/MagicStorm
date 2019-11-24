@@ -17,27 +17,7 @@
  */
 
 #include "ScriptMgr.h"
-#include "ScriptedGossip.h"
 //spell 227226
-
-struct npc_93465 : public ScriptedAI
-{
-   npc_93465(Creature* creature) : ScriptedAI(creature) {  }
-
-    void sGossipSelect(Player* player, uint32 menuId, uint32 gossipListId)
-    {
-        if (player->HasQuest(44775))
-        {
-            if (gossipListId == 0)
-            {
-                player->CastSpell(player, 231695, true);
-                CloseGossipMenuFor(player);
-            }
-        }
-    }
-};
-
 void AddSC_class_hall_dk()
 {
-    RegisterCreatureAI(npc_93465);
 }

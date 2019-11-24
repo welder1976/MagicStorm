@@ -180,7 +180,7 @@ void QuestObjectiveCriteriaMgr::ResetCriteria(CriteriaTypes type, uint64 miscVal
         for (CriteriaTree const* tree : *trees)
         {
             // don't update already completed criteria if not forced
-           if (!(CheckCompletedCriteriaTree(tree, _owner) && !evenIfCriteriaComplete))
+            if (!(IsCompletedCriteriaTree(tree) && !evenIfCriteriaComplete))
             {
                 allComplete = false;
                 break;
@@ -307,8 +307,6 @@ bool QuestObjectiveCriteriaMgr::CanCompleteCriteriaTree(CriteriaTree const* tree
 
 void QuestObjectiveCriteriaMgr::CompletedCriteriaTree(CriteriaTree const* tree, Player* referencePlayer)
 {
-    CriteriaHandler::CompletedCriteriaTree(tree, referencePlayer);
-
     QuestObjective const* objective = tree->QuestObjective;
     if (!objective)
         return;

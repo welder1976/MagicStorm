@@ -50,7 +50,8 @@ enum DataTypes
     DATA_PALADIN_STEP_5 = 2632, // Call upon the power of the Ashbringer to break free from Balnazzar's control. (One Final Blessing)
     DATA_PALADIN_STEP_6 = 1853, // Defeat Balnazzar. (Balnazzar the Risen)
     DATA_PALADIN_STEP_7 = 1854, // Return to Tirion Fordring. (The Fate of the Highlord)
-    DATA_MAX_ENCOUNTERS = 7,
+    DATA_MAX_ENCOUNTERS_DH = 7,
+    DATA_MAX_ENCOUNTERS_PALADIN = 7,
     PHASE_DH = 5875,
     PHASE_PALADIN = 5171,
     NPC_ALLARI_SOULEATER = 98882,
@@ -65,10 +66,8 @@ enum DataTypes
     GO_FELSOUL_PORTAL_2 = 248517,
     GO_FELSOUL_CAGE = 266029,
     GO_STONE_WALL = 245045,
+    NORMAL_PHASE = 169,
     DATA_BROKENSHORE = 0,
-    DH_VENGEANCE_ARTIFACT_ACQUISTION_LOOTED_SCENE = 1245,
-    QUEST_VENGEANCE_WILL_BE_OURS_1 = 40249,
-    QUEST_VENGEANCE_WILL_BE_OURS_2 = 41863,
     DATA_STAGE_1 = 1,
     DATA_STAGE_2 = 2,
     DATA_STAGE_3 = 3,
@@ -76,6 +75,9 @@ enum DataTypes
     DATA_STAGE_5 = 5,
     DATA_STAGE_6 = 6,
     DATA_STAGE_7 = 7,
+    DH_VENGEANCE_ARTIFACT_ACQUISTION_LOOTED_SCENE = 1245,
+    QUEST_VENGEANCE_WILL_BE_OURS_1 = 40249,
+    QUEST_VENGEANCE_WILL_BE_OURS_2 = 41863,
 };
 
 struct scenario_artifact_brokenshore : public InstanceScript
@@ -84,11 +86,11 @@ struct scenario_artifact_brokenshore : public InstanceScript
 
     void Initialize() override
     {
-        SetBossNumber(DATA_MAX_ENCOUNTERS);
+        SetBossNumber(DATA_MAX_ENCOUNTERS_DH);
         SetData(DATA_BROKENSHORE, NOT_STARTED);
-        for (uint8 i = 1; i < ClassMode; ++i)
+        for (uint8 i = 1; i < 7; ++i)
             SetData(i, NOT_STARTED);
-        StepID = ClassMode;
+        StepID = DATA_STAGE_1;
         isComplete = false;
         demonPortalsDestroyed = 0;
         demonTwinsKilled = 0;
@@ -105,14 +107,12 @@ struct scenario_artifact_brokenshore : public InstanceScript
     {
         InstanceScript::OnPlayerEnter(player);
         TC_LOG_ERROR("server.worldserver", " === scenario_artifact_brokenshore: Player Entered  === ");
-        if (player->GetMapId() == 1500 && player->getClass() == CLASS_DEMON_HUNTER)
+        if (player->GetMapId() == 1500)
         {
-            PhasingHandler::AddPhase(player, PHASE_DH, true);
             _playerGUID = player->GetGUID();
-            ClassMode = DATA_STAGE_7;
-            SendScenarioState(ScenarioData(SCENARIO_ID_DH, DATA_DH_STEP_1));
+            PhasingHandler::AddPhase(player, NORMAL_PHASE, true);
         }
-         SummonAllariSouleater();
+        SummonAllariSouleater();
     }
 
     void OnCreatureCreate(Creature* creature) override
@@ -160,13 +160,13 @@ struct scenario_artifact_brokenshore : public InstanceScript
     void NextStep()
     {
         TC_LOG_ERROR("server.worldserver", " === scenario_artifact_brokenshore  NextStep  %u === ", StepID);
-        if (StepID < ClassMode)
+        if (StepID < DATA_STAGE_7)
         {
             ++StepID;
             if (Scenario* scenario = instance->GetInstanceScenario())
                 scenario->CompleteCurrStep();
         }
-        else if (StepID == ClassMode)
+        else if (StepID == DATA_STAGE_7)
         {
             if (!isComplete)
                 if (Scenario* scenario = instance->GetInstanceScenario())
@@ -185,11 +185,11 @@ struct scenario_artifact_brokenshore : public InstanceScript
         if (data == NOT_STARTED)
             return;
 
-        if (type == DATA_DH_STEP_1 && data == DONE)
+        if (type == DATA_STAGE_1 && data == DONE)
         {
             NextStep();
         }
-        else if (type == DATA_DH_STEP_2 && data == DONE)
+        else if (type == DATA_STAGE_2 && data == DONE)
         {
             ++demonPortalsDestroyed;
             if (demonPortalsDestroyed == 2) {
@@ -197,7 +197,7 @@ struct scenario_artifact_brokenshore : public InstanceScript
                 SummonDemonTwins();
             }
         }
-        else if (type == DATA_DH_STEP_3 && data == DONE)
+        else if (type == DATA_STAGE_3 && data == DONE)
         {
             ++demonTwinsKilled;
             if (demonTwinsKilled == 2) {
@@ -205,23 +205,23 @@ struct scenario_artifact_brokenshore : public InstanceScript
                 SummonGorgonnash();
             }
         }
-        else if (type == DATA_DH_STEP_4 && data == DONE)
+        else if (type == DATA_STAGE_4 && data == DONE)
         {
             NextStep();
         }
-        else if (type == DATA_DH_STEP_5 && data == DONE)
+        else if (type == DATA_STAGE_5 && data == DONE)
         {
             NextStep();
             SummonAldrachiRevenant();
             SummonCariaFelsoul();
         }
-        else if (type == DATA_DH_STEP_6 && data == DONE)
+        else if (type == DATA_STAGE_6 && data == DONE)
         {
             NextStep();
             //summon Aldrachi Warblades GO + NPC
             SummonAldrachiWarblades();
         }
-        else if (type == DATA_DH_STEP_7 && data == DONE)
+        else if (type == DATA_STAGE_7 && data == DONE)
         {
             NextStep();
             // CompleteScenario();
@@ -275,7 +275,6 @@ private:
     ObjectGuid _cariaFelsoulGUID;
     ObjectGuid _aldrachiRevenantGUID;
     uint8 demonPortalsDestroyed;
-    uint8 ClassMode;
     uint8 demonTwinsKilled;
 };
 
@@ -314,7 +313,7 @@ public:
             Player* player = who->GetCharmerOrOwnerPlayerOrPlayerItself();
             if (!player)
                 return;
-            if (instance->GetData(DATA_DH_STEP_1) == NOT_STARTED && !sayGreeting)
+            if (instance->GetData(DATA_STAGE_1) == NOT_STARTED && !sayGreeting)
             {
                 sayGreeting = true;
                 Talk(0);
@@ -333,8 +332,8 @@ public:
                 Talk(1);
                 _events.ScheduleEvent(EVENT_SAY_3, 3000);
 
-                if (instance->GetData(DATA_DH_STEP_1) == NOT_STARTED)
-                    instance->SetData(DATA_DH_STEP_1, DONE);
+                if (instance->GetData(DATA_STAGE_1) == NOT_STARTED)
+                    instance->SetData(DATA_STAGE_1, DONE);
                 break;
             default:
                 break;
@@ -403,7 +402,7 @@ public:
             player->CastSpell(go, SPELL_DESTROYING_LEGION_PORTAL, true);
             player->CastSpell(go, SPELL_PORTAL_EXPLOSION, true);
             go->DestroyForPlayer(player);
-            instance->SetData(DATA_DH_STEP_2, DONE);
+            instance->SetData(DATA_STAGE_2, DONE);
         }
         return false;
     }
@@ -424,7 +423,7 @@ public:
         go->SetGoState(GO_STATE_READY);
         if (InstanceScript * instance = go->GetInstanceScript())
         {
-            if (instance->GetData(DATA_DH_STEP_1) == NOT_STARTED)
+            if (instance->GetData(DATA_STAGE_1) == NOT_STARTED)
             {
                 if (Creature* chained_allari = go->FindNearestCreature(NPC_CHAINED_ALLARI, 10.0f, true))
                 {
@@ -487,7 +486,7 @@ public:
             Player* player = who->GetCharmerOrOwnerPlayerOrPlayerItself();
             if (!player)
                 return;
-            if (instance->GetData(DATA_DH_STEP_3) == NOT_STARTED && !conversationStarted)
+            if (instance->GetData(DATA_STAGE_3) == NOT_STARTED && !conversationStarted)
             {
                 conversationStarted = true;
                 _events.ScheduleEvent(EVENT_SAY_1, 500);
@@ -504,7 +503,7 @@ public:
         {
             Talk(2);
             conversationStarted = false;
-            instance->SetData(DATA_DH_STEP_3, DONE);
+            instance->SetData(DATA_STAGE_3, DONE);
         }
 
         void SetData(uint32 id, uint32 /*value*/) override
@@ -625,7 +624,7 @@ public:
             for (std::list<Creature*>::const_iterator itr = summonedFelFamiliars.begin(); itr != summonedFelFamiliars.end(); ++itr)
                 (*itr)->ToCreature()->DespawnOrUnsummon(0);
 
-            instance->SetData(DATA_DH_STEP_3, DONE);
+            instance->SetData(DATA_STAGE_3, DONE);
         }
 
         void UpdateAI(uint32 diff) override
@@ -750,8 +749,8 @@ public:
             for (std::list<Creature*>::const_iterator itr = summonedCrushers.begin(); itr != summonedCrushers.end(); ++itr)
                 (*itr)->ToCreature()->DespawnOrUnsummon(0);
 
-            if (instance->GetData(DATA_DH_STEP_4) == NOT_STARTED)
-                instance->SetData(DATA_DH_STEP_4, DONE);
+            if (instance->GetData(DATA_STAGE_4) == NOT_STARTED)
+                instance->SetData(DATA_STAGE_4, DONE);
         }
 
         void UpdateAI(uint32 diff) override
@@ -887,7 +886,7 @@ public:
             if (!player)
                 return;
             _playerGUID = player->GetGUID();
-            if (instance->GetData(DATA_DH_STEP_6) == NOT_STARTED && !startTalk)
+            if (instance->GetData(DATA_STAGE_6) == NOT_STARTED && !startTalk)
             {
                 startTalk = true;
                 Talk(TEXT_SAY_1);
@@ -910,8 +909,8 @@ public:
             startTalk = false;
             jumpPosition = false;
             Talk(TEXT_SAY_6);
-            if (instance->GetData(DATA_DH_STEP_6) == NOT_STARTED)
-                instance->SetData(DATA_DH_STEP_6, DONE);
+            if (instance->GetData(DATA_STAGE_6) == NOT_STARTED)
+                instance->SetData(DATA_STAGE_6, DONE);
         }
 
         void DamageTaken(Unit* attacker, uint32& damage) override
@@ -1084,8 +1083,8 @@ public:
                     player->KilledMonsterCredit(114514);
 
             if (InstanceScript * instance = go->GetInstanceScript())
-                if (instance->GetData(DATA_DH_STEP_7) == NOT_STARTED)
-                    instance->SetData(DATA_DH_STEP_7, DONE);
+                if (instance->GetData(DATA_STAGE_7) == NOT_STARTED)
+                    instance->SetData(DATA_STAGE_7, DONE);
         }
     }
     bool isLooted;
@@ -1105,8 +1104,8 @@ public:
                 isUsed = true;
                 go->DestroyForPlayer(player);
 
-                if (instance->GetData(DATA_DH_STEP_5) == NOT_STARTED)
-                    instance->SetData(DATA_DH_STEP_5, DONE);
+                if (instance->GetData(DATA_STAGE_5) == NOT_STARTED)
+                    instance->SetData(DATA_STAGE_5, DONE);
             }
         }
         return false;

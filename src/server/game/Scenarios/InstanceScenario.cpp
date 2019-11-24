@@ -26,7 +26,7 @@
 #include "ObjectMgr.h"
 #include "Player.h"
 
-InstanceScenario::InstanceScenario(Map* map, ScenarioData const* scenarioData) : Scenario(scenarioData), _map(map)
+InstanceScenario::InstanceScenario(Map const* map, ScenarioData const* scenarioData) : Scenario(scenarioData), _map(map)
 {
     ASSERT(_map);
     LoadInstanceData(_map->GetInstanceId());
@@ -35,8 +35,6 @@ InstanceScenario::InstanceScenario(Map* map, ScenarioData const* scenarioData) :
     for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
         if (Player* player = itr->GetSource()->ToPlayer())
             SendScenarioState(player);
-
-    _scenarioType = SCENARIO_INSTANCE_TYPE_INSTANCE_SCENARIO;
 }
 
 void InstanceScenario::SaveToDB()
@@ -152,7 +150,7 @@ void InstanceScenario::LoadInstanceData(uint32 instanceId)
             if (!step)
                 continue;
 
-            if (CheckCompletedCriteriaTree(tree, nullptr))
+            if (IsCompletedCriteriaTree(tree))
                 SetStepState(step, SCENARIO_STEP_DONE);
         }
     }

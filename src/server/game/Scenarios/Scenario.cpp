@@ -35,8 +35,6 @@ Scenario::Scenario(ScenarioData const* scenarioData) : _data(scenarioData), _cur
         SetStep(step);
     else
         TC_LOG_ERROR("scenario", "Scenario::Scenario: Could not launch Scenario (id: %u), found no valid scenario step", _data->Entry->ID);
-
-    _scenarioType = SCENARIO_INSTANCE_TYPE_SCENARIO;
 }
 
 Scenario::~Scenario()
@@ -189,21 +187,10 @@ bool Scenario::CanCompleteCriteriaTree(CriteriaTree const* tree)
     return true;
 }
 
-void Scenario::CompletedCriteriaTree(CriteriaTree const* tree, Player* referencePlayer)
+void Scenario::CompletedCriteriaTree(CriteriaTree const* tree, Player* /*referencePlayer*/)
 {
-    CriteriaHandler::CompletedCriteriaTree(tree, referencePlayer);
-
-    if (InstanceScenario* instanceScenario = ToInstanceScenario())
-        if (InstanceMap* instanceMap = instanceScenario->GetMap()->ToInstanceMap())
-            if (InstanceScript* instanceScript = instanceMap->GetInstanceScript())
-                instanceScript->OnCompletedCriteriaTree(tree);
-
     ScenarioStepEntry const* step = tree->ScenarioStep;
     if (!step)
-        return;
-
-    // Do not complete if it's a sub-tree
-    if (step->Criteriatreeid != tree->ID)
         return;
 
     if (!step->IsBonusObjective() && step != GetStep())

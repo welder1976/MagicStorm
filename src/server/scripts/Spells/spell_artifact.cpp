@@ -80,6 +80,10 @@ enum SpellIds
     SPELL_PRIEST_SPHERE_OF_INSANITY_DAMAGE          = 194238,
     SPELL_PRIEST_SHADOW_WORD_PAIN                   = 589,
     SPELL_PRIEST_MIND_BLAST                         = 8092,
+    SPELL_MAGE_MARK_OF_ALUNETH                      = 224968,
+    SPELL_MAGE_MARK_OF_ALUNETH_AOE                  = 211088,
+    SPELL_MAGE_MARK_OF_ALUNETH_DAMAGE               = 211076,
+    SPELL_MAGE_MARK_OF_ALUNETH_SPEED                = 211056,
 };
 
 // Ebonbolt - 214634
@@ -1276,6 +1280,59 @@ class aura_concordance_of_the_legionfall : public AuraScript
     uint32 _rank;
     int64 _amount;
 };
+
+class aura_arti_mage_mark_of_aluneth : public AuraScript
+{
+    PrepareAuraScript(aura_arti_mage_mark_of_aluneth);
+
+    void HandleDummyTick(AuraEffect const* aurEff)
+    {
+        if (Unit* caster = GetCaster())
+            if(Unit* target = GetTarget())
+                caster->CastSpell(target, SPELL_MAGE_MARK_OF_ALUNETH_AOE, true, NULL, aurEff);
+    }
+
+    void OnRemove(AuraEffect const* aurEff, AuraEffectHandleModes /*mode*/)
+    {
+        Unit* caster = GetCaster();
+        Unit* target = GetTarget();
+
+        if (!caster || !target)
+            return;
+
+        uint32 power = caster->GetMaxPower(Powers::POWER_MANA);
+        int32 bp = CalculatePct(power, int32(sSpellMgr->GetSpellInfo(SPELL_MAGE_MARK_OF_ALUNETH_DAMAGE)->GetEffect(EFFECT_1)->BasePoints));
+        caster->CastCustomSpell(SPELL_MAGE_MARK_OF_ALUNETH_DAMAGE, SPELLVALUE_BASE_POINT0, bp, target, true, nullptr, aurEff);
+    }
+
+    void Register() override
+    {
+        OnEffectPeriodic += AuraEffectPeriodicFn(aura_arti_mage_mark_of_aluneth::HandleDummyTick, EFFECT_0, SPELL_AURA_PERIODIC_DUMMY);
+        AfterEffectRemove += AuraEffectRemoveFn(aura_arti_mage_mark_of_aluneth::OnRemove, EFFECT_0, SPELL_AURA_PERIODIC_DUMMY, AURA_EFFECT_HANDLE_REAL);
+    }
+};
+//211088,211076
+class spell_arti_mage_mark_of_aluneth_aoe : public SpellScript
+{
+    PrepareSpellScript(spell_arti_mage_mark_of_aluneth_aoe);
+
+    void HandleHit(SpellEffIndex /*effIndex*/)
+    {
+        Unit* caster = GetCaster();
+        Unit* hitunit = GetHitUnit();
+
+        if (!caster || !hitunit)
+            return;
+
+        caster->CastSpell(hitunit, SPELL_MAGE_MARK_OF_ALUNETH_SPEED, true);
+    }
+
+    void Register() override
+    {
+        OnEffectHitTarget += SpellEffectFn(spell_arti_mage_mark_of_aluneth_aoe::HandleHit, EFFECT_0, SPELL_EFFECT_SCHOOL_DAMAGE);
+    }
+};
+
 void AddSC_artifact_spell_scripts()
 {
     RegisterSpellScript(spell_arti_dru_new_moon);
@@ -1305,6 +1362,8 @@ void AddSC_artifact_spell_scripts()
     RegisterSpellScript(spell_arti_hun_titans_thunder);
     RegisterAuraScript(aura_arti_hun_titans_thunder);
     RegisterAuraScript(aura_concordance_of_the_legionfall);
+    RegisterAuraScript(aura_arti_mage_mark_of_aluneth);
+    RegisterSpellScript(spell_arti_mage_mark_of_aluneth_aoe);
 
     /// AreaTrigger scripts
     RegisterAreaTriggerAI(at_dh_fury_of_the_illidari);

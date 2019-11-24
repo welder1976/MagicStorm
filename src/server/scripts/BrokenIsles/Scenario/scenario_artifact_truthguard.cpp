@@ -53,41 +53,102 @@ enum
     ScenarioID = 1108,
 };
 
-/*struct scenario_paladin_truthguard : public InstanceScript
+struct scenario_paladin_truthguard : public InstanceScript
 {
     scenario_paladin_truthguard(InstanceMap* map) : InstanceScript(map) {  }
 
-    void InstanceScript::DoSendEventScenario(uint32 eventId /*= 0*//*)
+    void Initialize() override
     {
-      DoUpdateCriteria(CRITERIA_TYPE_SEND_EVENT_SCENARIO, eventId, 0, nullptr);
+        SetBossNumber(DATA_MAX_ENCOUNTERS);
+        SetData(DATA_Stormheim, NOT_STARTED);
+        for (uint8 i = 1; i < 6; ++i)
+            SetData(i, NOT_STARTED);
+        StepID = DATA_STAGE_1;
+        isComplete = false;
+        FirstCount = 0;
+        m_playerGUID = ObjectGuid::Empty;
     }
 
-    // Update Achievement Criteria for all players in instance
-    void InstanceScript::DoUpdateCriteria(CriteriaTypes type, uint32 miscValue1 /*= 0*//*, uint32 miscValue2 /*= 0*//*, Unit* unit /*= NULL*//*)
+    void OnPlayerEnter(Player* player) override
     {
-      DoOnPlayers([type, miscValue1, miscValue2, unit](Player* player)
-      {
-        player->UpdateCriteria(type, miscValue1, miscValue2, 0, unit);
-      }
-    );
-
-    void OnCompletedCriteriaTree(CriteriaTree const*tree) override
-    {
-        swich (tree->ID)
+        InstanceScript::OnPlayerEnter(player);
+        if (player->GetMapId() == 1495)
         {
-          case CRITERIA_TREE_YOU_VE_ARRIVED_AT_SHIELD_S_REST_MEET_UP_WITH_ORIK_AND_PREPARE_TO_ENTER_THE_TOMB:
-            GroupDoAction(50497);
-            break;
+            m_playerGUID = player->GetGUID();
+            PhasingHandler::AddPhase(player, NORMAL_PHASE, true);
         }
     }
-}
+
+    void OnCreatureCreate(Creature* creature) override
+    {
+
+    }
+
+    void OnGameObjectCreate(GameObject* go) override
+    {
+
+    }
+
+    void NextStep()
+    {
+        TC_LOG_ERROR("server.worldserver", " === scenario_paladin_truthguard  NextStep  %u === ", StepID);
+        if (StepID < DATA_STAGE_6)
+        {
+            ++StepID;
+            if (Scenario* scenario = instance->GetInstanceScenario())
+                scenario->CompleteCurrStep();
+        }
+        else if (StepID == DATA_STAGE_6)
+        {
+            if (!isComplete)
+                if (Scenario* scenario = instance->GetInstanceScenario())
+                    scenario->CompleteCurrStep();
+
+            // COMPLETE SCENARIO
+            if (Scenario* scenario = instance->GetInstanceScenario())
+                scenario->CompleteScenario();
+        }
+    }
+
+    void SetData(uint32 type, uint32 data) override
+    {
+        InstanceScript::SetData(type, data);
+        if (data == NOT_STARTED)
+            return;
+
+        if (type == DATA_STAGE_1 && data == DONE)
+        {
+            NextStep();
+        }
+        else if (type == DATA_STAGE_2 && data == DONE)
+        {
+            NextStep();
+        }
+        else if (type == DATA_STAGE_3 && data == DONE)
+        {
+            NextStep();
+        }
+        else if (type == DATA_STAGE_4 && data == DONE)
+        {
+            NextStep();
+        }
+        else if (type == DATA_STAGE_5 && data == DONE)
+        {
+            NextStep();
+        }
+        else if (type == DATA_STAGE_6 && data == DONE)
+        {
+            NextStep();
+            DoPlayScenePackageIdOnPlayers(1259);
+        }
+    }
 
 private:
     uint8 StepID;
     bool isComplete;
     ObjectGuid m_playerGUID;
     uint8 FirstCount;
-}; */
+};
 
 struct npc_orik_trueheart_105910 : public ScriptedAI
 {
@@ -116,7 +177,7 @@ struct npc_orik_trueheart_105910 : public ScriptedAI
                     {
                         Talk(2, player);
                         if (instance->GetData(DATA_STAGE_1) == NOT_STARTED)
-                           instance->DoSendEventScenario(50497);
+                            instance->SetData(DATA_STAGE_1, DONE);
                         me->GetMotionMaster()->MoveFollow(player, PET_FOLLOW_DIST, me->GetFollowAngle());
                         if (Creature* kato = me->FindNearestCreature(105694, 25.0f, true))
                             kato->GetMotionMaster()->MoveFollow(player, PET_FOLLOW_DIST, kato->GetFollowAngle());
@@ -155,7 +216,7 @@ public:
 //spell 204224
 void AddSC_scenario_artifact_truthguard()
 {
-   // RegisterInstanceScript(scenario_paladin_truthguard, 1495);
+    RegisterInstanceScript(scenario_paladin_truthguard, 1495);
     RegisterCreatureAI(npc_orik_trueheart_105910);
     new go_truthguard_249420();
 }

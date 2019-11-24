@@ -24,5 +24,3 @@ cmake-build-*/
 .vs
 
 src/server/scripts/BrokenIsles/TombOfSargeras/boss_sisters_of_moon\.cpp
-
-sql/sql/world/2018_09_14_99_01_druid.sql

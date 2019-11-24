@@ -788,7 +788,9 @@ void CriteriaHandler::UpdateCriteria(CriteriaTypes type, uint64 miscValue1 /*= 0
 
         for (CriteriaTree const* tree : *trees)
         {
-            CheckCompletedCriteriaTree(tree, referencePlayer);
+            if (IsCompletedCriteriaTree(tree))
+                CompletedCriteriaTree(tree, referencePlayer);
+
             AfterCriteriaTreeUpdate(tree, referencePlayer);
         }
     }
@@ -830,7 +832,7 @@ void CriteriaHandler::StartCriteriaTimer(CriteriaTimedTypes type, uint32 entry, 
         bool canStart = false;
         for (CriteriaTree const* tree : *trees)
         {
-            if (_timeCriteriaTrees.find(tree->ID) == _timeCriteriaTrees.end() && !CheckCompletedCriteriaTree(tree, nullptr))
+            if (_timeCriteriaTrees.find(tree->ID) == _timeCriteriaTrees.end() && !IsCompletedCriteriaTree(tree))
             {
                 // Start the timer
                 if (criteria->Entry->StartTimer * uint32(IN_MILLISECONDS) > timeLost)
@@ -960,7 +962,7 @@ void CriteriaHandler::SetCriteriaProgress(Criteria const* criteria, uint64 chang
                 timeElapsed = criteria->Entry->StartTimer - (timedIter->second / IN_MILLISECONDS);
 
                 // Remove the timer, we wont need it anymore
-                if (CheckCompletedCriteriaTree(tree, referencePlayer))
+                if (IsCompletedCriteriaTree(tree))
                     _timeCriteriaTrees.erase(timedIter);
             }
         }
@@ -983,11 +985,8 @@ void CriteriaHandler::RemoveCriteriaProgress(Criteria const* criteria)
     _criteriaProgress.erase(criteriaProgress);
 }
 
-bool CriteriaHandler::CheckCompletedCriteriaTree(CriteriaTree const* tree, Player* referencePlayer)
+bool CriteriaHandler::IsCompletedCriteriaTree(CriteriaTree const* tree)
 {
-    if (_completedCriteriaTree.find(tree->ID) != _completedCriteriaTree.end())
-        return true;
-
     if (!CanCompleteCriteriaTree(tree))
         return false;
 
@@ -995,18 +994,14 @@ bool CriteriaHandler::CheckCompletedCriteriaTree(CriteriaTree const* tree, Playe
     switch (tree->Entry->Operator)
     {
         case CRITERIA_TREE_OPERATOR_SINGLE:
-            if (!tree->Criteria || !IsCompletedCriteria(tree->Criteria, requiredCount))
-                return false;
-            break;
+            return tree->Criteria && IsCompletedCriteria(tree->Criteria, requiredCount);
         case CRITERIA_TREE_OPERATOR_SINGLE_NOT_COMPLETED:
-            if (tree->Criteria && IsCompletedCriteria(tree->Criteria, requiredCount))
-                return false;
-            break;
+            return !tree->Criteria || !IsCompletedCriteria(tree->Criteria, requiredCount);
         case CRITERIA_TREE_OPERATOR_ALL:
             for (CriteriaTree const* node : tree->Children)
-                if (!CheckCompletedCriteriaTree(node, referencePlayer))
+                if (!IsCompletedCriteriaTree(node))
                     return false;
-            break;
+            return true;
         case CRITERIA_TREE_OPERAROR_SUM_CHILDREN:
         {
             uint64 progress = 0;
@@ -1016,9 +1011,7 @@ bool CriteriaHandler::CheckCompletedCriteriaTree(CriteriaTree const* tree, Playe
                     if (CriteriaProgress const* criteriaProgress = GetCriteriaProgress(criteriaTree->Criteria))
                         progress += criteriaProgress->Counter;
             });
-            if (progress < requiredCount)
-                return false;
-            break;
+            return progress >= requiredCount;
         }
         case CRITERIA_TREE_OPERATOR_MAX_CHILD:
         {
@@ -1030,43 +1023,29 @@ bool CriteriaHandler::CheckCompletedCriteriaTree(CriteriaTree const* tree, Playe
                         if (criteriaProgress->Counter > progress)
                             progress = criteriaProgress->Counter;
             });
-            if (progress < requiredCount)
-                return false;
-            break;
+            return progress >= requiredCount;
         }
         case CRITERIA_TREE_OPERATOR_COUNT_DIRECT_CHILDREN:
         {
             uint64 progress = 0;
-            bool progressDone = false;
             for (CriteriaTree const* node : tree->Children)
                 if (node->Criteria)
                     if (CriteriaProgress const* criteriaProgress = GetCriteriaProgress(node->Criteria))
                         if (criteriaProgress->Counter >= 1)
                             if (++progress >= requiredCount)
-                            {
-                                progressDone = true;
-                                break;
-                            }
+                                return true;
 
-            if (!progressDone)
-                return false;
-            break;
+            return false;
         }
         case CRITERIA_TREE_OPERATOR_ANY:
         {
-            bool progressDone = false;
             uint64 progress = 0;
             for (CriteriaTree const* node : tree->Children)
-                if (CheckCompletedCriteriaTree(node, referencePlayer))
+                if (IsCompletedCriteriaTree(node))
                     if (++progress >= requiredCount)
-                    {
-                        progressDone = true;
-                        break;
-                    }
+                        return true;
 
-            if (!progressDone)
-                return false;
-            break;
+            return false;
         }
         case CRITERIA_TREE_OPERATOR_SUM_CHILDREN_WEIGHT:
         {
@@ -1077,23 +1056,13 @@ bool CriteriaHandler::CheckCompletedCriteriaTree(CriteriaTree const* tree, Playe
                     if (CriteriaProgress const* criteriaProgress = GetCriteriaProgress(criteriaTree->Criteria))
                         progress += criteriaProgress->Counter * criteriaTree->Entry->Amount;
             });
-            if (progress < requiredCount)
-                return false;
-            break;
+            return progress >= requiredCount;
         }
         default:
             break;
     }
 
-    if (_completedCriteriaTree.find(tree->ID) == _completedCriteriaTree.end())
-        CompletedCriteriaTree(tree, referencePlayer);
-
-    return true;
-}
-
-bool CriteriaHandler::CheckCompletedCriteriaTree(uint32 criteriaTreeId, Player* referencePlayer)
-{
-    return CheckCompletedCriteriaTree(sCriteriaMgr->GetCriteriaTree(criteriaTreeId), referencePlayer);
+    return false;
 }
 
 bool CriteriaHandler::CanUpdateCriteriaTree(Criteria const* criteria, CriteriaTree const* tree, Player* referencePlayer) const
@@ -1112,11 +1081,6 @@ bool CriteriaHandler::CanUpdateCriteriaTree(Criteria const* criteria, CriteriaTr
 bool CriteriaHandler::CanCompleteCriteriaTree(CriteriaTree const* /*tree*/)
 {
     return true;
-}
-
-void CriteriaHandler::CompletedCriteriaTree(CriteriaTree const* tree, Player* /*referencePlayer*/)
-{
-    _completedCriteriaTree.insert(tree->ID);
 }
 
 bool CriteriaHandler::IsCompletedCriteria(Criteria const* criteria, uint64 requiredAmount)
@@ -1619,7 +1583,7 @@ bool CriteriaHandler::AdditionalRequirementsSatisfied(ModifierTreeNode const* tr
         }
     }
 
-bool conditionMet = AdditionalRequirementsConditionSatisfied(tree, miscValue1, miscValue2, unit, referencePlayer);
+    bool conditionMet = AdditionalRequirementsConditionSatisfied(tree, miscValue1, miscValue2, unit, referencePlayer);
     if (tree->Entry->Operator == CRITERIA_TREE_OPERATOR_MODIFIER_SINGLE_NOT_COMPLETED)
         conditionMet = !conditionMet;
 
