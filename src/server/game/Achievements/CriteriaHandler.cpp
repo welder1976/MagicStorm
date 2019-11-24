@@ -18,6 +18,15 @@
 #include "CriteriaHandler.h"
 #include "Battleground.h"
 #include "DatabaseEnv.h"
+#include "AchievementMgr.h"
+#include "BattlePetMgr.h"
+#include "CollectionMgr.h"
+#include "Creature.h"
+#include "Garrison.h"
+#include "PhasingHandler.h"
+#include "RealmList.h"
+#include "Scenario.h"
+#include "BattlefieldMgr.h"
 #include "DB2Stores.h"
 #include "DisableMgr.h"
 #include "GameEventMgr.h"
@@ -587,16 +596,23 @@ void CriteriaHandler::UpdateCriteria(CriteriaTypes type, uint64 miscValue1 /*= 0
             }
             case CRITERIA_TYPE_COMPLETE_QUESTS_IN_ZONE:
             {
-                uint32 counter = 0;
-
-                const RewardedQuestSet &rewQuests = referencePlayer->getRewardedQuests();
-                for (RewardedQuestSet::const_iterator itr = rewQuests.begin(); itr != rewQuests.end(); ++itr)
+                if (miscValue1)
                 {
-                    Quest const* quest = sObjectMgr->GetQuestTemplate(*itr);
-                    if (quest && quest->GetZoneOrSort() >= 0 && uint32(quest->GetZoneOrSort()) == criteria->Entry->Asset.ZoneID)
-                        ++counter;
+                    SetCriteriaProgress(criteria, 1, referencePlayer, PROGRESS_ACCUMULATE);
                 }
-                SetCriteriaProgress(criteria, counter, referencePlayer);
+                else // login case
+                {
+                    uint32 counter = 0;
+
+                    const RewardedQuestSet& rewQuests = referencePlayer->getRewardedQuests();
+                    for (RewardedQuestSet::const_iterator itr = rewQuests.begin(); itr != rewQuests.end(); ++itr)
+                    {
+                        Quest const* quest = sObjectMgr->GetQuestTemplate(*itr);
+                        if (quest && quest->GetZoneOrSort() >= 0 && quest->GetZoneOrSort() == criteria->Entry->Asset.ZoneID)
+
+                        ++counter;
+                    }
+                    SetCriteriaProgress(criteria, counter, referencePlayer, PROGRESS_HIGHEST);
                 break;
             }
             case CRITERIA_TYPE_FALL_WITHOUT_DYING:
@@ -1232,7 +1248,7 @@ bool CriteriaHandler::CanUpdateCriteria(Criteria const* criteria, CriteriaTreeLi
         return false;
     }
 
-    if (criteria->Modifier && !AdditionalRequirementsSatisfied(criteria->Modifier, miscValue1, miscValue2, unit, referencePlayer))
+    if (criteria->Modifier && !ModifierTreeSatisfied(criteria->Modifier, miscValue1, miscValue2, unit, referencePlayer))
     {
         TC_LOG_TRACE("criteria", "CriteriaHandler::CanUpdateCriteria: (Id: %u Type %s) Requirements have not been satisfied", criteria->ID, CriteriaMgr::GetCriteriaTypeString(criteria->Entry->Type));
         return false;
@@ -1346,8 +1362,12 @@ bool CriteriaHandler::RequirementsSatisfied(Criteria const* criteria, uint64 mis
                 return false;
             break;
         case CRITERIA_TYPE_COMPLETE_QUESTS_IN_ZONE:
-            if (miscValue1 && miscValue1 != criteria->Entry->Asset.ZoneID)
+            if (miscValue1)
+            {
+                Quest const* quest = sObjectMgr->GetQuestTemplate(miscValue1);
+                if (!quest ||  quest->GetZoneOrSort() != criteria->Entry->Asset.ZoneID)
                 return false;
+            }
             break;
         case CRITERIA_TYPE_DEATH:
         {
@@ -1556,41 +1576,48 @@ bool CriteriaHandler::RequirementsSatisfied(Criteria const* criteria, uint64 mis
     return true;
 }
 
-bool CriteriaHandler::AdditionalRequirementsSatisfied(ModifierTreeNode const* tree, uint64 miscValue1, uint64 miscValue2, Unit const* unit, Player* referencePlayer) const
+bool CriteriaHandler::ModifierTreeSatisfied(ModifierTreeNode const* tree, uint64 miscValue1, uint64 miscValue2, Unit const* unit, Player* referencePlayer) const
 {
-    const uint64 requiredCount = tree->Entry->Amount;
-
-    switch (tree->Entry->Operator)
+    switch (ModifierTreeOperator(tree->Entry->Operator))
     {
-        case CRITERIA_TREE_OPERATOR_ANY:
-        {
-            uint64 progress = 0;
+        case ModifierTreeOperator::SingleTrue:
+            return tree->Entry->Type && ModifierSatisfied(tree->Entry, miscValue1, miscValue2, unit, referencePlayer);
+        case ModifierTreeOperator::SingleFalse:
+            return tree->Entry->Type && !ModifierSatisfied(tree->Entry, miscValue1, miscValue2, unit, referencePlayer);
+        case ModifierTreeOperator::All:
             for (ModifierTreeNode const* node : tree->Children)
-                if (AdditionalRequirementsSatisfied(node, miscValue1, miscValue2, unit, referencePlayer))
-                    if (++progress >= requiredCount)
+                if (!ModifierTreeSatisfied(node, miscValue1, miscValue2, unit, referencePlayer))
+                    return false;
+            return true;
+        case ModifierTreeOperator::Some:
+        {
+            int8 requiredAmount = std::max<int8>(tree->Entry->Amount, 1);
+            for (ModifierTreeNode const* node : tree->Children)
+                if (ModifierTreeSatisfied(node, miscValue1, miscValue2, unit, referencePlayer))
+                    if (!--requiredAmount)
                         return true;
 
             return false;
         }
-        case CRITERIA_TREE_OPERATOR_ALL:
         default:
-        {
-            for (ModifierTreeNode const* node : tree->Children)
-                if (!AdditionalRequirementsSatisfied(node, miscValue1, miscValue2, unit, referencePlayer))
-                    return false;
-
             break;
-        }
     }
 
-    uint32 reqType = tree->Entry->Type;
-    if (!reqType)
-        return true;
+bool CriteriaHandler::ModifierSatisfied(ModifierTreeEntry const* modifier, uint64 miscValue1, uint64 miscValue2, Unit const* unit, Player* referencePlayer) const
+{
+    uint32 reqValue = modifier->Asset;
+    uint32 secondaryAsset = modifier->SecondaryAsset;
+    uint32 tertiaryAsset = modifier->TertiaryAsset;
 
-    uint32 reqValue = tree->Entry->Asset;
-
-    switch (CriteriaAdditionalCondition(reqType))
+    switch (CriteriaAdditionalCondition(modifier->Type))
     {
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_DRUNK_VALUE: // 1
+        {
+            uint32 inebriation = std::min(std::max<uint32>(referencePlayer->GetDrunkValue(), *referencePlayer->m_playerData->FakeInebriation), 100u);
+            if (inebriation < reqValue)
+                return false;
+            break;
+        }
         case CRITERIA_ADDITIONAL_CONDITION_ITEM_LEVEL: // 3
         {
             // miscValue1 is itemid
@@ -1643,6 +1670,10 @@ bool CriteriaHandler::AdditionalRequirementsSatisfied(ModifierTreeNode const* tr
                 return false;
             break;
         }
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_IS_ALIVE: // 16
+            if (referencePlayer->isDead())
+                return false;
+            break;
         case CRITERIA_ADDITIONAL_CONDITION_SOURCE_AREA_OR_ZONE: // 17
         {
             uint32 zoneId, areaId;
@@ -1668,6 +1699,14 @@ bool CriteriaHandler::AdditionalRequirementsSatisfied(ModifierTreeNode const* tr
                 return false;
             break;
         }
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_LEVEL_ABOVE_TARGET: // 22
+            if (!unit || referencePlayer->getLevel() + reqValue < unit->getLevel())
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_LEVEL_EQUAL_TARGET: // 23
+            if (!unit || referencePlayer->getLevel() != unit->getLevel())
+                return false;
+            break;
         case CRITERIA_ADDITIONAL_CONDITION_ARENA_TYPE: // 24
         {
             Battleground* bg = referencePlayer->GetBattleground();
@@ -1703,8 +1742,33 @@ bool CriteriaHandler::AdditionalRequirementsSatisfied(ModifierTreeNode const* tr
                 return false;
             break;
         }
+        case CRITERIA_ADDITIONAL_CONDITION_TARGET_CREATURE_FAMILY: // 31
+        {
+            if (!unit)
+                return false;
+            if (unit->GetTypeId() != TYPEID_UNIT || unit->ToCreature()->GetCreatureTemplate()->family != CreatureFamily(reqValue))
+                return false;
+            break;
+        }
         case CRITERIA_ADDITIONAL_CONDITION_SOURCE_MAP: // 32
             if (referencePlayer->GetMapId() != reqValue)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_CLIENT_VERSION: // 33
+            if (reqValue < sRealmList->GetMinorMajorBugfixVersionForBuild(realm.Build))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_BATTLE_PET_TEAM_LEVEL: // 34
+            for (WorldPackets::BattlePet::BattlePetSlot const& slot : referencePlayer->GetSession()->GetBattlePetMgr()->GetSlots())
+                if (slot.Pet.Level != reqValue)
+                    return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_NOT_IN_GROUP: // 35
+            if (referencePlayer->GetGroup())
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_IN_GROUP: // 36
+            if (!referencePlayer->GetGroup())
                 return false;
             break;
         case CRITERIA_ADDITIONAL_CONDITION_TITLE_BIT_INDEX: // 38
@@ -1720,18 +1784,96 @@ bool CriteriaHandler::AdditionalRequirementsSatisfied(ModifierTreeNode const* tr
             if (!unit || unit->GetLevelForTarget(referencePlayer) != reqValue)
                 return false;
             break;
-        case CRITERIA_ADDITIONAL_CONDITION_TARGET_ZONE: // 41
-            if (!unit || unit->GetZoneId() != reqValue)
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_ZONE: // 41
+        {
+            uint32 zoneId = referencePlayer->GetAreaId();
+            if (AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(zoneId))
+                if (areaEntry->Flags[0] & AREA_FLAG_SUB_ZONE)
+                    zoneId = areaEntry->ParentAreaID;
+            if (zoneId != reqValue)
                 return false;
             break;
-        case CRITERIA_ADDITIONAL_CONDITION_TARGET_HEALTH_PERCENT_BELOW: // 46
+        }
+        case CRITERIA_ADDITIONAL_CONDITION_TARGET_ZONE: // 42
+        {
+            if (!unit)
+                return false;
+            uint32 zoneId = unit->GetAreaId();
+            if (AreaTableEntry const* areaEntry = sAreaTableStore.LookupEntry(zoneId))
+                if (areaEntry->Flags[0] & AREA_FLAG_SUB_ZONE)
+                    zoneId = areaEntry->ParentAreaID;
+            if (zoneId != reqValue)
+                return false;
+            break;
+        }
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_HEALTH_PCT_LOWER: // 43
+            if (referencePlayer->GetHealthPct() > float(reqValue))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_HEALTH_PCT_GREATER: // 44
+            if (referencePlayer->GetHealthPct() < float(reqValue))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_HEALTH_PCT_EQUAL: // 45
+            if (referencePlayer->GetHealthPct() != float(reqValue))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_TARGET_HEALTH_PCT_LOWER: // 46
+            if (!unit || unit->GetHealthPct() > float(reqValue))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_TARGET_HEALTH_PCT_GREATER: // 47
+            if (!unit || unit->GetHealthPct() < float(reqValue))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_TARGET_HEALTH_PCT_EQUAL: // 48
+            if (!unit || unit->GetHealthPct() != float(reqValue))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_HEALTH_LOWER: // 49
+            if (referencePlayer->GetHealth() > reqValue)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_HEALTH_GREATER: // 50
+            if (referencePlayer->GetHealth() < reqValue)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_HEALTH_EQUAL: // 51
+            if (referencePlayer->GetHealth() != reqValue)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_TARGET_HEALTH_LOWER: // 52
             if (!unit || unit->GetHealthPct() >= reqValue)
                 return false;
             break;
-        case CRITERIA_ADDITIONAL_CONDITION_RATED_BATTLEGROUND_RATING: // 64
-            //if (referencePlayer->GetRBGPersonalRating() < reqValue)
+        case CRITERIA_ADDITIONAL_CONDITION_MIN_ACHIEVEMENT_POINTS: // 56
+            if (referencePlayer->GetAchievementPoints() <= reqValue)
                 return false;
             break;
+        case CRITERIA_ADDITIONAL_CONDITION_IN_LFG_DUNGEON: // 57
+            if (!ConditionMgr::GetPlayerConditionLfgValue(referencePlayer, PlayerConditionLfgStatus::InLFGDungeon))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_IN_LFG_RANDOM_DUNGEON: // 58
+            if (!ConditionMgr::GetPlayerConditionLfgValue(referencePlayer, PlayerConditionLfgStatus::InLFGRandomDungeon))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_IN_LFG_FIRST_RANDOM_DUNGEON: // 59
+            if (!ConditionMgr::GetPlayerConditionLfgValue(referencePlayer, PlayerConditionLfgStatus::InLFGFirstRandomDungeon))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_GUILD_REPUTATION: // 62
+            if (referencePlayer->GetReputationMgr().GetReputation(1168) < int32(reqValue))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_RATED_BATTLEGROUND_RATING: // 64
+            if (!unit || unit->GetHealth() > reqValue)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_WORLD_STATE_EXPRESSION: // 67
+            if (WorldStateExpressionEntry const* worldStateExpression = sWorldStateExpressionStore.LookupEntry(reqValue))
+                return ConditionMgr::IsPlayerMeetingExpression(referencePlayer, worldStateExpression);
+            return false;
         case CRITERIA_ADDITIONAL_CONDITION_MAP_DIFFICULTY: // 68
         {
             DifficultyEntry const* difficulty = sDifficultyStore.LookupEntry(referencePlayer->GetMap()->GetDifficultyID());
@@ -1739,12 +1881,119 @@ bool CriteriaHandler::AdditionalRequirementsSatisfied(ModifierTreeNode const* tr
                 return false;
             break;
         }
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_LEVEL_GREATER: // 69
+            if (referencePlayer->getLevel() < reqValue)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_TARGET_LEVEL_GREATER: // 70
+            if (!unit || unit->getLevel() < reqValue)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_LEVEL_LOWER: // 71
+            if (referencePlayer->getLevel() > reqValue)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_TARGET_LEVEL_LOWER: // 72
+            if (!unit || unit->getLevel() > reqValue)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_MODIFIER_TREE: // 73
+            if (ModifierTreeNode const* nextModifierTree = sCriteriaMgr->GetModifierTree(reqValue))
+                return ModifierTreeSatisfied(nextModifierTree, miscValue1, miscValue2, unit, referencePlayer);
+            return false;
+        case CRITERIA_ADDITIONAL_CONDITION_SCENARIO_ID: // 74
+        {
+            Scenario const* scenario = referencePlayer->GetScenario();
+            if (!scenario)
+                return false;
+            if (scenario->GetEntry()->ID != reqValue)
+                return false;
+            break;
+        }
+        case CRITERIA_ADDITIONAL_CONDITION_THE_TILLERS_REPUTATION: // 75
+            if (referencePlayer->GetReputationMgr().GetReputation(1272) < int32(reqValue))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_SCENARIO_STEP_INDEX: // 82
+        {
+            Scenario const* scenario = referencePlayer->GetScenario();
+            if (!scenario)
+                return false;
+            if (scenario->GetStep()->OrderIndex != (reqValue - 1))
+                return false;
+            break;
+        }
+        case CRITERIA_ADDITIONAL_CONDITION_IS_ON_QUEST: // 84
+            if (referencePlayer->FindQuestSlot(reqValue) == MAX_QUEST_LOG_SIZE)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_EXALTED_WITH_FACTION: // 85
+            if (referencePlayer->GetReputationMgr().GetReputation(reqValue) < 42000)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_HAS_ACHIEVEMENT: // 86
+            if (!referencePlayer->HasAchieved(reqValue))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_CLOUD_SERPENT_REPUTATION: // 88
+            if (referencePlayer->GetReputationMgr().GetReputation(1271) < int32(reqValue))
+                return false;
+            break;
         case CRITERIA_ADDITIONAL_CONDITION_BATTLE_PET_SPECIES: // 91
             if (miscValue1 != reqValue)
                 return false;
             break;
-        case CRITERIA_ADDITIONAL_CONDITION_REPUTATION: // 95
-            if (referencePlayer->GetReputation(reqValue) < int32(tree->Entry->SecondaryAsset))
+        case CRITERIA_ADDITIONAL_CONDITION_ACTIVE_EXPANSION: // 92
+            if (referencePlayer->GetSession()->GetExpansion() < reqValue)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_FACTION_STANDING: // 95
+            if (referencePlayer->GetReputationMgr().GetReputation(reqValue) < int32(secondaryAsset))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_SEX: // 97
+            if (referencePlayer->getGender() != uint8(reqValue))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_SOURCE_NATIVE_SEX: // 98
+            if (referencePlayer->m_playerData->NativeSex != uint8(reqValue))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_SKILL: // 99
+            if (referencePlayer->GetPureSkillValue(reqValue) < uint16(secondaryAsset))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_NORMAL_PHASE_SHIFT: // 101
+            if (!PhasingHandler::InDbPhaseShift(referencePlayer, 0, 0, 0))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_IN_PHASE: // 102
+            if (!PhasingHandler::InDbPhaseShift(referencePlayer, 0, reqValue, 0))
+                return false;
+            break;
+      case CRITERIA_ADDITIONAL_CONDITION_NOT_IN_PHASE: // 103
+            if (PhasingHandler::InDbPhaseShift(referencePlayer, 0, reqValue, 0))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_HAS_SPELL: // 104
+            if (!referencePlayer->HasSpell(reqValue))
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_ITEM_COUNT: // 105
+            if (referencePlayer->GetItemCount(reqValue, false) < secondaryAsset)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_ACCOUNT_EXPANSION: // 106
+            if (referencePlayer->GetSession()->GetAccountExpansion() < reqValue)
+                return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_REWARDED_QUEST: // 110
+            if (uint32 questBit = sDB2Manager.GetQuestUniqueBitFlag(reqValue))
+                if (!(referencePlayer->m_activePlayerData->QuestCompleted[((questBit - 1) >> 6)] & (UI64LIT(1) << ((questBit - 1) & 63))))
+                    return false;
+            break;
+        case CRITERIA_ADDITIONAL_CONDITION_COMPLETED_QUEST: // 111
+            if (referencePlayer->GetQuestStatus(reqValue) != QUEST_STATUS_COMPLETE)
                 return false;
             break;
         case CRITERIA_ADDITIONAL_CONDITION_GARRISON_FOLLOWER_ENTRY: // 144
