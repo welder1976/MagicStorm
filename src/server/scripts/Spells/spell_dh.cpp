@@ -167,6 +167,27 @@ enum DHSpells
     SPELL_DH_SHATTERED_SOULS_5              = 226259,
 };
 
+enum ShatteredSoulsSpells
+{
+    // SPELL_DH_SHATTERED_SOULS = 204255,
+    SPELL_DH_SHATTERED_SOULS_DEMON = 204256,
+    SPELL_DH_LESSER_SOUL_SHARD = 203795,
+    // SPELL_DH_SHATTERED_SOULS_MISSILE = 209651,
+    SPELL_DH_SOUL_FRAGMENT_HEAL_25_HAVOC = 178963,
+    SPELL_DH_SOUL_FRAGMENT_DEMON_BONUS = 163073,
+    SPELL_DH_SOUL_FRAGMENT_HEAL_VENGEANCE = 210042,
+    SPELL_DH_LESSER_SOUL_SHARD_HEAL = 203794,
+    // SPELL_DH_CONSUME_SOUL_MISSILE = 210047,
+    SPELL_DH_LESSER_SOUL_FRAGMENT_HAVOC = 228532,
+    SPELL_DH_PAINBRINGER = 207387,
+    SPELL_DH_PAINBRINGER_BUFF = 212988,
+    SPELL_DH_DEVOUR_SOULS = 212821,
+    SPELL_DH_CHARRED_WARBLADES_HEAL = 213011,
+    SPELL_DH_SHATTER_THE_SOULS = 212827,
+    SPELL_DH_FIERY_DEMISE_DEBUFF = 212818,
+    SPELL_DH_COVER_OF_DARKNESS = 227635,
+};
+
 enum NemesisTargets
 {
     NEMESIS_ABERRATION                          = 208607,
@@ -485,30 +506,29 @@ class spell_dh_spirit_bomb_damage : public SpellScript
     }
 };
 
-// Blade Turning - 203753
+// 203753 - Blade Turning
 class spell_dh_blade_turning : public SpellScriptLoader
 {
-public:
-    spell_dh_blade_turning() : SpellScriptLoader("spell_dh_blade_turning") {}
+   public:
+        spell_dh_blade_turning() : SpellScriptLoader("spell_dh_blade_turning") { }
 
-    class spell_dh_blade_turning_AuraScript : public AuraScript
-    {
-        PrepareAuraScript(spell_dh_blade_turning_AuraScript);
-
-        bool CheckProc(ProcEventInfo& eventInfo)
+        class spell_dh_blade_turning_AuraScript : public AuraScript
         {
-            if (eventInfo.GetHitMask() & PROC_HIT_PARRY)
-                return true;
-            return false;
-        }
+            PrepareAuraScript(spell_dh_blade_turning_AuraScript);
+            bool CheckProc(ProcEventInfo& eventInfo)
+            {
+                if (eventInfo.GetHitMask() & PROC_HIT_PARRY)
+                    return true;
+                return false;
+            }
 
-        void Register() override
-        {
-            DoCheckProc += AuraCheckProcFn(spell_dh_blade_turning_AuraScript::CheckProc);
-        }
-    };
+            void Register() override
+            {
+                DoCheckProc += AuraCheckProcFn(spell_dh_blade_turning_AuraScript::CheckProc);
+            }
+        };
 
-    AuraScript* GetAuraScript() const override
+    AuraScript* GetAuraScript() const
     {
         return new spell_dh_blade_turning_AuraScript();
     }

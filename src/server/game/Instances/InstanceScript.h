@@ -41,7 +41,6 @@ class InstanceMap;
 class ModuleReference;
 class Player;
 class Unit;
-class TempSummon;
 struct Position;
 enum CriteriaTypes : uint8;
 enum CriteriaTimedTypes : uint8;
@@ -222,8 +221,6 @@ class TC_GAME_API InstanceScript : public ZoneScript
         void OnPlayerExit(Player*) override;
         void OnPlayerDeath(Player*) override;
 
-        virtual void OnCreatureGroupWipe(uint32 creatureGroupId) { }
-
         // Handle open / close objects
         // * use HandleGameObject(0, boolen, GO); in OnObjectCreate in instance scripts
         // * use HandleGameObject(GUID, boolen, NULL); in any other script
@@ -326,9 +323,6 @@ class TC_GAME_API InstanceScript : public ZoneScript
 
         // Return wether server allow two side groups or not
         bool ServerAllowsTwoSideGroups();
-
-        void SummonCreatureGroup(uint32 creatureGroupID, std::list<TempSummon*>* list = nullptr);
-        void DespawnCreatureGroup(uint32 creatureGroupID);
 
         virtual bool SetBossState(uint32 id, EncounterState state);
         EncounterState GetBossState(uint32 id) const { return id < bosses.size() ? bosses[id].state : TO_BE_DECIDED; }
@@ -635,8 +629,6 @@ class TC_GAME_API InstanceScript : public ZoneScript
         uint32 _combatResurrectionTimer;
         uint8 _combatResurrectionCharges; // the counter for available battle resurrections
         bool _combatResurrectionTimerStarted;
-
-        std::map<uint32, std::list<ObjectGuid>> summonBySummonGroupIDs;
 
         bool _challengeModeStarted;
         uint8 _challengeModeId;

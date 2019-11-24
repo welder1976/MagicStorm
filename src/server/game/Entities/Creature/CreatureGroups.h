@@ -90,8 +90,6 @@ class TC_GAME_API CreatureGroup
 
         void LeaderMoveTo(float x, float y, float z);
         void MemberAttackStart(Creature* member, Unit* target);
-
-        void CheckWipe(Creature* killed);
 };
 
 #define sFormationMgr FormationMgr::instance()
